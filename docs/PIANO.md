@@ -14,7 +14,7 @@ connessione, come Pipe Dreams: HTML, CSS e JavaScript senza librerie né compila
 | Prerequisiti | nessuno |
 | Versione attuale | **2.0**, esame 010-200: per ora solo in inglese, le traduzioni (italiano compreso) «nei prossimi mesi» |
 | Versione precedente | **1.6**, esame 010-160: **si può sostenere fino ad aprile 2027** |
-| Punteggio minimo | da verificare (non è scritto nella pagina dell'esame) |
+| Punteggio | scala da 200 a 800, **si supera con 500** (verificato il 12/11/2026, vedi sotto) |
 
 Fonti: [Linux Essentials](https://www.lpi.org/our-certifications/linux-essentials-overview/),
 [obiettivi 1.6](https://wiki.lpi.org/wiki/Linux_Essentials_Objectives_V1.6),
@@ -61,6 +61,14 @@ Le lezioni LPI hanno licenza **CC BY-NC-ND 4.0**: si possono condividere gratis,
 - Per ogni obiettivo: «studiato», i comandi da conoscere, i progressi.
 - Progressi salvati nel browser, con esportazione e importazione di un backup.
 
+**Fatta il 12/11/2026.** Obiettivi dalla traduzione italiana ufficiale (wiki LPI, controllata
+con la versione inglese: pesi e voci coincidono); 24 lezioni su 24, ognuna controllata carattere
+per carattere con l'originale sia nell'importazione sia nella pagina; «Riprendi la lettura» dal
+punto in cui si era arrivati e dimensione del testo regolabile; uso offline con il service worker
+(anticipato da M6, perché leggere offline è parte di M1). I dati di ogni esame stanno in un file
+a sé (`data/exam-010-160.js`), pronti per aggiungere la 2.0. Da fare quando serve: la 2.0, quando
+ci saranno le lezioni e l'esame in italiano.
+
 ### M2. Domande per obiettivo
 - Una banca di domande originali: almeno 8-10 per obiettivo (circa 200 in tutto).
 - I tipi dell'esame vero: scelta singola, scelta multipla («scegli 2») e completamento (scrivi il
@@ -68,9 +76,28 @@ Le lezioni LPI hanno licenza **CC BY-NC-ND 4.0**: si possono condividere gratis,
 - Dopo ogni risposta: giusto o sbagliato, il perché di ogni opzione, il link alla lezione.
 - Modalità «studia un obiettivo»: solo le sue domande.
 
+**Fatta il 12/11/2026.** 231 domande, tutte scritte da zero (il minimo per obiettivo è 6 + 2 × peso:
+da 8 a 14; ce ne sono da 9 a 17), con almeno una a scelta multipla e una di completamento per
+obiettivo. I risultati dei comandi usati nelle domande sono stati provati in Bash. Ogni domanda
+rimanda a una sezione precisa della lezione ufficiale. Il completamento accetta le forme
+equivalenti (per esempio `tar -czf` e `tar -zcvf`). Le risposte di ogni domanda (giuste, sbagliate,
+ultimo esito) sono salvate e entrano nel backup: serviranno al ripasso di M3. Controlli in CI:
+formato, risposte giuste, copertura per peso, nessuna sequenza di 8 parole uguale alle lezioni; nel
+browser, un test risponde a tutte le domande con la soluzione e verifica che sia riconosciuta.
+
 ### M3. Ripasso intelligente
 - Le domande sbagliate tornano presto, quelle giuste sempre più di rado (scatole di Leitner).
 - «Ripasso di oggi»: una decina di domande scelte così.
+
+**Fatta il 12/11/2026.** Cinque scatole: una domanda nuova parte dalla 1; giusta → scatola
+successiva, sbagliata → di nuovo la 1; torna dopo 1, 2, 4, 8 o 16 giorni secondo la scatola.
+Il ripasso prende fino a 10 domande: prima le scadute (dalla più vecchia), poi le nuove, dagli
+obiettivi segnati «studiato» o con una lezione letta (altrimenti da tutti), scelti a caso secondo
+il peso. Tutte le risposte contano, anche quelle date in «studia un obiettivo». Dopo ogni risposta
+l'app dice in quale scatola è finita la domanda e quando torna; nella pagina principale c'è il
+riquadro «Ripasso di oggi» con le scatole e il prossimo ripasso. Le risposte date prima di M3
+entrano nelle scatole da sole (giusta → 2, sbagliata → 1). I test fermano l'orologio del browser
+per provare i giorni successivi.
 
 ### M4. Simulazione d'esame
 - 40 domande in 60 minuti, distribuite secondo il peso degli obiettivi, con il cronometro.
@@ -78,14 +105,49 @@ Le lezioni LPI hanno licenza **CC BY-NC-ND 4.0**: si possono condividere gratis,
 - Alla fine: punteggio, risultato per argomento, le domande sbagliate con la spiegazione.
 - Storico delle simulazioni, per vedere i progressi.
 
+**Fatta il 12/11/2026.** Per ogni obiettivo tante domande quanto il suo peso (come all'esame: una
+per ogni punto di peso), scelte a caso tra le sue e mescolate. Cronometro con avvisi a 10, 5 e 1
+minuto per i lettori di schermo; la prova è salvata nel browser a ogni risposta e il tempo conta
+dall'inizio anche a pagina chiusa: si riprende dov'era, e se il tempo è finito si va al risultato.
+Quadro delle 40 domande (risposta data, segnata) e «Termina l'esame» con conferma. Risultato:
+giuste su 40, soglia di riferimento del 50% con l'avviso che non è la regola ufficiale, tempo usato,
+tabella per argomento, domande sbagliate o senza risposta con le spiegazioni e il link alla
+lezione. Storico (fino a 100 prove) nella pagina e nella pagina principale, anche nel backup. Le
+risposte date entrano nelle scatole del ripasso. I test fanno avanzare l'orologio del browser per
+provare il tempo che scade.
+
 ### M5. Pratica al terminale
 - Esercizi con i comandi dell'esame (ls, cd, cp, mv, mkdir, rm, find, grep, tar, chmod...).
   Serve un piccolo file system simulato: è il lavoro più grande, per questo viene dopo le domande.
 - Le pipeline vengono dal motore di Pipe Dreams, già verificato con bash.
 
+**Fatta il 12/11/2026.** Un Linux simulato nel browser (`shell-sim.js`, `shell-commands.js`):
+file system in memoria con utenti, gruppi, permessi (anche sticky bit, setuid, setgid), link
+simbolici e fisici; shell con virgolette, variabili, `~`, caratteri jolly, pipe, `;`, `&&`, `||` e
+i reindirizzamenti; 65 comandi più sudo (ls, cd, mkdir, cp, mv, rm, ln, find, grep, tar, gzip, bzip2,
+xz, zip, chmod, chown con sudo...). I filtri sort, uniq, cut, tr, nl, tac, rev e sed sono quelli di
+Pipe Dreams (`lib/`, copiati senza modifiche). 37 esercizi sugli obiettivi 2.1, 2.3, 2.4, 3.1, 3.2,
+3.3, 5.3 e 5.4, con gli obiettivi che si spuntano dopo ogni comando, suggerimento, soluzione e
+«Ricomincia»; terminale libero. `tools/check-shell.js` (anche in CI) ricrea il file system in una
+directory vera ed esegue in Bash le soluzioni e oltre 200 casi tipici: stesso output, stessi
+errori e codici di uscita, stessi file alla fine. Il simulatore si comporta come Bash con
+LC_ALL=C, ma i messaggi di errore sono in italiano. Non esegue script né editor (vi, nano): per gli
+script si scrive il file con echo e si danno i permessi.
+
 ### M6. Pubblicazione
 - GitHub Pages (repository pubblico) e copia offline (service worker).
 - Script per il container Proxmox, come per Pipe Dreams.
+
+**Fatta il 12/11/2026.** `tools/build-site.sh` prepara il sito (solo i file dell'app, con la
+versione in `version.js` e un nome nuovo per la cache del service worker); il workflow lo controlla
+(`tools/check-site.js`), esegue tutti i test nel browser proprio sul sito preparato e, dal branch
+`main`, lo pubblica su GitHub Pages. Per Proxmox, `deploy/proxmox-lxc.sh` e
+`deploy/certlpi-setup.sh` vengono da Pipe Dreams: Alpine, nginx in HTTPS con una CA locale, porte
+8444/8081 (per convivere con Pipe Dreams), e un Linux vero per esercitarsi (utente anna con i file
+del simulatore, pagine man, useradd). Provati: shellcheck, certificati, configurazione di nginx in
+Alpine. Da provare sul Proxmox vero: installazione dei pacchetti e comandi pct/pveam.
+Da fare una volta, a mano: unire il branch in `main` e attivare Settings → Pages → Source:
+«GitHub Actions».
 
 ### Dopo
 - LPIC-1, esami 101 e 102, con lo stesso schema.
@@ -101,6 +163,25 @@ Le lezioni LPI hanno licenza **CC BY-NC-ND 4.0**: si possono condividere gratis,
   dalle lezioni.
 - Test nel browser (Playwright) per ogni funzione, come in Pipe Dreams.
 
+### Punteggio (verificato il 12/11/2026)
+
+- Ogni esame LPI ha un punteggio da 200 a 800 e **si supera con 500**. Il numero di risposte
+  giuste che serve non è fisso: dipende da quali domande capitano, perché hanno difficoltà
+  diverse e i candidati non ricevono tutti le stesse. Il valore esatto viene da studi statistici
+  di LPI. Fonte: [FAQ di LPI](https://www.lpi.org/about-lpi/frequently-asked-questions/), domanda
+  «How are the LPIC test scores computed?» (la risposta vale per «ogni esame LPI»).
+- Per Linux Essentials 010-160 lo conferma un articolo del blog ufficiale LPI: «Minimum passing
+  score: 500 out of 800»
+  ([How I Scored 100% on the Linux Essentials Exam](https://www.lpi.org/blog/2026/02/12/how-i-scored-100-on-the-linux-essentials-exam/), 12/02/2026).
+- La stessa FAQ dice che c'è **una domanda per ogni punto di peso**: un obiettivo di peso 4 ha 4
+  domande all'esame. Per Linux Essentials (peso totale 40) sono 40 domande.
+
+Per la simulazione (M4): la conversione tra risposte giuste e punteggio non è pubblica, quindi
+l'app non può dire «hai superato l'esame». Mostrerà la percentuale di risposte giuste e, come
+indicazione e non come regola ufficiale, una soglia di riferimento: 500 su una scala 200-800
+corrisponde in proporzione al 50% (200 + 0,5 × 600). Avvisando che il valore vero può essere
+diverso, conviene puntare a stare con margine sopra quella soglia.
+
 ## Domande aperte
 
-1. Punteggio minimo di Linux Essentials: da confermare con LPI prima della simulazione d'esame.
+Nessuna per ora.

@@ -1,0 +1,14 @@
+{
+    "name": "Certificazioni LPI",
+    "short_name": "LPI",
+    "description": "Preparazione all'esame Linux Essentials: obiettivi e lezioni ufficiali in italiano, anche senza connessione.",
+    "lang": "it",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#fbfaf7",
+    "theme_color": "#1d4f91",
+    "icons": [
+        { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+    ]
+}

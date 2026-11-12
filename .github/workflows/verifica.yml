@@ -1,0 +1,101 @@
+# Verifica l'app a ogni push e, se tutto passa, la pubblica su GitHub Pages (solo dal branch
+# predefinito, main). Per la pubblicazione: Settings → Pages → Source: "GitHub Actions".
+name: Verifica e pubblica
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Una sola pubblicazione alla volta; quelle in coda non annullano quella in corso
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verifica:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Sintassi dei file JavaScript e Python
+        run: |
+          for f in *.js data/*.js lib/*.js lessons/*/*.js questions/*/*.js exercises/*.js tools/*.js tests/e2e/*.js; do node --check "$f"; done
+          python3 -m py_compile tools/*.py
+
+      - name: Esami, obiettivi e lezioni (licenza, completezza, file)
+        run: node tools/check-data.js
+
+      - name: Domande (formato, risposte giuste, copertura per peso, nessuna frase copiata dalle lezioni)
+        run: node tools/check-questions.js --stats
+
+      # ubuntu-24.04: GNU coreutils 9.4, come Pipe Dreams
+      - name: La shell simulata coincide con Bash e GNU coreutils (soluzioni degli esercizi e casi tipici)
+        run: node tools/check-shell.js
+
+      - name: Emoji visibili anche su macOS High Sierra
+        run: node tools/check-emoji.js
+
+      - name: Script per Proxmox e Alpine (shellcheck)
+        run: shellcheck deploy/proxmox-lxc.sh tools/build-site.sh && shellcheck -s sh deploy/certlpi-setup.sh
+
+      - name: Il sito da pubblicare è completo
+        run: bash tools/build-site.sh _site && node tools/check-site.js _site
+
+  browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Installa Playwright, Chromium e axe-core
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0 axe-core@4.10.2
+          npx playwright install --with-deps chromium
+
+      # I test girano sul sito preparato per la pubblicazione, cioè su quello che si pubblica
+      - name: Test nel browser (obiettivi, lezioni, domande, ripasso, simulazione, terminale, backup, offline, accessibilità)
+        run: |
+          bash tools/build-site.sh _site
+          E2E_ROOT=_site node tests/e2e/run.js
+
+  pubblica:
+    needs: [verifica, browser]
+    if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Prepara il sito
+        run: bash tools/build-site.sh _site
+
+      - uses: actions/configure-pages@v5
+
+      # Un nome diverso per ogni tentativo: con "Re-run jobs" GitHub troverebbe due archivi
+      # "github-pages" nello stesso run e la pubblicazione fallirebbe
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+          name: github-pages-${{ github.run_attempt }}
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages-${{ github.run_attempt }}
