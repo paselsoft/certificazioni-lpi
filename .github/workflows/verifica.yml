@@ -1,0 +1,49 @@
+# Verifica l'app a ogni push: dati degli esami e delle lezioni, emoji, test nel browser.
+# (La pubblicazione su GitHub Pages arriverà con la tappa M6.)
+name: Verifica
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verifica:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Sintassi dei file JavaScript e Python
+        run: |
+          for f in *.js data/*.js lessons/*/*.js tools/*.js tests/e2e/*.js; do node --check "$f"; done
+          python3 -m py_compile tools/*.py
+
+      - name: Esami, obiettivi e lezioni (licenza, completezza, file)
+        run: node tools/check-data.js
+
+      - name: Emoji visibili anche su macOS High Sierra
+        run: node tools/check-emoji.js
+
+  browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Installa Playwright, Chromium e axe-core
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0 axe-core@4.10.2
+          npx playwright install --with-deps chromium
+
+      - name: Test nel browser (obiettivi, lezioni, backup, offline, accessibilità)
+        run: node tests/e2e/run.js

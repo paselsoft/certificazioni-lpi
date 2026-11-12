@@ -61,6 +61,14 @@ Le lezioni LPI hanno licenza **CC BY-NC-ND 4.0**: si possono condividere gratis,
 - Per ogni obiettivo: «studiato», i comandi da conoscere, i progressi.
 - Progressi salvati nel browser, con esportazione e importazione di un backup.
 
+**Fatta il 12/11/2026.** Obiettivi dalla traduzione italiana ufficiale (wiki LPI, controllata
+con la versione inglese: pesi e voci coincidono); 24 lezioni su 24, ognuna controllata carattere
+per carattere con l'originale sia nell'importazione sia nella pagina; «Riprendi la lettura» dal
+punto in cui si era arrivati e dimensione del testo regolabile; uso offline con il service worker
+(anticipato da M6, perché leggere offline è parte di M1). I dati di ogni esame stanno in un file
+a sé (`data/exam-010-160.js`), pronti per aggiungere la 2.0. Da fare quando serve: la 2.0, quando
+ci saranno le lezioni e l'esame in italiano.
+
 ### M2. Domande per obiettivo
 - Una banca di domande originali: almeno 8-10 per obiettivo (circa 200 in tutto).
 - I tipi dell'esame vero: scelta singola, scelta multipla («scegli 2») e completamento (scrivi il
