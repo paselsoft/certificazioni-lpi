@@ -29,14 +29,11 @@ Fonti: [Linux Essentials](https://www.lpi.org/our-certifications/linux-essential
 | Esame in italiano | sì | non ancora |
 | Novità | | più spazio a scripting (013.3, peso 4), processi e log, rete, archivi e compressione |
 
-## Decisione da prendere: quale versione
+## Versione scelta: 1.6 (esame 010-160)
 
-Il certificato è lo stesso (Linux Essentials, a vita), cambia l'esame.
-
-- **1.6 (consigliata se pensi di dare l'esame entro aprile 2027):** materiale italiano completo
-  ed esame in italiano già oggi. Circa 5 mesi di tempo.
-- **2.0 (se pensi di darlo più avanti):** è il futuro, ma oggi mancano 15 lezioni italiane su 19
-  e l'esame italiano.
+Decisione del 12/11/2026: l'app parte dalla **versione 1.6**, con le lezioni italiane complete e
+l'esame in italiano, da sostenere **entro aprile 2027**. La 2.0 (010-200) si aggiungerà quando
+ci saranno le lezioni e l'esame in italiano.
 
 In tutti e due i casi l'app nasce con i dati di **entrambe** le versioni separati (obiettivi,
 domande, lezioni): si parte da una e si aggiunge l'altra senza rifare niente. Molti argomenti
@@ -106,5 +103,4 @@ Le lezioni LPI hanno licenza **CC BY-NC-ND 4.0**: si possono condividere gratis,
 
 ## Domande aperte
 
-1. Versione dell'esame: 1.6 (entro aprile 2027) o 2.0?
-2. Punteggio minimo di Linux Essentials: da confermare con LPI prima della simulazione d'esame.
+1. Punteggio minimo di Linux Essentials: da confermare con LPI prima della simulazione d'esame.
