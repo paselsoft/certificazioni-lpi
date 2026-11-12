@@ -4,6 +4,8 @@
 //   studied: { "010-160:2.1": "2026-11-12" },        obiettivi segnati «studiato» (con la data)
 //   read:    { "010-160/2.1_01": "2026-11-12" },     lezioni segnate «letta» (con la data)
 //   last:    { lesson: "010-160/2.1_01", scroll: 0.4 } ultima lezione aperta e dove si era arrivati
+//   answers: { "010-160/2.1-03": { ok: 2, ko: 1, last: "2026-11-12", result: true } }
+//            per ogni domanda: risposte giuste e sbagliate, data e esito dell'ultima risposta
 // }
 // Le chiavi contengono il codice dell'esame: i progressi di esami diversi restano separati.
 
@@ -29,8 +31,16 @@ function cleanProgress(data) {
     const progress = {
         studied: pick(source.studied, /^[\w.-]+:\d+\.\d+$/),
         read: pick(source.read, /^[\w.-]+\/\d+\.\d+_\d+$/),
-        last: null
+        last: null,
+        answers: {}
     };
+    const isCount = value => Number.isInteger(value) && value >= 0;
+    Object.entries(isPlainObject(source.answers) ? source.answers : {}).forEach(([key, value]) => {
+        if (/^[\w.-]+\/\d+\.\d+-\d+$/.test(key) && isPlainObject(value) && isCount(value.ok) && isCount(value.ko)
+            && value.ok + value.ko > 0 && isDate(value.last) && typeof value.result === "boolean") {
+            progress.answers[key] = { ok: value.ok, ko: value.ko, last: value.last, result: value.result };
+        }
+    });
     const last = source.last;
     if (isPlainObject(last) && typeof last.lesson === "string" && /^[\w.-]+\/\d+\.\d+_\d+$/.test(last.lesson)) {
         const scroll = Number(last.scroll);
@@ -90,6 +100,17 @@ function setRead(examId, lessonId, value) {
 
 function setLastLesson(examId, lessonId, scroll) {
     progress.last = { lesson: lessonKey(examId, lessonId), scroll: Math.min(1, Math.max(0, scroll || 0)) };
+    saveProgress();
+}
+
+const questionKey = question => `${question.exam}/${question.id}`;
+const answerOf = question => progress.answers[questionKey(question)] || null;
+
+// Registra una risposta a una domanda
+function recordAnswer(question, right) {
+    const key = questionKey(question);
+    const entry = progress.answers[key] || { ok: 0, ko: 0 };
+    progress.answers[key] = { ok: entry.ok + (right ? 1 : 0), ko: entry.ko + (right ? 0 : 1), last: todayKey(), result: right };
     saveProgress();
 }
 

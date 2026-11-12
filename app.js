@@ -3,10 +3,12 @@
 //   #/                               argomenti e obiettivi dell'esame, con i progressi
 //   #/010-160/obiettivo/2.1          un obiettivo: peso, lezioni, aree, comandi, «studiato»
 //   #/010-160/lezione/2.1_01         una lezione ufficiale, da leggere anche offline
+//   #/010-160/lezione/2.1_01/Quoting una lezione, alla sezione con quel titolo
+//   #/010-160/domande/2.1            le domande di un obiettivo (quiz.js)
 //   #/backup                         backup dei progressi
 
 const APP_NAME = "Certificazioni LPI";
-const state = { exam: "010-160", firstRender: true, lesson: null, scrollTimer: null };
+const state = { exam: "010-160", firstRender: true, lesson: null, scrollTimer: null, focusTarget: null };
 
 const main = document.getElementById("main");
 const announcer = document.getElementById("announce");
@@ -19,6 +21,7 @@ const totalWeight = exam => allObjectives(exam).reduce((sum, { objective }) => s
 
 const objectiveHref = (exam, objective) => `#/${exam.id}/obiettivo/${objective.id}`;
 const lessonHref = (exam, lessonId) => `#/${exam.id}/lezione/${lessonId}`;
+const quizHref = (exam, objective) => `#/${exam.id}/domande/${objective.id}`;
 const lessonName = (objective, index) => objective.lessons.length > 1 ? `Lezione ${index + 1} di ${objective.lessons.length}` : "Lezione unica";
 
 function link(text, href, className) {
@@ -78,7 +81,9 @@ function examSummary(exam) {
     return {
         studied: studied.length, objectives: objectives.length,
         studiedWeight: studied.reduce((sum, objective) => sum + objective.weight, 0), weight: totalWeight(exam),
-        read: read.length, lessons: lessons.length
+        read: read.length, lessons: lessons.length,
+        questions: QUESTIONS.filter(q => q.exam === exam.id).length,
+        rightQuestions: QUESTIONS.filter(q => q.exam === exam.id && answerOf(q) && answerOf(q).result).length
     };
 }
 
@@ -108,6 +113,7 @@ function renderHome(exam) {
     box.appendChild(title);
     box.appendChild(progressBar(`Obiettivi studiati: ${summary.studied} su ${summary.objectives} (peso ${summary.studiedWeight} su ${summary.weight})`, summary.studiedWeight, summary.weight));
     box.appendChild(progressBar(`Lezioni lette: ${summary.read} su ${summary.lessons}`, summary.read, summary.lessons));
+    box.appendChild(progressBar(`Domande con l'ultima risposta giusta: ${summary.rightQuestions} su ${summary.questions}`, summary.rightQuestions, summary.questions));
     box.appendChild(el("p", "hint", "Il peso dice quante domande, più o meno, arrivano da ogni obiettivo: le 40 domande dell'esame si dividono secondo i pesi."));
     box.id = "summary";
     page.appendChild(box);
@@ -132,6 +138,8 @@ function renderHome(exam) {
             const meta = el("span", "objective-meta");
             meta.append(el("span", "weight", `peso ${objective.weight}`),
                 el("span", "lessons-read", `lezioni lette ${read} su ${objective.lessons.length}`));
+            const stats = objectiveQuizStats(exam.id, objective.id);
+            if (stats.answered) meta.appendChild(el("span", "lessons-read", `domande giuste ${stats.right} su ${stats.total}`));
             if (studied) meta.appendChild(el("span", "badge", "✓ studiato"));
             anchor.appendChild(meta);
             item.appendChild(anchor);
@@ -203,6 +211,24 @@ function renderObjective(exam, topic, objective) {
     online.append(document.createTextNode("Si leggono qui anche senza connessione. "), externalLink("Le stesse lezioni sul sito LPI", objective.url));
     lessons.appendChild(online);
     page.appendChild(lessons);
+
+    const questions = el("section", "block");
+    questions.setAttribute("aria-labelledby", "domande");
+    const questionsTitle = el("h2", "", "Domande");
+    questionsTitle.id = "domande";
+    questions.appendChild(questionsTitle);
+    const stats = objectiveQuizStats(exam.id, objective.id);
+    const train = link(`🎯 Allenati con le ${stats.total} domande`, quizHref(exam, objective), "button primary");
+    train.id = "train";
+    // Da qui parte sempre una serie nuova, se quella di prima è finita
+    train.onclick = () => {
+        if (quiz.session && quiz.session.index >= quiz.session.questions.length) quiz.session = null;
+    };
+    questions.appendChild(train);
+    questions.appendChild(el("p", "hint", stats.answered
+        ? `Hai risposto a ${stats.answered} domande su ${stats.total}: l'ultima risposta è giusta per ${stats.right}.`
+        : "Domande scritte per questa app, come quelle dell'esame: scelta singola, scelta multipla e completamento. Dopo ogni risposta trovi il perché e la parte della lezione da ripassare."));
+    page.appendChild(questions);
 
     const terms = el("section", "block");
     terms.setAttribute("aria-labelledby", "termini");
@@ -347,7 +373,7 @@ function renderLessonPage(exam, entry, lesson) {
     main.appendChild(page);
 }
 
-function renderLesson(exam, entry) {
+function renderLesson(exam, entry, heading) {
     const page = el("div", "page");
     page.appendChild(breadcrumb([["Obiettivi", "#/"], [`${entry.objective.id} ${entry.objective.title}`, objectiveHref(exam, entry.objective)], [lessonName(entry.objective, entry.index), null]]));
     const loading = el("p", "lead", "Carico la lezione...");
@@ -356,7 +382,7 @@ function renderLesson(exam, entry) {
     main.appendChild(page);
     const route = location.hash;
     // Dove si era arrivati l'ultima volta in questa lezione
-    const saved = progress.last && progress.last.lesson === lessonKey(exam.id, entry.id) ? progress.last.scroll : 0;
+    const saved = !heading && progress.last && progress.last.lesson === lessonKey(exam.id, entry.id) ? progress.last.scroll : 0;
     return loadLesson(exam.id, entry.id).then(lesson => {
         if (location.hash !== route) return null;
         main.innerHTML = "";
@@ -372,7 +398,14 @@ function renderLesson(exam, entry) {
         }
         renderLessonPage(exam, entry, lesson);
         state.lesson = { exam: exam.id, id: entry.id };
-        if (saved > 0.01) {
+        // Una sezione precisa (per esempio dal «Ripassa» di una domanda)
+        const target = heading && [...main.querySelectorAll("article.lesson h2, article.lesson h3, article.lesson h4, article.lesson h5")]
+            .find(node => node.textContent.trim() === heading);
+        if (target) {
+            target.tabIndex = -1;
+            target.scrollIntoView({ block: "start" });
+            state.focusTarget = target;
+        } else if (saved > 0.01) {
             const height = document.documentElement.scrollHeight - window.innerHeight;
             window.scrollTo(0, Math.round(saved * height));
             announce("Hai ripreso la lezione da dove eri arrivato.");
@@ -548,6 +581,8 @@ function notFound() {
 
 function finishRender(title, focusTarget) {
     document.title = title ? `${title} · ${APP_NAME}` : APP_NAME;
+    focusTarget = focusTarget || state.focusTarget;
+    state.focusTarget = null;
     if (!state.firstRender) {
         const heading = focusTarget || main.querySelector("h1");
         if (heading) {
@@ -585,21 +620,31 @@ function render() {
         finishRender(renderBackup());
         return;
     }
-    match = hash.match(/^#\/([\w.-]+)\/(obiettivo|lezione)\/([\d._]+)$/);
+    match = hash.match(/^#\/([\w.-]+)\/(obiettivo|lezione|domande)\/([\d._]+)(?:\/([^/]+))?$/);
     const routeExam = match && EXAMS.find(item => item.id === match[1]);
     if (routeExam) {
         state.exam = routeExam.id;
         if (match[2] === "obiettivo") {
             const found = allObjectives(routeExam).find(item => item.objective.id === match[3]);
-            if (found) {
+            if (found && !match[4]) {
                 finishRender(renderObjective(routeExam, found.topic, found.objective));
+                return;
+            }
+        } else if (match[2] === "domande") {
+            const found = allObjectives(routeExam).find(item => item.objective.id === match[3]);
+            if (found && !match[4]) {
+                finishRender(renderQuiz(routeExam, found.topic, found.objective));
                 return;
             }
         } else {
             const entry = allLessons(routeExam).find(item => item.id === match[3]);
             if (entry) {
                 const first = state.firstRender;
-                renderLesson(routeExam, entry).then(title => {
+                let heading = null;
+                try {
+                    heading = match[4] ? decodeURIComponent(match[4]) : null;
+                } catch (e) { /* indirizzo rovinato: si apre la lezione dall'inizio */ }
+                renderLesson(routeExam, entry, heading).then(title => {
                     if (title === null) return;
                     state.firstRender = first;
                     finishRender(title);

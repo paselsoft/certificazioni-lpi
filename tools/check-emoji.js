@@ -11,7 +11,8 @@ const COMPATIBILI = new Set(["🐧", "📖", "📚", "💾", "⬇", "✅", "⚠"
 
 const files = [
     ...fs.readdirSync(root).filter(file => /\.(js|html|css|webmanifest)$/.test(file)),
-    ...fs.readdirSync(path.join(root, "data")).map(file => `data/${file}`)
+    ...fs.readdirSync(path.join(root, "data")).map(file => `data/${file}`),
+    ...fs.readdirSync(path.join(root, "questions", "010-160")).map(file => `questions/010-160/${file}`)
 ];
 const problems = [];
 let count = 0;

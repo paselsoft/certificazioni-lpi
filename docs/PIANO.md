@@ -76,6 +76,15 @@ ci saranno le lezioni e l'esame in italiano.
 - Dopo ogni risposta: giusto o sbagliato, il perché di ogni opzione, il link alla lezione.
 - Modalità «studia un obiettivo»: solo le sue domande.
 
+**Fatta il 12/11/2026.** 231 domande, tutte scritte da zero (il minimo per obiettivo è 6 + 2 × peso:
+da 8 a 14; ce ne sono da 9 a 17), con almeno una a scelta multipla e una di completamento per
+obiettivo. I risultati dei comandi usati nelle domande sono stati provati in Bash. Ogni domanda
+rimanda a una sezione precisa della lezione ufficiale. Il completamento accetta le forme
+equivalenti (per esempio `tar -czf` e `tar -zcvf`). Le risposte di ogni domanda (giuste, sbagliate,
+ultimo esito) sono salvate e entrano nel backup: serviranno al ripasso di M3. Controlli in CI:
+formato, risposte giuste, copertura per peso, nessuna sequenza di 8 parole uguale alle lezioni; nel
+browser, un test risponde a tutte le domande con la soluzione e verifica che sia riconosciuta.
+
 ### M3. Ripasso intelligente
 - Le domande sbagliate tornano presto, quelle giuste sempre più di rado (scatole di Leitner).
 - «Ripasso di oggi»: una decina di domande scelte così.

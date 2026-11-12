@@ -3,13 +3,14 @@
 // dai dati degli esami, così una lezione nuova entra da sola). Strategia «prima la rete»: online si
 // riceve sempre la versione più recente (e la copia salvata si aggiorna), offline si usa la copia.
 // Per far installare una nuova versione basta cambiare CACHE.
-const CACHE = "certlpi-v1";
+const CACHE = "certlpi-v2";
 
 importScripts("data/exams.js", "data/exam-010-160.js");
 
 const APP_FILES = [
     "./", "index.html", "style.css", "manifest.webmanifest", "icon.svg",
-    "data/exams.js", "data/exam-010-160.js", "store.js", "lesson-view.js", "app.js"
+    "data/exams.js", "data/exam-010-160.js", "store.js", "lesson-view.js", "app.js", "quiz.js",
+    "questions/010-160/1.js", "questions/010-160/2.js", "questions/010-160/3.js", "questions/010-160/4.js", "questions/010-160/5.js"
 ];
 const LESSON_FILES = EXAMS.flatMap(exam => exam.topics.flatMap(topic => topic.objectives.flatMap(objective =>
     objective.lessons.map(lesson => `lessons/${exam.id}/${lesson}.js`))));

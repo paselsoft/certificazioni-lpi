@@ -5,7 +5,8 @@ const { assert, open, go, ready, stored } = require("./helpers");
 const PROGRESS = {
     studied: { "010-160:1.1": "2026-11-01", "010-160:2.1": "2026-11-02" },
     read: { "010-160/2.1_01": "2026-11-02", "010-160/2.1_02": "2026-11-03", "010-160/3.3_01": "2026-11-04" },
-    last: { lesson: "010-160/3.3_01", scroll: 0.25 }
+    last: { lesson: "010-160/3.3_01", scroll: 0.25 },
+    answers: { "010-160/2.1-01": { ok: 1, ko: 2, last: "2026-11-04", result: true } }
 };
 
 module.exports = {
@@ -59,7 +60,7 @@ module.exports = {
         assert.deepEqual(await stored(page), PROGRESS);
         await page.click("#reset");
         await page.click("#reset-confirm");
-        assert.deepEqual(await stored(page), { studied: {}, read: {}, last: null });
+        assert.deepEqual(await stored(page), { studied: {}, read: {}, last: null, answers: {} });
         await go(page, "#/");
         assert.match(await page.textContent("#summary"), /Obiettivi studiati: 0 su 19/);
     }
