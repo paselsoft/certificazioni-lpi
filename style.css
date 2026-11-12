@@ -341,6 +341,63 @@ main { display: block; }
 .fill-given { margin: 4px 0; }
 .sim-latest { margin: 8px 0 0; }
 
+/* ---- Pratica al terminale (practice.js) ---- */
+
+.exercise-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.exercise-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.goals { list-style: none; padding: 8px 12px; margin: 12px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+.goal { margin: 4px 0; }
+.goal-mark { display: inline-block; width: 1.2em; font-weight: 700; color: var(--muted); }
+.goal.met .goal-mark { color: var(--ok); }
+.goal code, .task code, .hint-text code, .practice-success code {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 0.9em;
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 0 3px;
+    border-radius: 4px;
+    overflow-wrap: anywhere;
+}
+.terminal {
+    margin: 12px 0;
+    border-radius: 8px;
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    overflow: hidden;
+}
+.terminal-output {
+    height: 18rem;
+    overflow: auto;
+    padding: 8px 10px 0;
+    /* Le righe lunghe vanno a capo come in un terminale vero */
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.terminal-output:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+.terminal-command .terminal-prompt, .terminal-line .terminal-prompt { color: #7ee787; }
+.terminal-error { color: #ffa198; }
+.terminal-line { display: flex; align-items: baseline; padding: 4px 10px 10px; }
+.terminal-line .terminal-prompt { white-space: pre; flex: none; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
+.terminal-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    color: #e6edf3;
+    font: inherit;
+    padding: 0;
+    caret-color: #7ee787;
+}
+.terminal-input:focus { outline: none; }
+.terminal:focus-within { box-shadow: 0 0 0 3px var(--focus); }
+.practice-help { margin: 8px 0; }
+.solution-code { background: var(--code-bg); color: var(--code-text); padding: 8px 12px; border-radius: 8px; overflow-x: auto; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
+.practice-success { margin: 16px 0; padding: 4px 16px 12px; border: 2px solid var(--ok); border-radius: 10px; background: var(--surface); }
+.practice-success h2 { color: var(--ok); font-size: 1.2rem; }
+
 /* ---- Domande (quiz.js) ---- */
 
 .question-text { font-size: 1.25rem; line-height: 1.4; margin: 20px 0 8px; }

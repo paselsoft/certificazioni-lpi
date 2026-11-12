@@ -22,7 +22,7 @@ jobs:
 
       - name: Sintassi dei file JavaScript e Python
         run: |
-          for f in *.js data/*.js lessons/*/*.js questions/*/*.js tools/*.js tests/e2e/*.js; do node --check "$f"; done
+          for f in *.js data/*.js lib/*.js lessons/*/*.js questions/*/*.js exercises/*.js tools/*.js tests/e2e/*.js; do node --check "$f"; done
           python3 -m py_compile tools/*.py
 
       - name: Esami, obiettivi e lezioni (licenza, completezza, file)
@@ -30,6 +30,10 @@ jobs:
 
       - name: Domande (formato, risposte giuste, copertura per peso, nessuna frase copiata dalle lezioni)
         run: node tools/check-questions.js --stats
+
+      # ubuntu-24.04: GNU coreutils 9.4, come Pipe Dreams
+      - name: La shell simulata coincide con Bash e GNU coreutils (soluzioni degli esercizi e casi tipici)
+        run: node tools/check-shell.js
 
       - name: Emoji visibili anche su macOS High Sierra
         run: node tools/check-emoji.js
@@ -48,5 +52,5 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.63.0 axe-core@4.10.2
           npx playwright install --with-deps chromium
 
-      - name: Test nel browser (obiettivi, lezioni, domande, backup, offline, accessibilità)
+      - name: Test nel browser (obiettivi, lezioni, domande, ripasso, simulazione, terminale, backup, offline, accessibilità)
         run: node tests/e2e/run.js

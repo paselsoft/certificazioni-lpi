@@ -2,10 +2,10 @@
 
 App gratuita, in italiano, per prepararsi all'esame **Linux Essentials 1.6** (010-160) del Linux
 Professional Institute (e in seguito a LPIC-1): obiettivi d'esame e lezioni ufficiali in italiano
-da leggere anche senza connessione, domande originali con spiegazioni, un ripasso quotidiano e la
-simulazione d'esame. Il piano è in [docs/PIANO.md](docs/PIANO.md).
+da leggere anche senza connessione, domande originali con spiegazioni, un ripasso quotidiano, la
+simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](docs/PIANO.md).
 
-## Cosa c'è (tappe M1, M2, M3 e M4)
+## Cosa c'è (tappe da M1 a M5)
 
 - **Obiettivi**: i 5 argomenti e i 19 obiettivi dell'esame, con il peso, la descrizione, le aree di
   conoscenza e i file, termini e comandi da conoscere (dalla traduzione italiana ufficiale degli
@@ -25,6 +25,11 @@ simulazione d'esame. Il piano è in [docs/PIANO.md](docs/PIANO.md).
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
   rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
   risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
+- **Pratica al terminale**: 37 esercizi con i comandi dell'esame (directory, file, caratteri
+  jolly, archivi, grep e filtri, reindirizzamenti, script, permessi, link) su un piccolo Linux
+  simulato nel browser, con gli obiettivi che si spuntano, suggerimento e soluzione; più un
+  terminale libero. I filtri di testo vengono dal motore di Pipe Dreams; le soluzioni e oltre 200
+  casi tipici sono confrontati con Bash vero.
 - **Progressi**: «Ho studiato questo obiettivo», «Ho letto questa lezione», le risposte alle domande,
   barre dei progressi.
   Restano nel browser; dalla pagina **Backup** si scaricano in un file e si ripristinano.
@@ -55,6 +60,10 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `exam-sim.js` | la simulazione d'esame (`#/simulazione`, `#/simulazione/risultato`) |
 | `review.js` | il ripasso di oggi (`#/ripasso`); le scatole di Leitner sono in `store.js` |
 | `questions/010-160/1.js` ... `5.js` | le domande, un file per argomento |
+| `shell-sim.js`, `shell-commands.js` | la shell simulata: file system in memoria, interprete, comandi |
+| `lib/pipedreams-*.js` | il motore dei filtri di Pipe Dreams, copiato senza modifiche |
+| `exercise-check.js`, `practice.js` | gli esercizi al terminale: controllo degli obiettivi e pagina (`#/terminale`) |
+| `exercises/010-160.js` | gli esercizi |
 | `sw.js` | service worker per l'uso offline |
 | `data/exams.js`, `data/exam-010-160.js` | esami e obiettivi; un file per esame (la 2.0 e LPIC-1 si aggiungono così) |
 | `lessons/010-160/*.js` | le lezioni, una per file, caricate solo quando si aprono |
@@ -66,6 +75,7 @@ python3 tools/import-objectives.py     # rigenera data/exam-010-160.js dalla wik
 python3 tools/import-lpi-lessons.py    # riscarica le lezioni e controlla che il testo sia identico all'originale
 node tools/check-data.js [--online]    # controlla dati, lezioni, licenza, file (e i link, con --online)
 node tools/check-questions.js [--stats] # domande: formato, copertura per peso, nessuna frase copiata dalle lezioni
+node tools/check-shell.js [filtro]     # la shell simulata confrontata con Bash vero (serve Linux)
 node tools/check-emoji.js              # solo emoji visibili su macOS High Sierra
 node tests/e2e/run.js [filtro]         # test nel browser (Playwright; axe-core se installato)
 ```

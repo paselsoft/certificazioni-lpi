@@ -8,6 +8,8 @@
 //   #/ripasso                        ripasso di oggi, con le scatole di Leitner (review.js)
 //   #/simulazione                    simulazione d'esame, 40 domande in 60 minuti (exam-sim.js)
 //   #/simulazione/risultato          il risultato dell'ultima simulazione
+//   #/terminale                      pratica al terminale (practice.js): elenco degli esercizi
+//   #/terminale/t2.4-01              un esercizio; #/terminale/libero il terminale libero
 //   #/backup                         backup dei progressi
 
 const APP_NAME = "Certificazioni LPI";
@@ -119,6 +121,9 @@ function renderHome(exam) {
     box.appendChild(progressBar(`Obiettivi studiati: ${summary.studied} su ${summary.objectives} (peso ${summary.studiedWeight} su ${summary.weight})`, summary.studiedWeight, summary.weight));
     box.appendChild(progressBar(`Lezioni lette: ${summary.read} su ${summary.lessons}`, summary.read, summary.lessons));
     box.appendChild(progressBar(`Domande con l'ultima risposta giusta: ${summary.rightQuestions} su ${summary.questions}`, summary.rightQuestions, summary.questions));
+    const exercises = exercisesOf(exam.id);
+    const practiced = exercises.filter(isPracticeDone).length;
+    box.appendChild(progressBar(`Esercizi al terminale: ${practiced} su ${exercises.length}`, practiced, exercises.length));
     const sims = progress.simulations.filter(item => item.exam === exam.id);
     if (sims.length) {
         const latest = sims[sims.length - 1];
@@ -243,6 +248,17 @@ function renderObjective(exam, topic, objective) {
         ? `Hai risposto a ${stats.answered} domande su ${stats.total}: l'ultima risposta è giusta per ${stats.right}.`
         : "Domande scritte per questa app, come quelle dell'esame: scelta singola, scelta multipla e completamento. Dopo ogni risposta trovi il perché e la parte della lezione da ripassare."));
     page.appendChild(questions);
+
+    // Esercizi al terminale dell'obiettivo
+    const own = exercisesOf(exam.id, objective.id);
+    if (own.length) {
+        const practiceBlock = el("section", "block");
+        practiceBlock.setAttribute("aria-labelledby", "pratica");
+        const practiceTitle = el("h2", "", "Pratica al terminale");
+        practiceTitle.id = "pratica";
+        practiceBlock.append(practiceTitle, exerciseLinks(own));
+        page.appendChild(practiceBlock);
+    }
 
     const terms = el("section", "block");
     terms.setAttribute("aria-labelledby", "termini");
@@ -610,7 +626,7 @@ function finishRender(title, focusTarget) {
     document.querySelectorAll(".site-nav a").forEach(anchor => {
         const href = anchor.getAttribute("href");
         const hash = location.hash || "#/";
-        const here = href === "#/" ? !/^#\/(backup|ripasso|simulazione)/.test(hash) : hash === href || hash.startsWith(`${href}/`);
+        const here = href === "#/" ? !/^#\/(backup|ripasso|simulazione|terminale)/.test(hash) : hash === href || hash.startsWith(`${href}/`);
         if (here) anchor.setAttribute("aria-current", "page");
         else anchor.removeAttribute("aria-current");
     });
@@ -636,6 +652,18 @@ function render() {
     if (hash === "#/ripasso") {
         finishRender(renderReview(exam));
         return;
+    }
+    if (hash === "#/terminale") {
+        finishRender(renderPracticeList(exam));
+        return;
+    }
+    match = hash.match(/^#\/terminale\/([\w.-]+)$/);
+    if (match) {
+        const exercise = EXERCISES.find(item => item.exam === exam.id && item.id === match[1]);
+        if (exercise || match[1] === "libero") {
+            finishRender(renderPractice(exam, exercise || null));
+            return;
+        }
     }
     if (hash === "#/simulazione") {
         const title = renderSimulation(exam);

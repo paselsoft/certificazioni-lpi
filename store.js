@@ -9,6 +9,7 @@
 //            scatola del ripasso (1-5) e giorno in cui torna (vedi «Ripasso» più sotto)
 //   simulations: [ { exam: "010-160", date: "2026-11-12", right: 31, total: 40, seconds: 2520,
 //                    topics: { "1": [6, 7], ... } } ]   storico delle simulazioni d'esame
+//   practice: { "010-160/t2.4-01": "2026-11-12" }    esercizi al terminale completati
 // }
 // Le chiavi contengono il codice dell'esame: i progressi di esami diversi restano separati.
 
@@ -58,7 +59,8 @@ function cleanProgress(data) {
         read: pick(source.read, /^[\w.-]+\/\d+\.\d+_\d+$/),
         last: null,
         answers: {},
-        simulations: []
+        simulations: [],
+        practice: pick(source.practice, /^[\w.-]+\/t\d+\.\d+-\d+$/)
     };
     if (Array.isArray(source.simulations)) {
         progress.simulations = source.simulations.filter(item => isPlainObject(item) && typeof item.exam === "string"
@@ -124,6 +126,13 @@ function setStudied(examId, objectiveId, value) {
     const key = objectiveKey(examId, objectiveId);
     if (value) progress.studied[key] = progress.studied[key] || todayKey();
     else delete progress.studied[key];
+    saveProgress();
+}
+
+const isPracticeDone = exercise => Boolean(progress.practice[`${exercise.exam}/${exercise.id}`]);
+function setPracticeDone(exercise) {
+    const key = `${exercise.exam}/${exercise.id}`;
+    progress.practice[key] = progress.practice[key] || todayKey();
     saveProgress();
 }
 

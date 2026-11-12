@@ -121,6 +121,19 @@ provare il tempo che scade.
   Serve un piccolo file system simulato: è il lavoro più grande, per questo viene dopo le domande.
 - Le pipeline vengono dal motore di Pipe Dreams, già verificato con bash.
 
+**Fatta il 12/11/2026.** Un Linux simulato nel browser (`shell-sim.js`, `shell-commands.js`):
+file system in memoria con utenti, gruppi, permessi (anche sticky bit, setuid, setgid), link
+simbolici e fisici; shell con virgolette, variabili, `~`, caratteri jolly, pipe, `;`, `&&`, `||` e
+i reindirizzamenti; 65 comandi più sudo (ls, cd, mkdir, cp, mv, rm, ln, find, grep, tar, gzip, bzip2,
+xz, zip, chmod, chown con sudo...). I filtri sort, uniq, cut, tr, nl, tac, rev e sed sono quelli di
+Pipe Dreams (`lib/`, copiati senza modifiche). 37 esercizi sugli obiettivi 2.1, 2.3, 2.4, 3.1, 3.2,
+3.3, 5.3 e 5.4, con gli obiettivi che si spuntano dopo ogni comando, suggerimento, soluzione e
+«Ricomincia»; terminale libero. `tools/check-shell.js` (anche in CI) ricrea il file system in una
+directory vera ed esegue in Bash le soluzioni e oltre 200 casi tipici: stesso output, stessi
+errori e codici di uscita, stessi file alla fine. Il simulatore si comporta come Bash con
+LC_ALL=C, ma i messaggi di errore sono in italiano. Non esegue script né editor (vi, nano): per gli
+script si scrive il file con echo e si danno i permessi.
+
 ### M6. Pubblicazione
 - GitHub Pages (repository pubblico) e copia offline (service worker).
 - Script per il container Proxmox, come per Pipe Dreams.

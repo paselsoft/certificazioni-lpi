@@ -9,3 +9,10 @@ const QUESTIONS = [];
 function addQuestions(examId, list) {
     list.forEach(question => QUESTIONS.push(Object.assign({ exam: examId, objective: question.id.split("-")[0] }, question)));
 }
+
+// Esercizi al terminale (tappa M5), in exercises/<codice>.js: l'obiettivo è la parte dell'id
+// tra «t» e il trattino ("t2.4-03" → 2.4)
+const EXERCISES = [];
+function addExercises(examId, list) {
+    list.forEach(exercise => EXERCISES.push(Object.assign({ exam: examId, objective: exercise.id.slice(1).split("-")[0] }, exercise)));
+}
