@@ -15,7 +15,7 @@ module.exports = {
     "backup: scarica il file con i progressi": async ({ page }) => {
         await open(page, { hash: "#/backup", progress: PROGRESS });
         assert.equal(await page.textContent("main h1"), "Backup dei progressi");
-        assert.match(await page.textContent("#salva + p"), /2 obiettivi studiati e 3 lezioni lette/);
+        assert.equal(await page.textContent("#salva + p"), "Adesso: 2 obiettivi studiati, 3 lezioni lette, 1 domanda con almeno una risposta, 1 simulazione d'esame, 1 esercizio al terminale.");
         const [download] = await Promise.all([page.waitForEvent("download"), page.click("#backup-download")]);
         assert.match(download.suggestedFilename(), /^certificazioni-lpi-backup-\d{4}-\d{2}-\d{2}\.json$/);
         const data = JSON.parse(fs.readFileSync(await download.path(), "utf8"));
@@ -28,7 +28,7 @@ module.exports = {
         const file = { name: "backup.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify({ app: "certificazioni-lpi", version: 1, date: "2026-11-05", progress: PROGRESS })) };
         await page.setInputFiles("#backup-file", file);
         await page.waitForSelector("#backup-apply");
-        assert.match(await page.textContent("#backup-result"), /Backup del 05\/11\/2026: 2 obiettivi studiati e 3 lezioni lette/);
+        assert.match(await page.textContent("#backup-result"), /Backup del 05\/11\/2026: 2 obiettivi studiati, 3 lezioni lette, 1 domanda con almeno una risposta, 1 simulazione d'esame, 1 esercizio al terminale\. Sostituisce/);
         assert.equal(await stored(page), null, "niente cambia prima della conferma");
         await page.click("#backup-apply");
         assert.match(await page.textContent("#backup-result"), /Progressi ripristinati/);

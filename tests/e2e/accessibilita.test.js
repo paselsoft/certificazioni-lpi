@@ -55,5 +55,10 @@ module.exports = {
         await page.goBack();
         await ready(page, "#/010-160/obiettivo/1.3");
         assert.equal(await page.evaluate(() => document.activeElement.tagName), "H1");
+        // Il titolo riceve il fuoco ma senza bordo (su iPad comparirebbe a ogni cambio di pagina)
+        assert.equal(await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle), "none");
+        // I pulsanti e i collegamenti invece lo mostrano, usando la tastiera
+        await page.keyboard.press("Tab");
+        assert.notEqual(await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle), "none");
     }
 };

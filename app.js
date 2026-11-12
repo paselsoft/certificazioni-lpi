@@ -462,7 +462,7 @@ function renderBackup() {
     const page = el("div", "page");
     page.appendChild(breadcrumb([["Obiettivi", "#/"], ["Backup", null]]));
     page.appendChild(el("h1", "", "Backup dei progressi"));
-    page.appendChild(el("p", "lead", "I progressi (obiettivi studiati, lezioni lette, dove eri arrivato) restano in questo browser. Con un backup li porti su un altro computer o li ritrovi se il browser viene svuotato."));
+    page.appendChild(el("p", "lead", "I progressi restano in questo browser: obiettivi studiati, lezioni lette e dove eri arrivato, risposte alle domande e scatole del ripasso, simulazioni d'esame, esercizi al terminale. Con un backup li porti su un altro computer o li ritrovi se il browser viene svuotato."));
 
     const save = el("section", "block");
     save.setAttribute("aria-labelledby", "salva");
@@ -470,7 +470,7 @@ function renderBackup() {
     saveTitle.id = "salva";
     save.appendChild(saveTitle);
     const summary = examSummary(currentExam());
-    save.appendChild(el("p", "", `Adesso: ${summary.studied} obiettivi studiati e ${summary.read} lezioni lette.`));
+    save.appendChild(el("p", "", `Adesso: ${progressCounts(progress)}.`));
     const download = el("button", "button primary", "⬇ Scarica il backup");
     download.type = "button";
     download.id = "backup-download";
@@ -553,15 +553,25 @@ function renderBackup() {
     return "Backup dei progressi";
 }
 
+// Riepilogo dei progressi salvati, per la pagina Backup: «2 obiettivi studiati, 3 lezioni lette, ...»
+function progressCounts(data) {
+    const count = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+    return [
+        count(Object.keys(data.studied).length, "obiettivo studiato", "obiettivi studiati"),
+        count(Object.keys(data.read).length, "lezione letta", "lezioni lette"),
+        count(Object.keys(data.answers).length, "domanda con almeno una risposta", "domande con almeno una risposta"),
+        count(data.simulations.length, "simulazione d'esame", "simulazioni d'esame"),
+        count(Object.keys(data.practice).length, "esercizio al terminale", "esercizi al terminale")
+    ].join(", ");
+}
+
 function showBackup(result, backup) {
     result.innerHTML = "";
     if (backup.error) {
         result.appendChild(el("p", "warning", backup.error));
         return;
     }
-    const studied = Object.keys(backup.progress.studied).length;
-    const read = Object.keys(backup.progress.read).length;
-    result.appendChild(el("p", "", `Backup${backup.date ? ` del ${formatDate(backup.date)}` : ""}: ${studied} obiettivi studiati e ${read} lezioni lette. Sostituisce i progressi di adesso.`));
+    result.appendChild(el("p", "", `Backup${backup.date ? ` del ${formatDate(backup.date)}` : ""}: ${progressCounts(backup.progress)}. Sostituisce i progressi di adesso.`));
     const apply = el("button", "button primary", "Ripristina questo backup");
     apply.type = "button";
     apply.id = "backup-apply";
