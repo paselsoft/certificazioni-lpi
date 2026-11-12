@@ -6,6 +6,8 @@
 //   #/010-160/lezione/2.1_01/Quoting una lezione, alla sezione con quel titolo
 //   #/010-160/domande/2.1            le domande di un obiettivo (quiz.js)
 //   #/ripasso                        ripasso di oggi, con le scatole di Leitner (review.js)
+//   #/simulazione                    simulazione d'esame, 40 domande in 60 minuti (exam-sim.js)
+//   #/simulazione/risultato          il risultato dell'ultima simulazione
 //   #/backup                         backup dei progressi
 
 const APP_NAME = "Certificazioni LPI";
@@ -117,6 +119,15 @@ function renderHome(exam) {
     box.appendChild(progressBar(`Obiettivi studiati: ${summary.studied} su ${summary.objectives} (peso ${summary.studiedWeight} su ${summary.weight})`, summary.studiedWeight, summary.weight));
     box.appendChild(progressBar(`Lezioni lette: ${summary.read} su ${summary.lessons}`, summary.read, summary.lessons));
     box.appendChild(progressBar(`Domande con l'ultima risposta giusta: ${summary.rightQuestions} su ${summary.questions}`, summary.rightQuestions, summary.questions));
+    const sims = progress.simulations.filter(item => item.exam === exam.id);
+    if (sims.length) {
+        const latest = sims[sims.length - 1];
+        const line = el("p", "sim-latest");
+        line.id = "sim-latest";
+        line.append(document.createTextNode(`Ultima simulazione d'esame: ${latest.right} giuste su ${latest.total} (${Math.round(latest.right / latest.total * 100)}%) il ${formatDate(latest.date)}. `),
+            link("Tutte le simulazioni", "#/simulazione"));
+        box.appendChild(line);
+    }
     box.appendChild(el("p", "hint", "Il peso dice quante domande, più o meno, arrivano da ogni obiettivo: le 40 domande dell'esame si dividono secondo i pesi."));
     box.id = "summary";
     page.appendChild(box);
@@ -597,7 +608,9 @@ function finishRender(title, focusTarget) {
     // Segno che la pagina è pronta (lo usano anche i test)
     document.body.dataset.route = location.hash || "#/";
     document.querySelectorAll(".site-nav a").forEach(anchor => {
-        const here = anchor.getAttribute("href") === (location.hash || "#/") || (anchor.getAttribute("href") === "#/" && !/^#\/(backup|ripasso)/.test(location.hash));
+        const href = anchor.getAttribute("href");
+        const hash = location.hash || "#/";
+        const here = href === "#/" ? !/^#\/(backup|ripasso|simulazione)/.test(hash) : hash === href || hash.startsWith(`${href}/`);
         if (here) anchor.setAttribute("aria-current", "page");
         else anchor.removeAttribute("aria-current");
     });
@@ -606,6 +619,7 @@ function finishRender(title, focusTarget) {
 function render() {
     const hash = location.hash || "#/";
     state.lesson = null;
+    stopSimulationTimer();
     main.innerHTML = "";
     const exam = currentExam();
     let match;
@@ -621,6 +635,16 @@ function render() {
     window.scrollTo(0, 0);
     if (hash === "#/ripasso") {
         finishRender(renderReview(exam));
+        return;
+    }
+    if (hash === "#/simulazione") {
+        const title = renderSimulation(exam);
+        // null: la prova è appena finita per tempo e la pagina passa al risultato
+        if (title !== null) finishRender(title);
+        return;
+    }
+    if (hash === "#/simulazione/risultato") {
+        finishRender(renderSimulationResult(exam));
         return;
     }
     if (hash === "#/backup") {

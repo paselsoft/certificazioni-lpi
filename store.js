@@ -7,6 +7,8 @@
 //   answers: { "010-160/2.1-03": { ok: 2, ko: 1, last: "2026-11-12", result: true, box: 2, due: "2026-11-14" } }
 //            per ogni domanda: risposte giuste e sbagliate, data e esito dell'ultima risposta,
 //            scatola del ripasso (1-5) e giorno in cui torna (vedi «Ripasso» più sotto)
+//   simulations: [ { exam: "010-160", date: "2026-11-12", right: 31, total: 40, seconds: 2520,
+//                    topics: { "1": [6, 7], ... } } ]   storico delle simulazioni d'esame
 // }
 // Le chiavi contengono il codice dell'esame: i progressi di esami diversi restano separati.
 
@@ -16,6 +18,8 @@ const BACKUP_MAX_LENGTH = 1000000;
 const TEXT_SIZES = ["normale", "grande", "molto-grande"];
 
 const isPlainObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+const isCount = value => Number.isInteger(value) && value >= 0;
+const SIMULATIONS_KEPT = 100;
 const isDate = value => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 const todayKey = () => {
     const now = new Date();
@@ -53,9 +57,17 @@ function cleanProgress(data) {
         studied: pick(source.studied, /^[\w.-]+:\d+\.\d+$/),
         read: pick(source.read, /^[\w.-]+\/\d+\.\d+_\d+$/),
         last: null,
-        answers: {}
+        answers: {},
+        simulations: []
     };
-    const isCount = value => Number.isInteger(value) && value >= 0;
+    if (Array.isArray(source.simulations)) {
+        progress.simulations = source.simulations.filter(item => isPlainObject(item) && typeof item.exam === "string"
+            && isDate(item.date) && isCount(item.right) && isCount(item.total) && item.total > 0 && item.right <= item.total
+            && isCount(item.seconds) && isPlainObject(item.topics)
+            && Object.values(item.topics).every(pair => Array.isArray(pair) && pair.length === 2 && pair.every(isCount) && pair[0] <= pair[1]))
+            .map(item => ({ exam: item.exam, date: item.date, right: item.right, total: item.total, seconds: item.seconds, topics: item.topics }))
+            .slice(-SIMULATIONS_KEPT);
+    }
     Object.entries(isPlainObject(source.answers) ? source.answers : {}).forEach(([key, value]) => {
         if (/^[\w.-]+\/\d+\.\d+-\d+$/.test(key) && isPlainObject(value) && isCount(value.ok) && isCount(value.ko)
             && value.ok + value.ko > 0 && isDate(value.last) && typeof value.result === "boolean") {

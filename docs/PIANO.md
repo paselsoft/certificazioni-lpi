@@ -105,6 +105,17 @@ per provare i giorni successivi.
 - Alla fine: punteggio, risultato per argomento, le domande sbagliate con la spiegazione.
 - Storico delle simulazioni, per vedere i progressi.
 
+**Fatta il 12/11/2026.** Per ogni obiettivo tante domande quanto il suo peso (come all'esame: una
+per ogni punto di peso), scelte a caso tra le sue e mescolate. Cronometro con avvisi a 10, 5 e 1
+minuto per i lettori di schermo; la prova è salvata nel browser a ogni risposta e il tempo conta
+dall'inizio anche a pagina chiusa: si riprende dov'era, e se il tempo è finito si va al risultato.
+Quadro delle 40 domande (risposta data, segnata) e «Termina l'esame» con conferma. Risultato:
+giuste su 40, soglia di riferimento del 50% con l'avviso che non è la regola ufficiale, tempo usato,
+tabella per argomento, domande sbagliate o senza risposta con le spiegazioni e il link alla
+lezione. Storico (fino a 100 prove) nella pagina e nella pagina principale, anche nel backup. Le
+risposte date entrano nelle scatole del ripasso. I test fanno avanzare l'orologio del browser per
+provare il tempo che scade.
+
 ### M5. Pratica al terminale
 - Esercizi con i comandi dell'esame (ls, cd, cp, mv, mkdir, rm, find, grep, tar, chmod...).
   Serve un piccolo file system simulato: è il lavoro più grande, per questo viene dopo le domande.

@@ -291,6 +291,56 @@ main { display: block; }
 .question-objective { color: var(--muted); font-size: 0.9rem; margin: 12px 0 -12px; }
 .return-text { margin: 4px 0 12px; }
 
+/* ---- Simulazione (exam-sim.js) ---- */
+
+.sim-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2px 16px;
+    margin: 8px -16px 0;
+    padding: 8px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+}
+.sim-bar p { margin: 0; }
+.sim-clock { font-weight: 700; font-variant-numeric: tabular-nums; }
+.sim-clock.low { color: var(--warn); }
+.sim-count { color: var(--muted); }
+.sim-nav { margin-top: 16px; }
+.sim-nav #sim-flag[aria-pressed="true"] { border-color: var(--warn); color: var(--warn); font-weight: 600; }
+.sim-overview { margin-top: 32px; padding-top: 8px; border-top: 1px solid var(--border); }
+.sim-overview h2 { font-size: 1.15rem; }
+.sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(2.75rem, 1fr)); gap: 6px; margin: 8px 0 16px; }
+.sim-cell {
+    min-height: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+}
+.sim-cell.answered { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.sim-cell.flagged { box-shadow: inset 0 0 0 2px var(--warn); }
+.sim-cell[aria-current] { outline: 3px solid var(--text); outline-offset: 1px; }
+.sim-confirm { margin-top: 8px; }
+.sim-rules { padding-left: 1.25rem; }
+.sim-score { font-size: 1.6rem; font-weight: 700; margin: 8px 0; }
+.table-wrap { overflow-x: auto; }
+.history { border-collapse: collapse; width: 100%; }
+.history th, .history td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; }
+.history th { background: var(--surface-2); }
+.sim-wrong { border-top: 1px solid var(--border); padding-top: 4px; margin-top: 16px; }
+.sim-wrong h3 { font-size: 1rem; color: var(--muted); margin: 8px 0 4px; }
+.sim-wrong-text { font-weight: 600; font-size: 1.05rem; }
+.fill-given { margin: 4px 0; }
+.sim-latest { margin: 8px 0 0; }
+
 /* ---- Domande (quiz.js) ---- */
 
 .question-text { font-size: 1.25rem; line-height: 1.4; margin: 20px 0 8px; }
@@ -305,7 +355,7 @@ main { display: block; }
 }
 .question-code { margin: 8px 0; overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--code-bg); }
 .question-code pre { margin: 0; padding: 10px 12px; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; font-size: 0.9rem; color: var(--code-text); }
-.question-form fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.question-form fieldset, fieldset.question-form { border: 0; margin: 0; padding: 0; min-width: 0; }
 .question-legend { font-weight: 600; color: var(--muted); margin-bottom: 6px; padding: 0; }
 .options { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
 .option {

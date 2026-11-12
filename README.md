@@ -2,10 +2,10 @@
 
 App gratuita, in italiano, per prepararsi all'esame **Linux Essentials 1.6** (010-160) del Linux
 Professional Institute (e in seguito a LPIC-1): obiettivi d'esame e lezioni ufficiali in italiano
-da leggere anche senza connessione, domande originali con spiegazioni e un ripasso quotidiano.
-Poi arriverà la simulazione d'esame: il piano è in [docs/PIANO.md](docs/PIANO.md).
+da leggere anche senza connessione, domande originali con spiegazioni, un ripasso quotidiano e la
+simulazione d'esame. Il piano è in [docs/PIANO.md](docs/PIANO.md).
 
-## Cosa c'è (tappe M1, M2 e M3)
+## Cosa c'è (tappe M1, M2, M3 e M4)
 
 - **Obiettivi**: i 5 argomenti e i 19 obiettivi dell'esame, con il peso, la descrizione, le aree di
   conoscenza e i file, termini e comandi da conoscere (dalla traduzione italiana ufficiale degli
@@ -20,6 +20,11 @@ Poi arriverà la simulazione d'esame: il piano è in [docs/PIANO.md](docs/PIANO.
   risposta sbagliata riporta la domanda nella scatola 1 (torna il giorno dopo), ogni risposta
   giusta la sposta nella scatola successiva (torna dopo 2, 4, 8, poi 16 giorni). Prima le domande
   scadute, poi quelle nuove degli obiettivi che stai studiando.
+- **Simulazione d'esame**: 40 domande in 60 minuti, tante per obiettivo quanto il suo peso, come
+  all'esame. Si può segnare una domanda e tornarci; il tempo continua anche chiudendo la pagina e
+  allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
+  rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
+  risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
 - **Progressi**: «Ho studiato questo obiettivo», «Ho letto questa lezione», le risposte alle domande,
   barre dei progressi.
   Restano nel browser; dalla pagina **Backup** si scaricano in un file e si ripristinano.
@@ -47,6 +52,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `store.js` | progressi e preferenze nel browser, backup |
 | `lesson-view.js` | lettore delle lezioni (da Pipe Dreams) |
 | `quiz.js` | le domande di un obiettivo, una alla volta (`#/010-160/domande/2.1`) |
+| `exam-sim.js` | la simulazione d'esame (`#/simulazione`, `#/simulazione/risultato`) |
 | `review.js` | il ripasso di oggi (`#/ripasso`); le scatole di Leitner sono in `store.js` |
 | `questions/010-160/1.js` ... `5.js` | le domande, un file per argomento |
 | `sw.js` | service worker per l'uso offline |

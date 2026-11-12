@@ -218,6 +218,41 @@ function returnText(entry) {
     return `🔄 Scatola ${entry.box} di ${LEITNER_DAYS.length}: questa domanda torna nel ripasso ${days === 1 ? "domani" : `fra ${days} giorni`}.`;
 }
 
+// La spiegazione di una domanda: per il completamento la risposta giusta e il perché (given: la
+// risposta scritta, se va mostrata); per le altre ogni opzione con il suo perché, segnate quelle
+// giuste e quelle scelte (chosen: indici in options). La usa anche la simulazione (exam-sim.js).
+function explanation(question, options, chosen, given) {
+    const box = document.createDocumentFragment();
+    if (question.type === "fill") {
+        if (given !== undefined) {
+            const yours = el("p", "fill-given");
+            yours.append(document.createTextNode("La tua risposta: "), given ? el("code", "", given) : el("em", "", "nessuna"));
+            box.appendChild(yours);
+        }
+        const answer = el("p", "fill-solution");
+        answer.append(document.createTextNode(question.answers.length > 1 ? "Risposte accettate: " : "Risposta giusta: "));
+        question.answers.forEach((item, index) => {
+            if (index) answer.append(document.createTextNode(", "));
+            answer.append(el("code", "", item));
+        });
+        box.appendChild(answer);
+        box.appendChild(richText(question.why, "p", "why"));
+        return box;
+    }
+    const list = el("ul", "explanations");
+    options.forEach((option, index) => {
+        const item = el("li", option.ok ? "is-right" : "is-wrong");
+        const mark = el("p", "explanation-head");
+        mark.append(el("span", "mark", option.ok ? "✓ Giusta" : "✗ Sbagliata"));
+        if (chosen.includes(index)) mark.append(el("span", "picked", " (la tua scelta)"));
+        mark.append(document.createTextNode(": "), richText(option.t, "span", "option-text"));
+        item.append(mark, richText(option.why, "p", "why"));
+        list.appendChild(item);
+    });
+    box.appendChild(list);
+    return box;
+}
+
 function showFeedback(exam, objective, body, feedback, question, options, chosen, right, entry) {
     feedback.hidden = false;
     feedback.className = `feedback ${right ? "right" : "wrong"}`;
@@ -225,30 +260,7 @@ function showFeedback(exam, objective, body, feedback, question, options, chosen
     title.id = "feedback-title";
     title.tabIndex = -1;
     feedback.appendChild(title);
-    if (question.type === "fill") {
-        const answer = el("p", "fill-solution");
-        answer.append(document.createTextNode(question.answers.length > 1 ? "Risposte accettate: " : "Risposta giusta: "));
-        question.answers.forEach((item, index) => {
-            if (index) answer.append(document.createTextNode(", "));
-            answer.append(el("code", "", item));
-        });
-        feedback.appendChild(answer);
-        feedback.appendChild(richText(question.why, "p", "why"));
-    } else {
-        // Ogni opzione con il suo perché; segnate quelle giuste e quelle scelte
-        const list = el("ul", "explanations");
-        options.forEach((option, index) => {
-            const item = el("li", option.ok ? "is-right" : "is-wrong");
-            const mark = el("p", "explanation-head");
-            const picked = chosen.includes(index);
-            mark.append(el("span", "mark", option.ok ? "✓ Giusta" : "✗ Sbagliata"));
-            if (picked) mark.append(el("span", "picked", " (la tua scelta)"));
-            mark.append(document.createTextNode(": "), richText(option.t, "span", "option-text"));
-            item.append(mark, richText(option.why, "p", "why"));
-            list.appendChild(item);
-        });
-        feedback.appendChild(list);
-    }
+    feedback.appendChild(explanation(question, options, chosen));
     const review = el("p", "review");
     review.appendChild(reviewLink(exam, question));
     if (entry) feedback.appendChild(el("p", "return-text hint", returnText(entry)));
