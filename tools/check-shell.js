@@ -180,6 +180,9 @@ function realSnapshot(dir, simState) {
             result[label] = `l -> ${fs.readlinkSync(real).split(dir).join("")}`;
         } else if (stat.isDirectory()) {
             result[label] = `d ${mode}`;
+            // Annotato il modo, la directory si riapre per leggerne il contenuto (anche senza
+            // x o r, come dopo chmod u-x: chi esegue il controllo ne è il proprietario)
+            if (!asRoot) fs.chmodSync(real, stat.mode | 0o700);
             let names = [];
             try {
                 names = fs.readdirSync(real).sort();
