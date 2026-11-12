@@ -138,6 +138,17 @@ script si scrive il file con echo e si danno i permessi.
 - GitHub Pages (repository pubblico) e copia offline (service worker).
 - Script per il container Proxmox, come per Pipe Dreams.
 
+**Fatta il 12/11/2026.** `tools/build-site.sh` prepara il sito (solo i file dell'app, con la
+versione in `version.js` e un nome nuovo per la cache del service worker); il workflow lo controlla
+(`tools/check-site.js`), esegue tutti i test nel browser proprio sul sito preparato e, dal branch
+`main`, lo pubblica su GitHub Pages. Per Proxmox, `deploy/proxmox-lxc.sh` e
+`deploy/certlpi-setup.sh` vengono da Pipe Dreams: Alpine, nginx in HTTPS con una CA locale, porte
+8444/8081 (per convivere con Pipe Dreams), e un Linux vero per esercitarsi (utente anna con i file
+del simulatore, pagine man, useradd). Provati: shellcheck, certificati, configurazione di nginx in
+Alpine. Da provare sul Proxmox vero: installazione dei pacchetti e comandi pct/pveam.
+Da fare una volta, a mano: unire il branch in `main` e attivare Settings → Pages → Source:
+«GitHub Actions».
+
 ### Dopo
 - LPIC-1, esami 101 e 102, con lo stesso schema.
 

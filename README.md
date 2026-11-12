@@ -36,6 +36,14 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
 - **Senza connessione**: alla prima apertura (da un indirizzo http/https) il browser salva l'app e
   tutte le lezioni; dopo funziona anche offline.
 
+## Dove si usa
+
+- **Online**: https://paselsoft.github.io/certificazioni-lpi/ (GitHub Pages; si aggiorna da solo a
+  ogni modifica del branch `main` che supera tutti i controlli). Alla prima apertura il browser
+  salva l'app e le lezioni: poi funziona anche senza connessione.
+- **Nel container Proxmox** (Alpine, come Pipe Dreams), con in più un Linux vero per esercitarsi:
+  istruzioni in [deploy/README.md](deploy/README.md).
+
 ## Provarla sul computer
 
 Serve solo un browser. Dalla cartella del progetto:
@@ -65,6 +73,8 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `exercise-check.js`, `practice.js` | gli esercizi al terminale: controllo degli obiettivi e pagina (`#/terminale`) |
 | `exercises/010-160.js` | gli esercizi |
 | `sw.js` | service worker per l'uso offline |
+| `version.js` | la versione (commit e data), scritta da `tools/build-site.sh` |
+| `deploy/` | gli script per il container Proxmox |
 | `data/exams.js`, `data/exam-010-160.js` | esami e obiettivi; un file per esame (la 2.0 e LPIC-1 si aggiungono così) |
 | `lessons/010-160/*.js` | le lezioni, una per file, caricate solo quando si aprono |
 
@@ -77,10 +87,14 @@ node tools/check-data.js [--online]    # controlla dati, lezioni, licenza, file 
 node tools/check-questions.js [--stats] # domande: formato, copertura per peso, nessuna frase copiata dalle lezioni
 node tools/check-shell.js [filtro]     # la shell simulata confrontata con Bash vero (serve Linux)
 node tools/check-emoji.js              # solo emoji visibili su macOS High Sierra
+bash tools/build-site.sh _site         # il sito da pubblicare (solo i file dell'app, con la versione)
+node tools/check-site.js _site         # il sito preparato è completo
+E2E_ROOT=_site node tests/e2e/run.js   # i test nel browser sul sito preparato
 node tests/e2e/run.js [filtro]         # test nel browser (Playwright; axe-core se installato)
 ```
 
-I controlli girano in CI a ogni push (`.github/workflows/verifica.yml`).
+I controlli girano in CI a ogni push (`.github/workflows/verifica.yml`); dal branch `main`, se
+passano tutti, il sito viene pubblicato su GitHub Pages.
 
 ## Licenze
 

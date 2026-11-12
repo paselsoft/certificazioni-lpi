@@ -546,6 +546,9 @@ function renderBackup() {
     };
     reset.append(resetButton, resetBox);
     page.appendChild(reset);
+    const build = el("p", "hint", `Versione dell'app: ${APP_BUILD}.`);
+    build.id = "app-build";
+    page.appendChild(build);
     main.appendChild(page);
     return "Backup dei progressi";
 }

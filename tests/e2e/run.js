@@ -9,7 +9,8 @@ const path = require("path");
 const http = require("http");
 const { chromium } = require("playwright");
 
-const ROOT = path.join(__dirname, "..", "..");
+// Di solito il repository; con E2E_ROOT un'altra cartella, per esempio il sito preparato per la pubblicazione
+const ROOT = path.resolve(process.env.E2E_ROOT || path.join(__dirname, "..", ".."));
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json",
     ".webmanifest": "application/manifest+json", ".png": "image/png", ".svg": "image/svg+xml" };
 // Cartelle e file che non fanno parte dell'app
