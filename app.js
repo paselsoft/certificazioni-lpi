@@ -5,6 +5,7 @@
 //   #/010-160/lezione/2.1_01         una lezione ufficiale, da leggere anche offline
 //   #/010-160/lezione/2.1_01/Quoting una lezione, alla sezione con quel titolo
 //   #/010-160/domande/2.1            le domande di un obiettivo (quiz.js)
+//   #/ripasso                        ripasso di oggi, con le scatole di Leitner (review.js)
 //   #/backup                         backup dei progressi
 
 const APP_NAME = "Certificazioni LPI";
@@ -104,6 +105,8 @@ function renderHome(exam) {
         resume.appendChild(go);
         page.appendChild(resume);
     }
+
+    page.appendChild(reviewCard(exam));
 
     const summary = examSummary(exam);
     const box = el("section", "summary");
@@ -594,7 +597,7 @@ function finishRender(title, focusTarget) {
     // Segno che la pagina è pronta (lo usano anche i test)
     document.body.dataset.route = location.hash || "#/";
     document.querySelectorAll(".site-nav a").forEach(anchor => {
-        const here = anchor.getAttribute("href") === (location.hash || "#/") || (anchor.getAttribute("href") === "#/" && !/^#\/backup/.test(location.hash));
+        const here = anchor.getAttribute("href") === (location.hash || "#/") || (anchor.getAttribute("href") === "#/" && !/^#\/(backup|ripasso)/.test(location.hash));
         if (here) anchor.setAttribute("aria-current", "page");
         else anchor.removeAttribute("aria-current");
     });
@@ -616,6 +619,10 @@ function render() {
         return;
     }
     window.scrollTo(0, 0);
+    if (hash === "#/ripasso") {
+        finishRender(renderReview(exam));
+        return;
+    }
     if (hash === "#/backup") {
         finishRender(renderBackup());
         return;

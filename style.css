@@ -278,6 +278,19 @@ main { display: block; }
     .pager .next { margin-left: 0; }
 }
 
+/* ---- Ripasso (review.js) ---- */
+
+.review-card {
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 4px 16px 12px;
+    margin: 16px 0;
+}
+.review-card h2 { font-size: 1.15rem; margin: 10px 0 4px; }
+.question-objective { color: var(--muted); font-size: 0.9rem; margin: 12px 0 -12px; }
+.return-text { margin: 4px 0 12px; }
+
 /* ---- Domande (quiz.js) ---- */
 
 .question-text { font-size: 1.25rem; line-height: 1.4; margin: 20px 0 8px; }

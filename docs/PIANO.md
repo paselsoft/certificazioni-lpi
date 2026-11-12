@@ -89,6 +89,16 @@ browser, un test risponde a tutte le domande con la soluzione e verifica che sia
 - Le domande sbagliate tornano presto, quelle giuste sempre più di rado (scatole di Leitner).
 - «Ripasso di oggi»: una decina di domande scelte così.
 
+**Fatta il 12/11/2026.** Cinque scatole: una domanda nuova parte dalla 1; giusta → scatola
+successiva, sbagliata → di nuovo la 1; torna dopo 1, 2, 4, 8 o 16 giorni secondo la scatola.
+Il ripasso prende fino a 10 domande: prima le scadute (dalla più vecchia), poi le nuove, dagli
+obiettivi segnati «studiato» o con una lezione letta (altrimenti da tutti), scelti a caso secondo
+il peso. Tutte le risposte contano, anche quelle date in «studia un obiettivo». Dopo ogni risposta
+l'app dice in quale scatola è finita la domanda e quando torna; nella pagina principale c'è il
+riquadro «Ripasso di oggi» con le scatole e il prossimo ripasso. Le risposte date prima di M3
+entrano nelle scatole da sole (giusta → 2, sbagliata → 1). I test fermano l'orologio del browser
+per provare i giorni successivi.
+
 ### M4. Simulazione d'esame
 - 40 domande in 60 minuti, distribuite secondo il peso degli obiettivi, con il cronometro.
 - Si può segnare una domanda e tornarci, come all'esame.

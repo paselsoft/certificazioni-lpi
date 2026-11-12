@@ -145,7 +145,7 @@ module.exports = {
         assert.equal(await page.evaluate(() => document.activeElement.id), "quiz-result");
         assert.equal(await page.locator(".result-list li.is-wrong").count(), 1);
         assert.match(await page.textContent(".result-list li.is-wrong"), /chmod 755 script\.sh/);
-        assert.equal(await page.textContent("#retry-wrong"), "Ripeti le sbagliata");
+        assert.equal(await page.textContent("#retry-wrong"), "Ripeti la sbagliata");
         await page.click("#retry-wrong");
         assert.match(await page.textContent(".meter-label"), /^Domanda 1 di 1$/);
         assert.match(await page.textContent("#question-text"), /chmod 755/);

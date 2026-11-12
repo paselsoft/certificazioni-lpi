@@ -65,10 +65,13 @@ function reviewLink(exam, question) {
 
 // ---- Sessione ----
 
+// Una serie di domande: quelle di un obiettivo, oppure (objective null, per il ripasso) quelle
+// dell'esame indicate in onlyIds
 function startQuiz(exam, objective, onlyIds) {
-    const list = questionsOf(exam.id, objective.id).filter(q => !onlyIds || onlyIds.includes(q.id));
+    const pool = objective ? questionsOf(exam.id, objective.id) : QUESTIONS.filter(q => q.exam === exam.id);
+    const list = pool.filter(q => !onlyIds || onlyIds.includes(q.id));
     quiz.session = {
-        exam: exam.id, objective: objective.id,
+        kind: objective ? "objective" : "review", exam: exam.id, objective: objective ? objective.id : null,
         questions: shuffle(list).map(q => ({ question: q, options: q.options ? (q.fixed ? q.options.slice() : shuffle(q.options)) : null })),
         index: 0, results: []
     };
@@ -104,6 +107,11 @@ function renderQuestion(exam, objective, body, focus) {
     body.innerHTML = "";
     const count = session.questions.length;
     body.appendChild(progressBar(`Domanda ${session.index + 1} di ${count}`, session.index, count));
+    // Nel ripasso le domande sono di obiettivi diversi: si dice di quale
+    if (!objective) {
+        const found = allObjectives(exam).find(item => item.objective.id === question.objective);
+        body.appendChild(el("p", "question-objective", `Obiettivo ${found.objective.id}: ${found.objective.title}`));
+    }
 
     const text = richText(question.text, "h2", "question-text");
     text.id = "question-text";
@@ -195,16 +203,22 @@ function renderQuestion(exam, objective, body, focus) {
             right = options.every((option, index) => option.ok === chosen.includes(index));
         }
         message.textContent = "";
-        recordAnswer(question, right);
+        const entry = recordAnswer(question, right);
         session.results[session.index] = right;
         form.querySelectorAll("input").forEach(input => { input.disabled = true; });
         check.hidden = true;
-        showFeedback(exam, objective, body, feedback, question, options, chosen, right);
+        showFeedback(exam, objective, body, feedback, question, options, chosen, right, entry);
     };
     if (focus) text.focus();
 }
 
-function showFeedback(exam, objective, body, feedback, question, options, chosen, right) {
+// Quando la domanda torna nel ripasso, secondo la sua scatola
+function returnText(entry) {
+    const days = LEITNER_DAYS[entry.box - 1];
+    return `🔄 Scatola ${entry.box} di ${LEITNER_DAYS.length}: questa domanda torna nel ripasso ${days === 1 ? "domani" : `fra ${days} giorni`}.`;
+}
+
+function showFeedback(exam, objective, body, feedback, question, options, chosen, right, entry) {
     feedback.hidden = false;
     feedback.className = `feedback ${right ? "right" : "wrong"}`;
     const title = el("h2", "feedback-title", right ? "✅ Giusto!" : "Non è giusto");
@@ -237,6 +251,7 @@ function showFeedback(exam, objective, body, feedback, question, options, chosen
     }
     const review = el("p", "review");
     review.appendChild(reviewLink(exam, question));
+    if (entry) feedback.appendChild(el("p", "return-text hint", returnText(entry)));
     feedback.appendChild(review);
     const next = el("button", "button primary", quiz.session.index + 1 < quiz.session.questions.length ? "Domanda successiva →" : "Vedi il risultato");
     next.type = "button";
@@ -279,7 +294,7 @@ function renderQuizEnd(exam, objective, body) {
     const actions = el("div", "pager");
     const wrong = session.questions.filter((_, index) => !session.results[index]).map(({ question }) => question.id);
     if (wrong.length) {
-        const again = el("button", "button primary", `Ripeti le ${wrong.length === 1 ? "sbagliata" : `${wrong.length} sbagliate`}`);
+        const again = el("button", "button primary", wrong.length === 1 ? "Ripeti la sbagliata" : `Ripeti le ${wrong.length} sbagliate`);
         again.type = "button";
         again.id = "retry-wrong";
         again.onclick = () => {
@@ -288,14 +303,32 @@ function renderQuizEnd(exam, objective, body) {
         };
         actions.appendChild(again);
     }
-    const restart = el("button", "button", "Ricomincia tutte");
-    restart.type = "button";
-    restart.id = "restart";
-    restart.onclick = () => {
-        startQuiz(exam, objective);
-        renderQuestion(exam, objective, body, true);
-    };
-    actions.appendChild(restart);
-    actions.appendChild(link(`Obiettivo ${objective.id}`, objectiveHref(exam, objective), "button"));
+    if (objective) {
+        const restart = el("button", "button", "Ricomincia tutte");
+        restart.type = "button";
+        restart.id = "restart";
+        restart.onclick = () => {
+            startQuiz(exam, objective);
+            renderQuestion(exam, objective, body, true);
+        };
+        actions.appendChild(restart);
+        actions.appendChild(link(`Obiettivo ${objective.id}`, objectiveHref(exam, objective), "button"));
+    } else {
+        // Ripasso: altre domande (se ce ne sono ancora per oggi o di nuove), poi la pagina principale
+        const { due, fresh } = reviewPlan(exam);
+        if (due.length || fresh.length) {
+            const more = el("button", "button", due.length ? "Continua il ripasso" : "Altre domande nuove");
+            more.type = "button";
+            more.id = "review-more";
+            more.onclick = () => {
+                startReview(exam);
+                renderQuestion(exam, null, body, true);
+            };
+            actions.appendChild(more);
+        } else {
+            body.appendChild(el("p", "ok", "✅ Per oggi il ripasso è finito: hai risposto a tutte le domande in programma."));
+        }
+        actions.appendChild(link("Pagina principale", "#/", "button"));
+    }
     body.appendChild(actions);
 }

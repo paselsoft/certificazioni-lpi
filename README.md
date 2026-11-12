@@ -2,10 +2,10 @@
 
 App gratuita, in italiano, per prepararsi all'esame **Linux Essentials 1.6** (010-160) del Linux
 Professional Institute (e in seguito a LPIC-1): obiettivi d'esame e lezioni ufficiali in italiano
-da leggere anche senza connessione, e domande originali con spiegazioni. Poi arriveranno ripasso
-e simulazione d'esame: il piano è in [docs/PIANO.md](docs/PIANO.md).
+da leggere anche senza connessione, domande originali con spiegazioni e un ripasso quotidiano.
+Poi arriverà la simulazione d'esame: il piano è in [docs/PIANO.md](docs/PIANO.md).
 
-## Cosa c'è (tappe M1 e M2)
+## Cosa c'è (tappe M1, M2 e M3)
 
 - **Obiettivi**: i 5 argomenti e i 19 obiettivi dell'esame, con il peso, la descrizione, le aree di
   conoscenza e i file, termini e comandi da conoscere (dalla traduzione italiana ufficiale degli
@@ -16,6 +16,10 @@ e simulazione d'esame: il piano è in [docs/PIANO.md](docs/PIANO.md).
   all'esame: scelta singola, scelta multipla («scegli 2») e completamento. Dopo ogni risposta: il
   perché di ogni opzione e il link alla sezione della lezione da ripassare. Alla fine il risultato
   e «Ripeti le sbagliate».
+- **Ripasso di oggi**: ogni giorno una decina di domande scelte con le scatole di Leitner. Una
+  risposta sbagliata riporta la domanda nella scatola 1 (torna il giorno dopo), ogni risposta
+  giusta la sposta nella scatola successiva (torna dopo 2, 4, 8, poi 16 giorni). Prima le domande
+  scadute, poi quelle nuove degli obiettivi che stai studiando.
 - **Progressi**: «Ho studiato questo obiettivo», «Ho letto questa lezione», le risposte alle domande,
   barre dei progressi.
   Restano nel browser; dalla pagina **Backup** si scaricano in un file e si ripristinano.
@@ -43,6 +47,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `store.js` | progressi e preferenze nel browser, backup |
 | `lesson-view.js` | lettore delle lezioni (da Pipe Dreams) |
 | `quiz.js` | le domande di un obiettivo, una alla volta (`#/010-160/domande/2.1`) |
+| `review.js` | il ripasso di oggi (`#/ripasso`); le scatole di Leitner sono in `store.js` |
 | `questions/010-160/1.js` ... `5.js` | le domande, un file per argomento |
 | `sw.js` | service worker per l'uso offline |
 | `data/exams.js`, `data/exam-010-160.js` | esami e obiettivi; un file per esame (la 2.0 e LPIC-1 si aggiungono così) |

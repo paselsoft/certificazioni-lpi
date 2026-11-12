@@ -4,8 +4,9 @@
 //   studied: { "010-160:2.1": "2026-11-12" },        obiettivi segnati «studiato» (con la data)
 //   read:    { "010-160/2.1_01": "2026-11-12" },     lezioni segnate «letta» (con la data)
 //   last:    { lesson: "010-160/2.1_01", scroll: 0.4 } ultima lezione aperta e dove si era arrivati
-//   answers: { "010-160/2.1-03": { ok: 2, ko: 1, last: "2026-11-12", result: true } }
-//            per ogni domanda: risposte giuste e sbagliate, data e esito dell'ultima risposta
+//   answers: { "010-160/2.1-03": { ok: 2, ko: 1, last: "2026-11-12", result: true, box: 2, due: "2026-11-14" } }
+//            per ogni domanda: risposte giuste e sbagliate, data e esito dell'ultima risposta,
+//            scatola del ripasso (1-5) e giorno in cui torna (vedi «Ripasso» più sotto)
 // }
 // Le chiavi contengono il codice dell'esame: i progressi di esami diversi restano separati.
 
@@ -21,6 +22,26 @@ const todayKey = () => {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 };
 const formatDate = key => key.split("-").reverse().join("/");
+
+// Il giorno (AAAA-MM-GG) che viene n giorni dopo key, nel calendario locale
+function addDays(key, days) {
+    const [year, month, day] = key.split("-").map(Number);
+    const date = new Date(year, month - 1, day + days);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+// Giorni tra due date (b - a)
+const dayNumber = key => {
+    const [year, month, day] = key.split("-").map(Number);
+    return Date.UTC(year, month - 1, day) / 86400000;
+};
+const daysBetween = (a, b) => dayNumber(b) - dayNumber(a);
+
+// ---- Ripasso (scatole di Leitner) ----
+// Ogni domanda a cui hai risposto sta in una scatola da 1 a 5. Risposta giusta: sale di una
+// scatola (al massimo la 5). Risposta sbagliata: torna nella 1. La scatola dice dopo quanti
+// giorni la domanda torna nel ripasso: le sbagliate tornano presto, le giuste sempre più di rado.
+const LEITNER_DAYS = [1, 2, 4, 8, 16];
 
 // Tiene solo i valori con la forma giusta: un salvataggio rovinato o un backup modificato a mano
 // non devono bloccare l'app
@@ -38,7 +59,10 @@ function cleanProgress(data) {
     Object.entries(isPlainObject(source.answers) ? source.answers : {}).forEach(([key, value]) => {
         if (/^[\w.-]+\/\d+\.\d+-\d+$/.test(key) && isPlainObject(value) && isCount(value.ok) && isCount(value.ko)
             && value.ok + value.ko > 0 && isDate(value.last) && typeof value.result === "boolean") {
-            progress.answers[key] = { ok: value.ok, ko: value.ko, last: value.last, result: value.result };
+            // Le risposte date prima del ripasso (tappa M2) non hanno la scatola: si ricava dall'esito
+            const box = Number.isInteger(value.box) && value.box >= 1 && value.box <= LEITNER_DAYS.length ? value.box : value.result ? 2 : 1;
+            const due = isDate(value.due) ? value.due : addDays(value.last, LEITNER_DAYS[box - 1]);
+            progress.answers[key] = { ok: value.ok, ko: value.ko, last: value.last, result: value.result, box, due };
         }
     });
     const last = source.last;
@@ -107,11 +131,19 @@ const questionKey = question => `${question.exam}/${question.id}`;
 const answerOf = question => progress.answers[questionKey(question)] || null;
 
 // Registra una risposta a una domanda
+// Registra una risposta: conteggi, esito e nuova scatola. Restituisce la voce aggiornata.
 function recordAnswer(question, right) {
     const key = questionKey(question);
-    const entry = progress.answers[key] || { ok: 0, ko: 0 };
-    progress.answers[key] = { ok: entry.ok + (right ? 1 : 0), ko: entry.ko + (right ? 0 : 1), last: todayKey(), result: right };
+    // Una domanda nuova parte dalla scatola 1: giusta → 2, sbagliata → resta nella 1
+    const entry = progress.answers[key] || { ok: 0, ko: 0, box: 1 };
+    const box = right ? Math.min(LEITNER_DAYS.length, entry.box + 1) : 1;
+    const today = todayKey();
+    progress.answers[key] = {
+        ok: entry.ok + (right ? 1 : 0), ko: entry.ko + (right ? 0 : 1), last: today, result: right,
+        box, due: addDays(today, LEITNER_DAYS[box - 1])
+    };
     saveProgress();
+    return progress.answers[key];
 }
 
 // ---- Backup ----
