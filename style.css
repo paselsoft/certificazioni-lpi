@@ -68,6 +68,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-vis
     outline-offset: 2px;
 }
 h1:focus, h2:focus, main:focus { outline: none; }
+/* Titoli e riquadri che ricevono il fuoco dall'app (tabindex="-1", per i lettori di schermo):
+   niente bordo, che su iPad comparirebbe a ogni cambio di pagina */
+[tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outline: none; }
 
 .sr-only {
     position: absolute;
