@@ -14,7 +14,7 @@ connessione, come Pipe Dreams: HTML, CSS e JavaScript senza librerie né compila
 | Prerequisiti | nessuno |
 | Versione attuale | **2.0**, esame 010-200: per ora solo in inglese, le traduzioni (italiano compreso) «nei prossimi mesi» |
 | Versione precedente | **1.6**, esame 010-160: **si può sostenere fino ad aprile 2027** |
-| Punteggio minimo | da verificare (non è scritto nella pagina dell'esame) |
+| Punteggio | scala da 200 a 800, **si supera con 500** (verificato il 12/11/2026, vedi sotto) |
 
 Fonti: [Linux Essentials](https://www.lpi.org/our-certifications/linux-essentials-overview/),
 [obiettivi 1.6](https://wiki.lpi.org/wiki/Linux_Essentials_Objectives_V1.6),
@@ -128,6 +128,25 @@ per provare i giorni successivi.
   dalle lezioni.
 - Test nel browser (Playwright) per ogni funzione, come in Pipe Dreams.
 
+### Punteggio (verificato il 12/11/2026)
+
+- Ogni esame LPI ha un punteggio da 200 a 800 e **si supera con 500**. Il numero di risposte
+  giuste che serve non è fisso: dipende da quali domande capitano, perché hanno difficoltà
+  diverse e i candidati non ricevono tutti le stesse. Il valore esatto viene da studi statistici
+  di LPI. Fonte: [FAQ di LPI](https://www.lpi.org/about-lpi/frequently-asked-questions/), domanda
+  «How are the LPIC test scores computed?» (la risposta vale per «ogni esame LPI»).
+- Per Linux Essentials 010-160 lo conferma un articolo del blog ufficiale LPI: «Minimum passing
+  score: 500 out of 800»
+  ([How I Scored 100% on the Linux Essentials Exam](https://www.lpi.org/blog/2026/02/12/how-i-scored-100-on-the-linux-essentials-exam/), 12/02/2026).
+- La stessa FAQ dice che c'è **una domanda per ogni punto di peso**: un obiettivo di peso 4 ha 4
+  domande all'esame. Per Linux Essentials (peso totale 40) sono 40 domande.
+
+Per la simulazione (M4): la conversione tra risposte giuste e punteggio non è pubblica, quindi
+l'app non può dire «hai superato l'esame». Mostrerà la percentuale di risposte giuste e, come
+indicazione e non come regola ufficiale, una soglia di riferimento: 500 su una scala 200-800
+corrisponde in proporzione al 50% (200 + 0,5 × 600). Avvisando che il valore vero può essere
+diverso, conviene puntare a stare con margine sopra quella soglia.
+
 ## Domande aperte
 
-1. Punteggio minimo di Linux Essentials: da confermare con LPI prima della simulazione d'esame.
+Nessuna per ora.
