@@ -148,8 +148,9 @@ if (process.argv.includes("--installa")) {
             const result = asAnna(lines);
             if (result.status !== 0) problems.push(`installa: ${exercise.id}, la soluzione non funziona da anna: ${result.error || result.stderr}`);
         }
-        const again = asAnna("lpi-esercizio t5.3-01 >/dev/null && ls -l diario.txt");
-        check("lpi-esercizio riprepara l'esercizio", /^-rw-r--r-- 1 anna anna/.test(again.stdout));
+        // Dopo la soluzione (chmod 600) l'esercizio ripreparato torna come all'inizio
+        const again = asAnna("lpi-esercizio t5.3-01 >/dev/null && stat -c '%a %U' diario.txt");
+        check(`lpi-esercizio riprepara l'esercizio: ${again.stdout.trim()} ${again.stderr.trim()}`, again.status === 0 && again.stdout.trim() === "644 anna");
         const remove = spawnSync("bash", ["/usr/local/bin/lpi-esercizio", "disinstalla"], { encoding: "utf8" });
         check(`disinstalla: ${remove.stderr}`, remove.status === 0 && spawnSync("id", ["anna"]).status !== 0 && !fs.existsSync("/var/log/app.log"));
     }
