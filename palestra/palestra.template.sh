@@ -102,6 +102,15 @@ a_capo() {
     if command -v fold >/dev/null; then fold -s -w 78; else cat; fi
 }
 
+# Se il terminale era dentro una cartella della home, quella cartella è stata cancellata e
+# ricreata: il terminale resta «nel vuoto» finché non si cambia directory
+ero_dentro() {
+    case "${PWD:-}" in
+        "$CASA"/*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 prepara() {
     controlla_utente
     esercizio "$1"
@@ -110,7 +119,14 @@ prepara() {
     esercizio "$1"
     printf 'Esercizio %s: %s\n\n' "$1" "$TITOLO"
     printf '%s\n' "$COMPITO" | a_capo
-    printf '\nLa home di anna è pronta. Per cominciare scrivi: cd %s\n' "${PARTENZA}"
+    printf '\nLa home di anna è pronta.\n'
+    if [ -n "$PARTENZA" ]; then
+        printf 'Per cominciare scrivi: cd %s\n' "$PARTENZA"
+    elif ero_dentro; then
+        printf 'Per cominciare scrivi: cd   (la cartella in cui eri è stata ricreata: cd ti riporta nella home)\n'
+    else
+        printf 'Comincia pure da qui, dalla home di anna.\n'
+    fi
     printf 'La soluzione: lpi-esercizio soluzione %s\n' "$1"
 }
 
@@ -119,7 +135,9 @@ inizio() {
     PREPARA=1
     svuota
     base
-    printf 'La home di anna è come all%sinizio. Scrivi cd per tornarci.\n' "'"
+    printf 'La home di anna è come all%sinizio.' "'"
+    if ero_dentro; then printf ' Scrivi cd per tornarci.'; fi
+    printf '\n'
 }
 
 installa() {
