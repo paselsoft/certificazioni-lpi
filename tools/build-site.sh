@@ -13,6 +13,9 @@ rm -rf "$out"
 mkdir -p "$out"
 cp index.html style.css manifest.webmanifest icon.svg ./*.js "$out/"
 cp -r data lessons questions exercises lib "$out/"
+# Lo script per esercitarsi su un Linux vero (senza il modello da cui è generato)
+mkdir -p "$out/palestra"
+cp palestra/palestra.sh "$out/palestra/"
 
 if git rev-parse --short HEAD >/dev/null 2>&1; then
     sha="$(git rev-parse --short HEAD)"
