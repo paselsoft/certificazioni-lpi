@@ -59,8 +59,39 @@ function renderPracticeList(exam) {
         page.appendChild(section);
     });
     page.appendChild(el("p", "hint", "Il simulatore si comporta come Bash con LC_ALL=C (ordine alfabetico e date all'inglese); i messaggi di errore sono in italiano. Ogni soluzione è controllata anche con Bash vero."));
+    page.appendChild(realLinuxSection());
     main.appendChild(page);
     return "Pratica al terminale";
+}
+
+// Gli stessi esercizi su un Linux vero: lo script palestra/palestra.sh (tools/build-palestra.js)
+// crea l'utente anna con la stessa home e il comando lpi-esercizio
+const PALESTRA = "palestra/palestra.sh";
+
+function realLinuxSection() {
+    const section = el("section", "block");
+    const title = el("h2", "", "Con un Linux vero");
+    title.id = "linux-vero";
+    section.setAttribute("aria-labelledby", title.id);
+    section.appendChild(title);
+    section.appendChild(el("p", "", "Hai un Linux, anche in una macchina virtuale come VirtualBox? Con lo script della palestra ritrovi gli stessi esercizi nel terminale vero: crea l'utente anna, con gli stessi file del simulatore, e il comando lpi-esercizio, che prepara la home per un esercizio e ne mostra il compito."));
+    const download = el("p");
+    const anchor = link("⬇ Scarica palestra.sh", PALESTRA, "button");
+    anchor.setAttribute("download", "palestra.sh");
+    anchor.id = "palestra-download";
+    download.appendChild(anchor);
+    section.appendChild(download);
+    section.appendChild(el("p", "", "Oppure, nel terminale di Linux, una riga alla volta (la prima scarica lo script, la seconda lo installa: serve la tua password):"));
+    const commands = el("pre", "solution-code", [
+        `wget ${new URL(PALESTRA, location.href).href}`,
+        "sudo bash palestra.sh installa",
+        "su - anna",
+        "lpi-esercizio t2.3-01"
+    ].join("\n"));
+    commands.id = "palestra-comandi";
+    section.appendChild(commands);
+    section.appendChild(el("p", "hint", "La password di anna è anna. lpi-esercizio da solo mostra l'elenco degli esercizi; lpi-esercizio soluzione t2.3-01 mostra la soluzione; exit ti riporta al tuo utente. Lo script lavora solo nella home di anna: i tuoi file non vengono toccati."));
+    return section;
 }
 
 function exerciseLinks(list) {
@@ -163,6 +194,11 @@ function renderPractice(exam, exercise) {
     success.id = "practice-success";
     success.hidden = true;
     page.appendChild(success);
+    if (exercise) {
+        const real = el("p", "hint");
+        real.append(document.createTextNode("Su un Linux vero, con la palestra: "), el("code", "", `lpi-esercizio ${exercise.id}`), document.createTextNode(" ("), link("come si installa", "#/terminale"), document.createTextNode(")."));
+        page.appendChild(real);
+    }
     if (!exercise) page.appendChild(el("p", "hint", "Scrivi help per l'elenco dei comandi. Il simulatore si comporta come Bash con LC_ALL=C; i messaggi di errore sono in italiano."));
     main.appendChild(page);
 

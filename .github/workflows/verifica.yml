@@ -40,6 +40,13 @@ jobs:
       - name: La shell simulata coincide con Bash e GNU coreutils (soluzioni degli esercizi e casi tipici)
         run: node tools/check-shell.js
 
+      # Su un sistema vero: installa la palestra (utenti anna e luca), esegue le soluzioni da anna
+      - name: Palestra per un Linux vero (come il simulatore, installazione e soluzioni da anna)
+        run: |
+          shellcheck palestra/palestra.sh
+          node tools/check-palestra.js
+          sudo "$(command -v node)" tools/check-palestra.js --installa
+
       - name: Emoji visibili anche su macOS High Sierra
         run: node tools/check-emoji.js
 

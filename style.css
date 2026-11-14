@@ -398,6 +398,7 @@ main { display: block; }
 .terminal:focus-within { box-shadow: 0 0 0 3px var(--focus); }
 .practice-help { margin: 8px 0; }
 .solution-code { background: var(--code-bg); color: var(--code-text); padding: 8px 12px; border-radius: 8px; overflow-x: auto; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
+#palestra-comandi { white-space: pre-wrap; overflow-wrap: anywhere; } /* a 320 px l'indirizzo va a capo invece di scorrere */
 .practice-success { margin: 16px 0; padding: 4px 16px 12px; border: 2px solid var(--ok); border-radius: 10px; background: var(--surface); }
 .practice-success h2 { color: var(--ok); font-size: 1.2rem; }
 

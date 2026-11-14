@@ -159,6 +159,16 @@ l'azione più recente, anche togliere una spunta, grazie a `removed`), per ogni 
 più recente con la sua scatola, tutte le simulazioni. Restano di ogni dispositivo il punto di
 lettura e la simulazione in corso. Test con un'API di GitHub simulata.
 
+### Palestra su un Linux vero (14/11/2026)
+Per esercitarsi con il terminale vero (per esempio Linux Mint in VirtualBox): `palestra/palestra.sh`,
+scaricabile dalla pagina del terminale. `sudo bash palestra.sh installa` crea gli utenti anna
+(password anna, gruppi sudo e sviluppo) e luca, `/var/log/app.log` e il comando `lpi-esercizio`,
+che rimette la home di anna come nel simulatore per l'esercizio scelto e ne mostra il compito
+(`lpi-esercizio soluzione ID` la soluzione, `inizio`, `disinstalla`). Lavora solo da anna, per non
+toccare i file dell'utente. Lo script è generato dagli esercizi (`tools/build-palestra.js`);
+`tools/check-palestra.js` confronta ogni home preparata con quella del simulatore e in CI installa
+la palestra davvero ed esegue le soluzioni da anna.
+
 ### Dopo
 - LPIC-1, esami 101 e 102, con lo stesso schema.
 

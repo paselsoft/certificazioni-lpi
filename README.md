@@ -25,11 +25,15 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
   rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
   risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
-- **Pratica al terminale**: 37 esercizi con i comandi dell'esame (directory, file, caratteri
+- **Pratica al terminale**: 38 esercizi con i comandi dell'esame (directory, file, caratteri
   jolly, archivi, grep e filtri, reindirizzamenti, script, permessi, link) su un piccolo Linux
   simulato nel browser, con gli obiettivi che si spuntano, suggerimento e soluzione; più un
   terminale libero. I filtri di testo vengono dal motore di Pipe Dreams; le soluzioni e oltre 200
   casi tipici sono confrontati con Bash vero.
+- **Palestra su un Linux vero**: gli stessi esercizi nel terminale di un Linux vero (anche in
+  VirtualBox). Dalla pagina del terminale si scarica `palestra.sh`; `sudo bash palestra.sh installa`
+  crea l'utente anna (password anna) con gli stessi file, poi `su - anna` e `lpi-esercizio t2.3-01`
+  prepara l'esercizio e ne mostra il compito.
 - **Progressi**: «Ho studiato questo obiettivo», «Ho letto questa lezione», le risposte alle domande,
   barre dei progressi.
   Restano nel browser; dalla pagina **Backup** si scaricano in un file e si ripristinano.
@@ -78,6 +82,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `lib/pipedreams-*.js` | il motore dei filtri di Pipe Dreams, copiato senza modifiche |
 | `exercise-check.js`, `practice.js` | gli esercizi al terminale: controllo degli obiettivi e pagina (`#/terminale`) |
 | `exercises/010-160.js` | gli esercizi |
+| `palestra/palestra.sh` | la palestra per un Linux vero, generata da `tools/build-palestra.js` con `palestra.template.sh` |
 | `sw.js` | service worker per l'uso offline |
 | `version.js` | la versione (commit e data), scritta da `tools/build-site.sh` |
 | `deploy/` | gli script per il container Proxmox |
@@ -92,6 +97,8 @@ python3 tools/import-lpi-lessons.py    # riscarica le lezioni e controlla che il
 node tools/check-data.js [--online]    # controlla dati, lezioni, licenza, file (e i link, con --online)
 node tools/check-questions.js [--stats] # domande: formato, copertura per peso, nessuna frase copiata dalle lezioni
 node tools/check-shell.js [filtro]     # la shell simulata confrontata con Bash vero (serve Linux)
+node tools/build-palestra.js           # rigenera palestra/palestra.sh dagli esercizi (dopo ogni modifica)
+node tools/check-palestra.js [--installa] # la palestra prepara le stesse home del simulatore (--installa: da root)
 node tools/check-emoji.js              # solo emoji visibili su macOS High Sierra
 bash tools/build-site.sh _site         # il sito da pubblicare (solo i file dell'app, con la versione)
 node tools/check-site.js _site         # il sito preparato è completo

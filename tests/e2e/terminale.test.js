@@ -105,6 +105,22 @@ module.exports = {
         assert.match(await outputText(page), /editor non sono disponibili nel simulatore/);
     },
 
+    "con un Linux vero: lo script della palestra e i comandi per installarlo": async ({ page }) => {
+        await open(page, { hash: "#/terminale" });
+        assert.equal(await page.textContent("#linux-vero"), "Con un Linux vero");
+        assert.equal(await page.getAttribute("#palestra-download", "href"), "palestra/palestra.sh");
+        const commands = (await page.textContent("#palestra-comandi")).split("\n");
+        assert.match(commands[0], /^wget https?:\/\/.+\/palestra\/palestra\.sh$/);
+        assert.deepEqual(commands.slice(1), ["sudo bash palestra.sh installa", "su - anna", "lpi-esercizio t2.3-01"]);
+        // Lo script c'è davvero, ed è quello degli esercizi
+        const script = await page.evaluate(async () => (await fetch("palestra/palestra.sh")).text());
+        assert.match(script, /^#!\/usr\/bin\/env bash/);
+        assert.ok(await page.evaluate(text => EXERCISES.every(exercise => text.includes(`    ${exercise.id})`)), script));
+        // In ogni esercizio, il comando per ritrovarlo nella palestra
+        await go(page, "#/terminale/t2.4-04");
+        assert.match(await page.textContent(".practice-page p.hint"), /Su un Linux vero, con la palestra: lpi-esercizio t2\.4-04 \(come si installa\)/);
+    },
+
     "terminale: 320 px e nessuna violazione axe": async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 700 });
         await open(page, { hash: "#/terminale/t2.3-03" });
@@ -121,7 +137,7 @@ module.exports = {
             assert.deepEqual(violations, [], scheme);
         }
         await go(page, "#/terminale");
-        assert.ok(await overflow(page) <= 0);
+        assert.ok(await overflow(page) <= 0, `elenco: scorrimento di ${await overflow(page)} px`);
         assert.deepEqual(await axeViolations(page), [], "elenco");
     }
 };
