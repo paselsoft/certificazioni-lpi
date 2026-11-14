@@ -10,6 +10,10 @@
 //   simulations: [ { exam: "010-160", date: "2026-11-12", right: 31, total: 40, seconds: 2520,
 //                    topics: { "1": [6, 7], ... } } ]   storico delle simulazioni d'esame
 //   practice: { "010-160/t2.4-01": "2026-11-12" }    esercizi al terminale completati
+//   removed: { "studied|010-160:2.1": "2026-11-14T10:00:00.000Z" }  spunte tolte e quando (per la
+//            sincronizzazione: senza, una spunta tolta tornerebbe dagli altri dispositivi)
+// Le spunte nuove hanno l'ora esatta (ISO), le risposte anche «at»: con più dispositivi vince
+// l'azione più recente (mergeProgress, sync.js).
 // }
 // Le chiavi contengono il codice dell'esame: i progressi di esami diversi restano separati.
 
@@ -21,6 +25,9 @@ const TEXT_SIZES = ["normale", "grande", "molto-grande"];
 const isPlainObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
 const isCount = value => Number.isInteger(value) && value >= 0;
 const SIMULATIONS_KEPT = 100;
+// Una data (AAAA-MM-GG) oppure un istante preciso (ISO, come 2026-11-14T10:00:00.000Z)
+const isStamp = value => typeof value === "string" && /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?Z)?$/.test(value);
+const nowStamp = () => new Date().toISOString();
 const isDate = value => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 const todayKey = () => {
     const now = new Date();
@@ -53,14 +60,15 @@ const LEITNER_DAYS = [1, 2, 4, 8, 16];
 function cleanProgress(data) {
     const source = isPlainObject(data) ? data : {};
     const pick = (object, validKey) => Object.fromEntries(Object.entries(isPlainObject(object) ? object : {})
-        .filter(([key, value]) => validKey.test(key) && isDate(value)));
+        .filter(([key, value]) => validKey.test(key) && isStamp(value)));
     const progress = {
         studied: pick(source.studied, /^[\w.-]+:\d+\.\d+$/),
         read: pick(source.read, /^[\w.-]+\/\d+\.\d+_\d+$/),
         last: null,
         answers: {},
         simulations: [],
-        practice: pick(source.practice, /^[\w.-]+\/t\d+\.\d+-\d+$/)
+        practice: pick(source.practice, /^[\w.-]+\/t\d+\.\d+-\d+$/),
+        removed: pick(source.removed, /^(studied\|[\w.-]+:\d+\.\d+|read\|[\w.-]+\/\d+\.\d+_\d+|practice\|[\w.-]+\/t\d+\.\d+-\d+)$/)
     };
     if (Array.isArray(source.simulations)) {
         progress.simulations = source.simulations.filter(item => isPlainObject(item) && typeof item.exam === "string"
@@ -77,6 +85,7 @@ function cleanProgress(data) {
             const box = Number.isInteger(value.box) && value.box >= 1 && value.box <= LEITNER_DAYS.length ? value.box : value.result ? 2 : 1;
             const due = isDate(value.due) ? value.due : addDays(value.last, LEITNER_DAYS[box - 1]);
             progress.answers[key] = { ok: value.ok, ko: value.ko, last: value.last, result: value.result, box, due };
+            if (isStamp(value.at) && value.at.includes("T")) progress.answers[key].at = value.at;
         }
     });
     const last = source.last;
@@ -113,7 +122,13 @@ function cleanSettings(data) {
 
 let settings = cleanSettings(readStored(STORE_KEYS.settings));
 
-const saveProgress = () => writeStored(STORE_KEYS.progress, progress);
+// Salva i progressi; con la sincronizzazione collegata, li manda anche su GitHub qualche secondo
+// dopo (sync.js). sync false: solo qui (per esempio il punto di lettura della lezione)
+function saveProgress(sync = true) {
+    const ok = writeStored(STORE_KEYS.progress, progress);
+    if (sync && typeof scheduleSync === "function") scheduleSync();
+    return ok;
+}
 const saveSettings = () => writeStored(STORE_KEYS.settings, settings);
 
 const objectiveKey = (examId, objectiveId) => `${examId}:${objectiveId}`;
@@ -122,30 +137,29 @@ const lessonKey = (examId, lessonId) => `${examId}/${lessonId}`;
 const isStudied = (examId, objectiveId) => Boolean(progress.studied[objectiveKey(examId, objectiveId)]);
 const isRead = (examId, lessonId) => Boolean(progress.read[lessonKey(examId, lessonId)]);
 
-function setStudied(examId, objectiveId, value) {
-    const key = objectiveKey(examId, objectiveId);
-    if (value) progress.studied[key] = progress.studied[key] || todayKey();
-    else delete progress.studied[key];
+// Mette o toglie una spunta (studied, read, practice) registrando quando: con la
+// sincronizzazione vince l'azione più recente fra i dispositivi
+function setMark(kind, key, value) {
+    if (value) {
+        if (!progress[kind][key]) progress[kind][key] = nowStamp();
+        delete progress.removed[`${kind}|${key}`];
+    } else if (progress[kind][key]) {
+        delete progress[kind][key];
+        progress.removed[`${kind}|${key}`] = nowStamp();
+    }
     saveProgress();
 }
+
+const setStudied = (examId, objectiveId, value) => setMark("studied", objectiveKey(examId, objectiveId), value);
 
 const isPracticeDone = exercise => Boolean(progress.practice[`${exercise.exam}/${exercise.id}`]);
-function setPracticeDone(exercise) {
-    const key = `${exercise.exam}/${exercise.id}`;
-    progress.practice[key] = progress.practice[key] || todayKey();
-    saveProgress();
-}
+const setPracticeDone = exercise => setMark("practice", `${exercise.exam}/${exercise.id}`, true);
+const setRead = (examId, lessonId, value) => setMark("read", lessonKey(examId, lessonId), value);
 
-function setRead(examId, lessonId, value) {
-    const key = lessonKey(examId, lessonId);
-    if (value) progress.read[key] = progress.read[key] || todayKey();
-    else delete progress.read[key];
-    saveProgress();
-}
-
+// Dove si è arrivati a leggere: vale per questo dispositivo e non si sincronizza
 function setLastLesson(examId, lessonId, scroll) {
     progress.last = { lesson: lessonKey(examId, lessonId), scroll: Math.min(1, Math.max(0, scroll || 0)) };
-    saveProgress();
+    saveProgress(false);
 }
 
 const questionKey = question => `${question.exam}/${question.id}`;
@@ -161,16 +175,61 @@ function recordAnswer(question, right) {
     const today = todayKey();
     progress.answers[key] = {
         ok: entry.ok + (right ? 1 : 0), ko: entry.ko + (right ? 0 : 1), last: today, result: right,
-        box, due: addDays(today, LEITNER_DAYS[box - 1])
+        box, due: addDays(today, LEITNER_DAYS[box - 1]), at: nowStamp()
     };
     saveProgress();
     return progress.answers[key];
 }
 
+// ---- Unione (sincronizzazione fra dispositivi) ----
+
+// Unisce i progressi di due dispositivi: non si perde niente, e se la stessa cosa è cambiata su
+// tutti e due vince la modifica più recente.
+//   - spunte (studied, read, practice): ci sono se l'ultima azione è stata metterle;
+//   - risposte alle domande: per ogni domanda la più recente, con la sua scatola del ripasso;
+//   - simulazioni: tutte, senza doppioni, in ordine di data;
+//   - punto di lettura (last): quello di questo dispositivo (a).
+function mergeProgress(a, b) {
+    const later = (x, y) => (x === undefined ? y : y === undefined ? x : x >= y ? x : y);
+    const removed = { ...a.removed };
+    Object.entries(b.removed).forEach(([key, when]) => { removed[key] = later(removed[key], when); });
+    const merged = { studied: {}, read: {}, practice: {}, removed, last: a.last || b.last, answers: {}, simulations: [] };
+    ["studied", "read", "practice"].forEach(kind => {
+        new Set([...Object.keys(a[kind]), ...Object.keys(b[kind])]).forEach(key => {
+            const marked = later(a[kind][key], b[kind][key]);
+            const gone = removed[`${kind}|${key}`];
+            // Un istante senza ora (solo la data, dai backup vecchi) vale come inizio del giorno
+            if (gone !== undefined && gone >= marked) return;
+            merged[kind][key] = marked;
+            delete removed[`${kind}|${key}`];
+        });
+    });
+    const answerTime = entry => entry.at || entry.last;
+    new Set([...Object.keys(a.answers), ...Object.keys(b.answers)]).forEach(key => {
+        const x = a.answers[key];
+        const y = b.answers[key];
+        merged.answers[key] = !x ? y : !y ? x
+            : answerTime(y) > answerTime(x) || (answerTime(y) === answerTime(x) && y.ok + y.ko > x.ok + x.ko) ? y : x;
+    });
+    const seen = new Set();
+    merged.simulations = [...a.simulations, ...b.simulations]
+        .filter(item => {
+            const id = JSON.stringify(item);
+            if (seen.has(id)) return false;
+            seen.add(id);
+            return true;
+        })
+        .map((item, index) => ({ item, index }))
+        .sort((x, y) => x.item.date.localeCompare(y.item.date) || x.index - y.index)
+        .map(({ item }) => item)
+        .slice(-SIMULATIONS_KEPT);
+    return merged;
+}
+
 // ---- Backup ----
 
-function backupData() {
-    return { app: BACKUP_APP, version: 1, date: todayKey(), progress: cleanProgress(progress) };
+function backupData(data = progress) {
+    return { app: BACKUP_APP, version: 1, date: todayKey(), progress: cleanProgress(data) };
 }
 
 const backupFileName = () => `certificazioni-lpi-backup-${todayKey()}.json`;

@@ -66,7 +66,7 @@ module.exports = {
         await page.waitForSelector("#studied");
         assert.equal(await page.isChecked("#studied"), true);
         const saved = await stored(page);
-        assert.match(saved.studied["010-160:3.3"], /^\d{4}-\d{2}-\d{2}$/);
+        assert.match(saved.studied["010-160:3.3"], /^\d{4}-\d{2}-\d{2}T/);
 
         await go(page, "#/");
         assert.match(await page.textContent("#summary"), /Obiettivi studiati: 1 su 19 \(peso 4 su 40\)/);

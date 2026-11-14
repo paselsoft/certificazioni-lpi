@@ -149,6 +149,16 @@ Alpine. Da provare sul Proxmox vero: installazione dei pacchetti e comandi pct/p
 Da fare una volta, a mano: unire il branch in `main` e attivare Settings → Pages → Source:
 «GitHub Actions».
 
+### Sincronizzazione fra i dispositivi (14/11/2026)
+Come in Pipe Dreams: i progressi vanno in `certificazioni-lpi.json` di un repository GitHub privato
+(predefinito lo stesso di Pipe Dreams, `paselsoft/pipedreams-progressi`, con la stessa chiave
+fine-grained; sullo stesso sito basta «Usa la chiave di Pipe Dreams»). Ogni dispositivo scarica,
+unisce (`mergeProgress`) e salva se è cambiato qualcosa: all'apertura, qualche secondo dopo ogni
+progresso, quando la pagina torna visibile o torna la rete. Unione: spunte con l'ora (vince
+l'azione più recente, anche togliere una spunta, grazie a `removed`), per ogni domanda la risposta
+più recente con la sua scatola, tutte le simulazioni. Restano di ogni dispositivo il punto di
+lettura e la simulazione in corso. Test con un'API di GitHub simulata.
+
 ### Dopo
 - LPIC-1, esami 101 e 102, con lo stesso schema.
 

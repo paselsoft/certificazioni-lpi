@@ -8,7 +8,8 @@ const PROGRESS = {
     last: { lesson: "010-160/3.3_01", scroll: 0.25 },
     answers: { "010-160/2.1-01": { ok: 1, ko: 2, last: "2026-11-04", result: true, box: 2, due: "2026-11-06" } },
     simulations: [{ exam: "010-160", date: "2026-11-04", right: 27, total: 40, seconds: 3100, topics: { "1": [5, 7], "2": [7, 9], "3": [6, 9], "4": [5, 8], "5": [4, 7] } }],
-    practice: { "010-160/t2.4-01": "2026-11-04" }
+    practice: { "010-160/t2.4-01": "2026-11-04" },
+    removed: {}
 };
 
 module.exports = {
@@ -62,7 +63,7 @@ module.exports = {
         assert.deepEqual(await stored(page), PROGRESS);
         await page.click("#reset");
         await page.click("#reset-confirm");
-        assert.deepEqual(await stored(page), { studied: {}, read: {}, last: null, answers: {}, simulations: [], practice: {} });
+        assert.deepEqual(await stored(page), { studied: {}, read: {}, last: null, answers: {}, simulations: [], practice: {}, removed: {} });
         await go(page, "#/");
         assert.match(await page.textContent("#summary"), /Obiettivi studiati: 0 su 19/);
     }

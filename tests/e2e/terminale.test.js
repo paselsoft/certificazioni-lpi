@@ -42,7 +42,7 @@ module.exports = {
         await page.waitForSelector("#practice-success:not([hidden])");
         assert.match(await page.textContent("#practice-success"), /Esercizio completato!.*pwd/s);
         assert.equal(await page.evaluate(() => document.activeElement.id), "terminal-input", "il fuoco resta sulla riga di comando");
-        assert.match((await stored(page)).practice["010-160/t2.3-01"], /^\d{4}-\d{2}-\d{2}$/);
+        assert.match((await stored(page)).practice["010-160/t2.3-01"], /^\d{4}-\d{2}-\d{2}T/);
         // ↑ e ↓ richiamano i comandi
         await page.press("#terminal-input", "ArrowUp");
         assert.equal(await page.inputValue("#terminal-input"), "pwd");
