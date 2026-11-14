@@ -33,6 +33,11 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
 - **Progressi**: «Ho studiato questo obiettivo», «Ho letto questa lezione», le risposte alle domande,
   barre dei progressi.
   Restano nel browser; dalla pagina **Backup** si scaricano in un file e si ripristinano.
+- **Sincronizzazione fra i dispositivi** (come in Pipe Dreams): dalla pagina **Backup** si collega
+  un repository GitHub privato con una chiave; i progressi vanno nel file
+  `certificazioni-lpi.json` e si ritrovano uniti su iMac, telefono, tablet e PC dell'ufficio.
+  Vanno bene lo stesso repository e la stessa chiave di Pipe Dreams (dove Pipe Dreams è già
+  collegato basta un tocco). Vince la modifica più recente, anche togliendo una spunta.
 - **Senza connessione**: alla prima apertura (da un indirizzo http/https) il browser salva l'app e
   tutte le lezioni; dopo funziona anche offline.
 
@@ -62,7 +67,8 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | File | Cosa fa |
 |---|---|
 | `index.html`, `style.css`, `app.js` | pagine e navigazione (`#/`, `#/010-160/obiettivo/2.1`, `#/010-160/lezione/2.1_01`, `#/backup`) |
-| `store.js` | progressi e preferenze nel browser, backup |
+| `store.js` | progressi e preferenze nel browser, backup, unione dei progressi di più dispositivi |
+| `sync.js` | sincronizzazione con un repository GitHub privato (da Pipe Dreams) |
 | `lesson-view.js` | lettore delle lezioni (da Pipe Dreams) |
 | `quiz.js` | le domande di un obiettivo, una alla volta (`#/010-160/domande/2.1`) |
 | `exam-sim.js` | la simulazione d'esame (`#/simulazione`, `#/simulazione/risultato`) |

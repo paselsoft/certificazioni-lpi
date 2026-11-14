@@ -68,7 +68,7 @@ module.exports = {
         await open(page, { hash: "#/010-160/lezione/2.1_02" });
         assert.equal(await page.textContent("main h1"), "2.1 Lezione 2");
         await page.check("#lesson-read");
-        assert.match((await stored(page)).read["010-160/2.1_02"], /^\d{4}-\d{2}-\d{2}$/);
+        assert.match((await stored(page)).read["010-160/2.1_02"], /^\d{4}-\d{2}-\d{2}T/);
         const pager = await page.$$eval(".lesson-end .pager a", nodes => nodes.map(node => node.textContent));
         assert.deepEqual(pager, ["← 2.1 lezione 1 di 2", "Obiettivo 2.1", "2.2 lezione unica →"]);
         await page.click(".lesson-end a.next");

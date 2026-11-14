@@ -470,7 +470,9 @@ function renderBackup() {
     saveTitle.id = "salva";
     save.appendChild(saveTitle);
     const summary = examSummary(currentExam());
-    save.appendChild(el("p", "", `Adesso: ${progressCounts(progress)}.`));
+    const now = el("p", "", `Adesso: ${progressCounts(progress)}.`);
+    now.id = "backup-now";
+    save.appendChild(now);
     const download = el("button", "button primary", "⬇ Scarica il backup");
     download.type = "button";
     download.id = "backup-download";
@@ -489,6 +491,7 @@ function renderBackup() {
     save.appendChild(download);
     save.appendChild(el("p", "hint", "Il file si chiama come certificazioni-lpi-backup-2026-11-12.json e finisce nella cartella Download."));
     page.appendChild(save);
+    page.appendChild(syncPanel());
 
     const restore = el("section", "block");
     restore.setAttribute("aria-labelledby", "ripristina");
@@ -528,7 +531,7 @@ function renderBackup() {
     const resetBox = el("div", "backup-result");
     resetButton.onclick = () => {
         resetBox.innerHTML = "";
-        resetBox.appendChild(el("p", "warning", "Cancello tutti i progressi di questo browser? Prima, se vuoi, scarica un backup."));
+        resetBox.appendChild(el("p", "warning", `Cancello tutti i progressi di questo browser? Prima, se vuoi, scarica un backup.${syncWarning()}`));
         const yes = el("button", "button danger", "Sì, azzera");
         yes.type = "button";
         yes.id = "reset-confirm";
@@ -550,6 +553,7 @@ function renderBackup() {
     build.id = "app-build";
     page.appendChild(build);
     main.appendChild(page);
+    renderSyncPanel();
     return "Backup dei progressi";
 }
 
@@ -565,13 +569,17 @@ function progressCounts(data) {
     ].join(", ");
 }
 
+// Con la sincronizzazione collegata, i progressi salvati su GitHub tornano alla prossima unione
+const syncWarning = () => syncState.config
+    ? " Attenzione: la sincronizzazione è collegata e riunirà i progressi salvati su GitHub. Per ripartire davvero da capo, scollegala prima su tutti i dispositivi." : "";
+
 function showBackup(result, backup) {
     result.innerHTML = "";
     if (backup.error) {
         result.appendChild(el("p", "warning", backup.error));
         return;
     }
-    result.appendChild(el("p", "", `Backup${backup.date ? ` del ${formatDate(backup.date)}` : ""}: ${progressCounts(backup.progress)}. Sostituisce i progressi di adesso.`));
+    result.appendChild(el("p", "", `Backup${backup.date ? ` del ${formatDate(backup.date)}` : ""}: ${progressCounts(backup.progress)}. Sostituisce i progressi di adesso.${syncWarning()}`));
     const apply = el("button", "button primary", "Ripristina questo backup");
     apply.type = "button";
     apply.id = "backup-apply";
