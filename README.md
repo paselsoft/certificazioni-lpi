@@ -5,7 +5,7 @@ Professional Institute (e in seguito a LPIC-1): obiettivi d'esame e lezioni uffi
 da leggere anche senza connessione, domande originali con spiegazioni, un ripasso quotidiano, la
 simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](docs/PIANO.md).
 
-## Cosa c'è (tappe da M1 a M5)
+## Cosa c'è (tappe da M1 a M6)
 
 - **Obiettivi**: i 5 argomenti e i 19 obiettivi dell'esame, con il peso, la descrizione, le aree di
   conoscenza e i file, termini e comandi da conoscere (dalla traduzione italiana ufficiale degli
@@ -95,7 +95,7 @@ Strumenti e controlli:
 python3 tools/import-objectives.py     # rigenera data/exam-010-160.js dalla wiki LPI
 python3 tools/import-lpi-lessons.py    # riscarica le lezioni e controlla che il testo sia identico all'originale
 node tools/check-data.js [--online]    # controlla dati, lezioni, licenza, file (e i link, con --online)
-node tools/check-questions.js [--stats] # domande: formato, copertura per peso, nessuna frase copiata dalle lezioni
+node tools/check-questions.js [--stats] # domande: formato, copertura per peso, forme accettate nei completamenti, nessuna frase copiata dalle lezioni
 node tools/check-shell.js [filtro]     # la shell simulata confrontata con Bash vero (serve Linux)
 node tools/build-palestra.js           # rigenera palestra/palestra.sh dagli esercizi (dopo ogni modifica)
 node tools/check-palestra.js [--installa] # la palestra prepara le stesse home del simulatore (--installa: da root)

@@ -121,6 +121,18 @@ module.exports = {
             await page.click("#check");
             assert.equal(await page.textContent("#feedback-title"), "✅ Giusto!", answer);
         }
+        // Altre forme giuste dello stesso comando (alsoAccepted) e forme sbagliate (notAccepted)
+        const samples = await page.evaluate(() => QUESTIONS.filter(q => q.type === "fill" && (q.alsoAccepted || q.notAccepted))
+            .map(q => ({ id: q.id, objective: q.objective, right: q.alsoAccepted || [], wrong: q.notAccepted || [] })));
+        assert.ok(samples.length >= 12, "ci sono completamenti con più forme accettate");
+        for (const sample of samples) {
+            for (const [answer, title] of [...sample.right.map(a => [a, "✅ Giusto!"]), ...sample.wrong.map(a => [a, "Non è giusto"])]) {
+                await only(page, sample.objective, [sample.id]);
+                await page.fill("#fill-answer", answer);
+                await page.click("#check");
+                assert.equal(await page.textContent("#feedback-title"), title, `${sample.id}: ${answer}`);
+            }
+        }
         await only(page, "3.1", ["3.1-01"]);
         await page.fill("#fill-answer", "tar -xzf backup.tar.gz documenti");
         await page.click("#check");

@@ -7,8 +7,9 @@ addQuestions("010-160", [
         id: "3.1-01", type: "fill", ref: "3.1_01#Strumenti di Archiviazione", placeholder: "comando",
         text: "Scrivi il comando `tar` che crea l'archivio compresso con gzip `backup.tar.gz` con dentro la directory `documenti`.",
         answers: ["tar -czf backup.tar.gz documenti", "tar czf backup.tar.gz documenti", "tar -cvzf backup.tar.gz documenti", "tar -zcf backup.tar.gz documenti"],
-        pattern: "^(sudo )?tar -?(?=[cvz]*c)(?=[cvz]*z)[cvz]{2,3}f backup\\.tar\\.gz documenti/?$",
-        notAccepted: ["tar -xzf backup.tar.gz documenti", "tar -cf backup.tar.gz documenti", "tar -czf documenti backup.tar.gz"],
+        pattern: "^(sudo )?tar (-?(?=[cvz]*c)(?=[cvz]*z)[cvz]{2,3}f|(?=[cvzf]*c)(?=[cvzf]*z)(?=[cvzf]*f)[cvzf]{3,4}|-c (-v )?-z (-v )?-f|-z (-v )?-c (-v )?-f|-(cz|zc) -f|-c -zf|-z -cf) backup\\.tar\\.gz documenti/?$",
+        alsoAccepted: ["tar cfz backup.tar.gz documenti", "tar -c -z -f backup.tar.gz documenti", "tar -cz -f backup.tar.gz documenti", "tar -zcvf backup.tar.gz documenti/"],
+        notAccepted: ["tar -xzf backup.tar.gz documenti", "tar -cf backup.tar.gz documenti", "tar -czf documenti backup.tar.gz", "tar -cfz backup.tar.gz documenti"],
         why: "`c` crea l'archivio, `z` lo comprime con gzip, `f` indica il nome del file (che va subito dopo). L'ordine di `c` e `z` non conta; `v` (facoltativa) elenca i file mentre lavora."
     },
     {
@@ -76,6 +77,9 @@ addQuestions("010-160", [
         id: "3.1-08", type: "fill", ref: "3.1_01#Gestire i File ZIP", placeholder: "comando",
         text: "Scrivi il comando che estrae i file dell'archivio `foto.zip` nella directory corrente.",
         answers: ["unzip foto.zip"],
+        pattern: "^unzip (\\./)?foto\\.zip$",
+        alsoAccepted: ["unzip ./foto.zip"],
+        notAccepted: ["zip foto.zip", "unzip -l foto.zip"],
         why: "`unzip` estrae gli archivi zip; `unzip -l foto.zip` invece elenca solo il contenuto."
     },
     {
@@ -160,6 +164,9 @@ addQuestions("010-160", [
         id: "3.2-06", type: "fill", ref: "3.2_01#Pipe", placeholder: "comando",
         text: "Scrivi un comando che conta quante righe ha il file `nomi.txt`.",
         answers: ["wc -l nomi.txt", "wc --lines nomi.txt", "wc -l < nomi.txt", "cat nomi.txt | wc -l"],
+        pattern: "^(wc (-l|--lines) (\\./)?nomi\\.txt|wc (-l|--lines) ?< ?(\\./)?nomi\\.txt|cat (\\./)?nomi\\.txt ?\\| ?wc (-l|--lines)|grep -c ('{2}|\"{2}) nomi\\.txt)$",
+        alsoAccepted: ["wc -l <nomi.txt", "cat nomi.txt|wc -l", "grep -c '' nomi.txt"],
+        notAccepted: ["wc nomi.txt", "wc -w nomi.txt", "wc -c nomi.txt"],
         why: "`wc -l` conta le righe; `wc` da solo mostra righe, parole e byte."
     },
     {
