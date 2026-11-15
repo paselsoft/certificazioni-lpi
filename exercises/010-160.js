@@ -361,6 +361,40 @@ addExercises("010-160", [
         solution: ["PATH=$PATH:~/bin", "saluta"],
         explain: "Con la directory nel `PATH` lo script si usa come un comando qualsiasi, da ogni directory. Per averlo sempre, la stessa riga va in `~/.bashrc`."
     },
+    {
+        id: "t3.3-08", title: "Un ciclo su una riga",
+        task: "Con un ciclo `for` scritto su una sola riga, stampa per ogni file `.jpg` della directory `foto` una riga come questa: `Foto: foto/mare.jpg`",
+        goals: [{ text: "Il ciclo stampa una riga per ogni foto", output: "same", command: "^for\\s+\\w+\\s+in\\s.*\\bdone\\s*$" }],
+        hint: "La forma è `for f in ELENCO; do COMANDO; done`. L'elenco può essere `foto/*.jpg`; dentro il ciclo il nome del file è `$f`.",
+        solution: ["for f in foto/*.jpg; do echo \"Foto: $f\"; done"],
+        explain: "La shell sostituisce `foto/*.jpg` con i nomi dei file; il ciclo esegue il comando una volta per ognuno, con il nome nella variabile `f`. In uno script si scrive su più righe: `for`, `do`, i comandi, `done`."
+    },
+    {
+        id: "t3.3-09", title: "Un saluto per ciascuno",
+        task: "Leggi lo script `saluti.sh` con `cat`: saluta ogni persona che riceve come argomento. Avvialo in modo che saluti, in quest'ordine, `Anna`, `Luca` e `Sara`.",
+        setup: { files: { "/home/anna/saluti.sh": { content: "#!/bin/bash\n# Saluta tutti gli argomenti\nfor nome in \"$@\"; do\n    echo \"Ciao, $nome!\"\ndone\necho \"Ho salutato $# persone\"\n", mode: "755" } } },
+        goals: [{ text: "Lo script saluta Anna, Luca e Sara", output: "same", command: "saluti\\.sh\\s" }],
+        hint: "`\"$@\"` sono tutti gli argomenti, uno per uno: scrivili dopo il nome dello script, separati da spazi.",
+        solution: ["./saluti.sh Anna Luca Sara"],
+        explain: "`for nome in \"$@\"` ripete i comandi per ogni argomento. Le virgolette intorno a `$@` tengono intero anche un argomento con uno spazio, come `'Mario Rossi'`."
+    },
+    {
+        id: "t3.3-10", title: "Se il file esiste",
+        task: "Scrivi su una sola riga un `if` che controlla se nella tua home esiste il file `note.txt` e, se c'è, stampa `trovato`.",
+        goals: [{ text: "L'`if` controlla il file e stampa `trovato`", output: "same", command: "^if\\s+(\\[|test)\\s+-[ef]\\s+\\S*note\\.txt.*\\bfi\\s*$" }],
+        hint: "La forma è `if CONDIZIONE; then COMANDO; fi`. La condizione «è un file» si scrive `[ -f nome ]`, con gli spazi dopo `[` e prima di `]`.",
+        solution: ["if [ -f note.txt ]; then echo trovato; fi"],
+        explain: "`[` è un comando (lo stesso di `test`): esce con 0 se la condizione è vera, e `if` guarda proprio il codice di uscita. `-f` file, `-d` directory, `-e` esiste; per i numeri `-eq`, `-ne`, `-lt`, `-gt`."
+    },
+    {
+        id: "t3.3-11", title: "Leggere uno script",
+        task: "Leggi lo script `controlla.sh` con `cat` e capisci quando esce con il codice 2. Avvialo in modo che succeda, poi mostra il codice di uscita.",
+        setup: { files: { "/home/anna/controlla.sh": { content: "#!/bin/bash\nif [ $# -ne 1 ]; then\n    echo \"Uso: $0 FILE\"\n    exit 1\nfi\nif [ -f \"$1\" ]; then\n    echo \"$1 esiste\"\nelse\n    echo \"$1 non esiste\"\n    exit 2\nfi\n", mode: "755" } } },
+        goals: [{ text: "Dopo lo script, `echo` mostra il codice di uscita 2", output: "same", command: "^echo\\b.*\\$\\?" }],
+        hint: "Senza argomenti (o con più di uno) lo script esce con 1. Con un argomento solo guarda se è un file: prova con un nome che non esiste.",
+        solution: ["./controlla.sh nonesiste.txt", "echo $?"],
+        explain: "`$# -ne 1` vuol dire «il numero degli argomenti è diverso da 1». Il ramo `else` scatta quando `[ -f \"$1\" ]` è falso: lì lo script sceglie di uscire con 2."
+    },
 
     // ---- 5.3 Permessi e proprietà ----
     {

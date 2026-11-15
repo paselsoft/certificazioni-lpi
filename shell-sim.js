@@ -243,7 +243,7 @@ function createShell(setup = {}) {
         lastOutput: "", lastErrors: "", lastCommand: "", tty: true,
         // Gli argomenti dello script in esecuzione ($1, $2..., $#, $@), il suo nome ($0), quanti
         // script sono aperti uno dentro l'altro e lo stdin che lo script ha ricevuto
-        args: [], arg0: "bash", depth: 0, stdin: null
+        args: [], arg0: "bash", depth: 0, stdin: null, loops: 0
     };
     const base = simBaseTree();
     const add = (type, list) => Object.entries(list || {}).forEach(([path, spec]) => {
@@ -335,10 +335,17 @@ function simTokenize(text) {
     for (let i = 0; i < text.length; i++) {
         const c = text[i];
         const atWordStart = word === null;
-        if (c === " " || c === "\t" || c === "\n") {
+        if (c === " " || c === "\t") {
             pushWord();
+        } else if (c === "\n") {
+            // In uno script l'a capo separa i comandi, come ;
+            pushWord();
+            tokens.push({ type: "op", op: "\n" });
         } else if (c === "#" && atWordStart) {
-            break;
+            // Commento: fino alla fine della riga
+            const end = text.indexOf("\n", i);
+            if (end === -1) break;
+            i = end - 1;
         } else if (c === "'") {
             const end = text.indexOf("'", i + 1);
             if (end === -1) throw new SimSyntaxError("bash: manca l'apice singolo di chiusura '");
@@ -423,44 +430,167 @@ function simTokenize(text) {
     return tokens;
 }
 
-// Struttura: elenco di { pipeline: [comando], op } dove op (;, &&, ||) collega alla successiva.
-// Comando: { words, redirects: [{ fd, op, to, target }] }
+// Struttura: elenco di { pipeline: [comando], op, negate } dove op (;, &&, ||) collega alla
+// successiva e negate è il ! davanti alla pipeline.
+// Comando semplice: { words, redirects: [{ fd, op, to, target }] }
+// Ciclo: { kind: "for", name, items (null: "$@"), body: elenco, redirects }
+// Condizione: { kind: "if", branches: [{ condition: elenco, body: elenco }], otherwise: elenco o null, redirects }
+
+// Manca la fine di un for o di un if: in uno script si leggono altre righe
+class SimIncomplete extends SimSyntaxError {}
+
+const SIM_KEYWORDS = new Set(["for", "in", "do", "done", "if", "then", "elif", "else", "fi"]);
+const SIM_NO_KEYWORDS = { while: "i cicli while", until: "i cicli until", case: "il costrutto case", function: "le funzioni", select: "il costrutto select" };
+
 function simParse(text) {
     const tokens = simTokenize(text);
-    const list = [];
-    let pipeline = [];
-    let command = { words: [], redirects: [] };
-    const endCommand = (token) => {
-        if (!command.words.length && !command.redirects.length) throw new SimSyntaxError(`bash: errore di sintassi vicino al token inatteso '${token}'`);
-        pipeline.push(command);
-        command = { words: [], redirects: [] };
+    let pos = 0;
+    const peek = () => tokens[pos];
+    const show = token => !token ? "newline" : token.type === "op" ? (token.op === "\n" ? "newline" : token.op) : token.type === "redir" ? token.op : token.parts.map(part => part.text ?? `$${part.name}`).join("");
+    const unexpected = token => new SimSyntaxError(`bash: errore di sintassi vicino al token inatteso '${show(token)}'`);
+    // Una parola chiave vale solo scritta così com'è, senza virgolette
+    const keyword = token => token && token.type === "word" && token.parts.length === 1 && token.parts[0].t === "lit" && !token.parts[0].q && SIM_KEYWORDS.has(token.parts[0].text) ? token.parts[0].text : null;
+    const plain = token => token && token.type === "word" && token.parts.length === 1 && token.parts[0].t === "lit" && !token.parts[0].q ? token.parts[0].text : null;
+    const isOp = (token, op) => token && token.type === "op" && token.op === op;
+    const skipNewlines = () => { while (isOp(peek(), "\n")) pos++; };
+    const expect = (word, missing) => {
+        skipNewlines();
+        if (!peek()) throw new SimIncomplete(`bash: errore di sintassi: fine inattesa, manca \`${missing}'`);
+        if (keyword(peek()) !== word) throw unexpected(peek());
+        pos++;
     };
-    for (let i = 0; i < tokens.length; i++) {
-        const token = tokens[i];
-        if (token.type === "word") {
-            command.words.push(token.parts);
-        } else if (token.type === "redir") {
-            if (token.op === ">&") {
-                command.redirects.push(token);
-                continue;
-            }
-            const next = tokens[i + 1];
-            if (!next || next.type !== "word") throw new SimSyntaxError("bash: errore di sintassi: dopo il reindirizzamento serve il nome di un file");
-            command.redirects.push({ ...token, target: next.parts });
-            i++;
-        } else if (token.op === "|") {
-            endCommand("|");
-        } else {
-            endCommand(token.op);
-            list.push({ pipeline, op: token.op });
-            pipeline = [];
+
+    function redirect(command) {
+        const token = tokens[pos++];
+        if (token.op === ">&") {
+            command.redirects.push(token);
+            return;
         }
+        const next = peek();
+        if (!next || next.type !== "word") throw new SimSyntaxError("bash: errore di sintassi: dopo il reindirizzamento serve il nome di un file");
+        command.redirects.push({ ...token, target: next.parts });
+        pos++;
     }
-    if (command.words.length || command.redirects.length) pipeline.push(command);
-    else if (pipeline.length) throw new SimSyntaxError("bash: errore di sintassi: la riga finisce con |");
-    if (pipeline.length) list.push({ pipeline, op: null });
-    else if (list.length && list[list.length - 1].op !== ";") throw new SimSyntaxError(`bash: errore di sintassi: la riga finisce con ${list[list.length - 1].op}`);
-    return list;
+
+    // Un elenco di comandi, fino a una delle parole chiave in stops (o alla fine)
+    function list(stops) {
+        const items = [];
+        skipNewlines();
+        while (peek() && !stops.includes(keyword(peek()))) {
+            const item = pipeline();
+            const token = peek();
+            if (isOp(token, "&&") || isOp(token, "||")) {
+                pos++;
+                skipNewlines();
+                if (!peek()) throw new SimSyntaxError(`bash: errore di sintassi: la riga finisce con ${token.op}`);
+                items.push({ ...item, op: token.op });
+            } else if (isOp(token, ";") || isOp(token, "\n")) {
+                pos++;
+                skipNewlines();
+                items.push({ ...item, op: ";" });
+            } else {
+                items.push({ ...item, op: null });
+                break;
+            }
+        }
+        return items;
+    }
+
+    function pipeline() {
+        let negate = false;
+        if (plain(peek()) === "!") {
+            negate = true;
+            pos++;
+        }
+        const commands = [command()];
+        while (isOp(peek(), "|")) {
+            pos++;
+            skipNewlines();
+            if (!peek()) throw new SimSyntaxError("bash: errore di sintassi: la riga finisce con |");
+            commands.push(command());
+        }
+        return { pipeline: commands, negate };
+    }
+
+    function command() {
+        const word = keyword(peek());
+        let result;
+        if (word === "for") result = forLoop();
+        else if (word === "if") result = condition();
+        else if (word && word !== "in") throw unexpected(peek());
+        else if (SIM_NO_KEYWORDS[plain(peek())]) throw new SimSyntaxError(`bash: ${plain(peek())}: nel simulatore ${SIM_NO_KEYWORDS[plain(peek())]} non sono disponibili (ci sono for e if)`);
+        else {
+            result = { words: [], redirects: [] };
+            while (peek() && peek().type !== "op") {
+                if (peek().type === "word") result.words.push(tokens[pos++].parts);
+                else redirect(result);
+            }
+            if (!result.words.length && !result.redirects.length) throw unexpected(peek());
+            return result;
+        }
+        // Dopo done e fi possono esserci dei reindirizzamenti: done > elenco.txt
+        while (peek() && peek().type === "redir") redirect(result);
+        if (peek() && peek().type === "word") throw unexpected(peek());
+        return result;
+    }
+
+    function body(stops, after) {
+        const items = list(stops);
+        if (!items.length) {
+            if (!peek()) throw new SimIncomplete(`bash: errore di sintassi: fine inattesa, manca \`${after}'`);
+            throw unexpected(peek());
+        }
+        return items;
+    }
+
+    function forLoop() {
+        pos++;
+        const name = plain(peek());
+        // Un nome non valido (for 1a in ...) si scopre quando il ciclo viene eseguito, come in Bash
+        if (!name) {
+            if (!peek()) throw new SimSyntaxError("bash: errore di sintassi: dopo for serve il nome di una variabile");
+            throw unexpected(peek());
+        }
+        pos++;
+        let items = null;
+        if (keyword(peek()) === "in") {
+            pos++;
+            items = [];
+            while (peek() && peek().type === "word") items.push(tokens[pos++].parts);
+        }
+        if (peek() && !isOp(peek(), ";") && !isOp(peek(), "\n")) throw unexpected(peek());
+        if (peek()) pos++;
+        expect("do", "do");
+        const loop = body(["done"], "done");
+        expect("done", "done");
+        return { kind: "for", name, items, body: loop, redirects: [] };
+    }
+
+    function condition() {
+        pos++;
+        const branches = [];
+        let otherwise = null;
+        for (;;) {
+            const test = body(["then"], "then");
+            expect("then", "then");
+            branches.push({ condition: test, body: body(["elif", "else", "fi"], "fi") });
+            if (!peek()) throw new SimIncomplete("bash: errore di sintassi: fine inattesa, manca `fi'");
+            const word = keyword(peek());
+            if (!["elif", "else", "fi"].includes(word)) throw unexpected(peek());
+            pos++;
+            if (word === "elif") continue;
+            if (word === "else") {
+                otherwise = body(["fi"], "fi");
+                expect("fi", "fi");
+            }
+            break;
+        }
+        return { kind: "if", branches, otherwise, redirects: [] };
+    }
+
+    const result = list([]);
+    if (peek()) throw unexpected(peek());
+    return result;
 }
 
 // ---- Espansione: variabili, ~, divisione in parole, caratteri jolly ----
@@ -615,6 +745,8 @@ function simRun(sh, text) {
         list = simParse(text);
     } catch (error) {
         if (!(error instanceof SimSyntaxError)) throw error;
+        // Nel terminale non si continua sulla riga dopo: for e if si scrivono su una riga sola
+        if (error instanceof SimIncomplete) error.message += " (nel terminale scrivi tutto su una riga, separando con ; per esempio: for f in a b; do echo $f; done)";
         display.push({ text: error.message, err: true });
         sh.lastErrors = error.message;
         sh.status = 2;
@@ -644,6 +776,7 @@ function simRunList(sh, list, display) {
             continue;
         }
         const result = simRunPipeline(sh, item.pipeline, display);
+        if (item.negate) sh.status = sh.status === 0 ? 1 : 0;
         if (result.clear) {
             clear = true;
             display.length = 0;
@@ -669,7 +802,8 @@ function simRunPipeline(sh, pipeline, display) {
         const command = pipeline[index];
         const last = index === pipeline.length - 1;
         // Dove vanno stdout (1) e stderr (2): "terminal", "pipe", oppure un file
-        const route = { 1: last ? { kind: "terminal" } : { kind: "pipe" }, 2: { kind: "terminal" } };
+        // (err: sul terminale conta come errore, anche per lo stdout mandato lì con >&2)
+        const route = { 1: last ? { kind: "terminal", err: false } : { kind: "pipe" }, 2: { kind: "terminal", err: true } };
         let stdin = input;
         let stdinInfo = inputInfo;
         let failed = null;
@@ -710,8 +844,13 @@ function simRunPipeline(sh, pipeline, display) {
         if (failed) {
             result = { out: "", err: `${failed}\n`, code: 1 };
         } else {
-            const words = command.words.flatMap((parts, i) => i === 0 ? simExpandWord(sh, parts) : simExpandWord(sh, parts));
-            result = simExecute(sh, words, stdin, { stdinInfo, tty: sh.tty && route[1].kind === "terminal" });
+            const tty = sh.tty && route[1].kind === "terminal";
+            if (command.kind) {
+                result = simRunCompound(sh, command, stdin, tty);
+            } else {
+                const words = command.words.flatMap(parts => simExpandWord(sh, parts));
+                result = simExecute(sh, words, stdin, { stdinInfo, tty });
+            }
             if (result.clear) clear = true;
         }
         // Consegna stdout e stderr secondo la loro destinazione (prima stdout, poi stderr; uno
@@ -724,8 +863,8 @@ function simRunPipeline(sh, pipeline, display) {
             if (!text) continue;
             const target = route[fd];
             if (target.kind === "terminal") {
-                display.push({ text, err: fd === 2 });
-                if (fd === 1) {
+                display.push({ text, err: target.err });
+                if (!target.err) {
                     sh.lastOutput += text;
                     sh.lineOutput += text;
                 } else {
@@ -750,6 +889,75 @@ function simRunPipeline(sh, pipeline, display) {
 }
 
 class SimRedirectError extends Error {}
+
+// break e continue dentro un ciclo for
+class SimLoopControl extends Error {
+    constructor(kind) {
+        super(kind);
+        this.kind = kind;
+    }
+}
+
+// Esegue un for o un if nella shell corrente. L'output dei comandi interni viene raccolto, così
+// si può reindirizzare tutto insieme (done > file, fi | sort); il codice di uscita è quello
+// dell'ultimo comando eseguito (0 se il ciclo non gira o nessun ramo dell'if è vero)
+function simRunCompound(sh, command, stdin, tty) {
+    const saved = { tty: sh.tty, stdin: sh.stdin, lastOutput: sh.lastOutput, lineOutput: sh.lineOutput, lastErrors: sh.lastErrors };
+    sh.tty = tty;
+    if (stdin !== null) sh.stdin = stdin;
+    const display = [];
+    try {
+        if (command.kind === "for" && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(command.name)) {
+            display.push({ text: `bash: \`${command.name}': non è un identificatore valido\n`, err: true });
+            sh.status = 1;
+        } else if (command.kind === "for") {
+            const values = command.items === null ? [...sh.args] : command.items.flatMap(parts => simExpandWord(sh, parts));
+            sh.status = 0;
+            sh.loops++;
+            try {
+                for (const value of values) {
+                    sh.vars[command.name] = value;
+                    try {
+                        simRunList(sh, command.body, display);
+                    } catch (error) {
+                        if (!(error instanceof SimLoopControl)) throw error;
+                        display.push(...(error.pending || []));
+                        sh.status = 0;
+                        if (error.kind === "break") break;
+                    }
+                }
+            } finally {
+                sh.loops--;
+            }
+        } else {
+            let matched = false;
+            for (const branch of command.branches) {
+                simRunList(sh, branch.condition, display);
+                if (sh.status === 0) {
+                    simRunList(sh, branch.body, display);
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                sh.status = 0;
+                if (command.otherwise) simRunList(sh, command.otherwise, display);
+            }
+        }
+    } catch (error) {
+        // exit, break e continue attraversano il comando: quello che era già stato scritto non si perde
+        if (error instanceof SimExit || error instanceof SimLoopControl) error.pending = [...display, ...(error.pending || [])];
+        throw error;
+    } finally {
+        Object.assign(sh, saved);
+    }
+    return {
+        chunks: display,
+        out: display.filter(chunk => !chunk.err).map(chunk => chunk.text).join(""),
+        err: display.filter(chunk => chunk.err).map(chunk => chunk.text).join(""),
+        code: sh.status
+    };
+}
 
 // Apre un file per scriverci (> lo svuota, >> no), creandolo se non c'è
 function simOpenForWrite(sh, path, append) {
@@ -888,7 +1096,8 @@ const SIM_MAX_DEPTH = 20;
 function simRunScript(sh, text, name, args, stdin, ctx = {}) {
     if (sh.depth >= SIM_MAX_DEPTH) return { out: "", err: `bash: ${name}: troppi script aperti uno dentro l'altro (lo script richiama se stesso?)\n`, code: 126 };
     const saved = {};
-    for (const key of ["vars", "exported", "cwd", "args", "arg0", "tty", "stdin", "lastOutput", "lineOutput", "lastErrors"]) saved[key] = sh[key];
+    for (const key of ["vars", "exported", "cwd", "args", "arg0", "tty", "stdin", "loops", "lastOutput", "lineOutput", "lastErrors"]) saved[key] = sh[key];
+    sh.loops = 0;
     const env = ctx.env || {};
     sh.vars = { ...Object.fromEntries([...sh.exported].filter(key => sh.vars[key] !== undefined).map(key => [key, sh.vars[key]])), ...env };
     sh.exported = new Set([...sh.exported, ...Object.keys(env)]);
@@ -903,13 +1112,28 @@ function simRunScript(sh, text, name, args, stdin, ctx = {}) {
     try {
         const lines = text.split("\n");
         for (let i = 0; i < lines.length; i++) {
+            // Un for o un if può occupare più righe: si leggono finché il comando è completo
             let list;
-            try {
-                list = simParse(lines[i]);
-            } catch (error) {
-                if (!(error instanceof SimSyntaxError)) throw error;
+            let chunk = lines[i];
+            const first = i;
+            let problem = null;
+            for (;;) {
+                try {
+                    list = simParse(chunk);
+                    break;
+                } catch (error) {
+                    if (!(error instanceof SimSyntaxError)) throw error;
+                    if (error instanceof SimIncomplete && i + 1 < lines.length) {
+                        chunk += `\n${lines[++i]}`;
+                        continue;
+                    }
+                    problem = error;
+                    break;
+                }
+            }
+            if (problem) {
                 // Come Bash: un errore di sintassi ferma lo script
-                display.push({ text: `${name}: riga ${i + 1}: ${error.message.replace(/^bash: /, "")}\n`, err: true });
+                display.push({ text: `${name}: riga ${first + 1}: ${problem.message.replace(/^bash: /, "")}\n`, err: true });
                 sh.status = 2;
                 break;
             }
@@ -918,6 +1142,7 @@ function simRunScript(sh, text, name, args, stdin, ctx = {}) {
         code = sh.status;
     } catch (error) {
         if (!(error instanceof SimExit)) throw error;
+        display.push(...(error.pending || []));
         if (error.complaint) display.push({ text: `${name}: ${error.complaint}\n`, err: true });
         code = error.code;
     } finally {

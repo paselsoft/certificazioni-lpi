@@ -116,6 +116,39 @@ module.exports = {
         assert.match(await outputText(page), /script: bash script\.sh, \.\/script\.sh/);
     },
 
+    "cicli for, if e test: su una riga nel terminale, su più righe negli script": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").pop();
+        await type(page, "for f in foto/*.jpg; do echo \"Foto: $f\"; done");
+        assert.match(await outputText(page), /Foto: foto\/mare\.jpg\nFoto: foto\/montagna\.jpg$/);
+        await type(page, "if [ -d documenti ]; then echo directory; else echo altro; fi");
+        assert.equal(await last(), "directory");
+        await type(page, "[ 3 -gt 5 ]; echo $?");
+        assert.equal(await last(), "1");
+        await type(page, "if ! grep -q burro documenti/spesa.txt; then echo manca il burro; fi");
+        assert.equal(await last(), "manca il burro");
+        // Il ciclo si può mandare in una pipe o in un file
+        await type(page, "for n in 3 1 2; do echo $n; done | sort > numeri.txt; cat numeri.txt");
+        assert.match(await outputText(page), /1\n2\n3$/);
+        // Nel terminale non si va a capo: il messaggio spiega come fare
+        await type(page, "for f in a b");
+        assert.match(await last(), /manca `do' \(nel terminale scrivi tutto su una riga, separando con ;/);
+        await type(page, "while true; do echo x; done");
+        assert.match(await last(), /i cicli while non sono disponibili/);
+        // Uno script su più righe, con if, for ed exit
+        for (const line of ["if [ $# -eq 0 ]; then", "    echo Uso: $0 NOMI", "    exit 1", "fi", "for nome in \"$@\"; do", "    echo \"Ciao, $nome\"", "done"]) {
+            await type(page, `echo '${line}' >> saluti.sh`);
+        }
+        await type(page, "bash saluti.sh; echo $?");
+        assert.match(await outputText(page), /Uso: saluti\.sh NOMI\n1$/);
+        await type(page, "bash saluti.sh Anna 'Luca Bianchi'");
+        assert.match(await outputText(page), /Ciao, Anna\nCiao, Luca Bianchi$/);
+        await type(page, "echo 'for f in a; do' > rotto.sh; bash rotto.sh; echo $?");
+        assert.match(await outputText(page), /rotto\.sh: riga 1: errore di sintassi: fine inattesa, manca `done'\n2$/);
+        await type(page, "help");
+        assert.match(await outputText(page), /cicli e condizioni: for f in/);
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");

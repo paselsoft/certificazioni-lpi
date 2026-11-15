@@ -206,15 +206,25 @@ la palestra davvero ed esegue le soluzioni da anna.
   `$?`, `PATH`. 31 sequenze in più confrontate con Bash vero; la palestra controlla il codice di
   uscita della soluzione invece di pretendere 0.
 
+- **Script nel simulatore, secondo passo (15/11/2026).** `for VAR in ELENCO; do ...; done` (anche
+  `for VAR; do`, che scorre `"$@"`, con `break` e `continue`), `if ...; then ...; elif ...; else
+  ...; fi`, `!` davanti a un comando, e `test` / `[ ... ]`: file (`-e -f -d -L -r -w -x -s`),
+  stringhe (`-z -n = == !=`), numeri (`-eq -ne -lt -le -gt -ge`), `!`. Il parser è diventato
+  ricorsivo (`simParse`): i cicli si annidano, e dopo `done` e `fi` valgono `|` e i
+  reindirizzamenti. Nel terminale si scrive tutto su una riga (se manca `done` o `fi` il messaggio
+  lo spiega); in uno script un `for` o un `if` può occupare più righe, perché le righe si leggono
+  finché il comando è completo. `>&2` manda davvero lo stdout tra gli errori. `while`, `until`,
+  `case` e le funzioni rispondono che non sono disponibili. Quattro esercizi nuovi per il 3.3 (da 7
+  a 11): un ciclo su una riga, `"$@"` in uno script, `if [ -f ... ]`, leggere uno script con `$#`
+  ed `exit`. 65 sequenze in più confrontate con Bash vero (345 in tutto).
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
-1. **Script nel simulatore (obiettivo 3.3, peso 4: il più pesante), secondo passo.** Il primo
-   passo è fatto (vedi sopra). Restano i cicli `for` e gli `if [ ... ]` con `test`, più gli altri
-   esercizi (3-4, per arrivare a 10 circa); poi, se servono, `$(...)`, `read`, `alias`. Le righe di
-   uno script oggi si eseguono una alla volta: `for` e `if` chiedono di leggere più righe insieme.
-   Ogni novità va confrontata con Bash vero (`tools/check-shell.js`).
+1. **Script nel simulatore: quello che resta.** I due passi sono fatti (vedi sopra): il 3.3 ha 11
+   esercizi. Solo se servono: `$(...)`, `read`, `alias`, i cicli `while` (chiedono anche `$((...))`),
+   `-a` e `-o` in `test`.
 2. **Esercizi per gli obiettivi senza pratica** (2.2, 4.3, 4.4, 5.1, 5.2: peso 11 su 40, zero
    esercizi). Mancano al simulatore: `man`, `info`, `locate`/`updatedb`, `ps`, `top`, `free`,
    `dmesg`, `ip`, `ping`, `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`;

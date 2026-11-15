@@ -3,7 +3,7 @@
 // ctx.stdinInfo: { regular, size } se lo stdin è un file reindirizzato con < (wc allinea i numeri).
 // I filtri sort, uniq, cut, tr, nl, tac, rev e sed usano il motore di Pipe Dreams.
 
-const SIM_BUILTINS = new Set(["cd", "pwd", "echo", "export", "unset", "type", "history", "help", "clear", "exit", "true", "false"]);
+const SIM_BUILTINS = new Set(["cd", "pwd", "echo", "export", "unset", "type", "history", "help", "clear", "exit", "true", "false", "test", "[", "break", "continue"]);
 
 // Comandi che esistono su un sistema vero ma non nel simulatore
 const SIM_UNAVAILABLE = Object.fromEntries([
@@ -1527,6 +1527,69 @@ function exitRun(sh, args) {
     throw new SimExit(((Number(args[0]) % 256) + 256) % 256);
 }
 
+function loopControl(sh, kind) {
+    if (!sh.loops) return { err: `bash: ${kind}: ha significato solo in un ciclo \`for'\n` };
+    throw new SimLoopControl(kind);
+}
+
+// test ESPRESSIONE oppure [ ESPRESSIONE ]: 0 se è vera, 1 se è falsa, 2 se è scritta male.
+// File: -e -f -d -L -r -w -x -s; stringhe: -z -n = == !=; numeri: -eq -ne -lt -le -gt -ge; ! nega
+function testRun(sh, name, args) {
+    const fail = message => ({ err: `bash: ${name}: ${message}\n`, code: 2 });
+    let words = [...args];
+    if (name === "[") {
+        if (words[words.length - 1] !== "]") return fail("manca `]'");
+        words.pop();
+    }
+    let negate = false;
+    while (words[0] === "!" && words.length > 1) {
+        negate = !negate;
+        words.shift();
+    }
+    const fileTest = (letter, path) => {
+        let node;
+        try {
+            node = simLookup(sh, path, letter !== "L").node;
+        } catch (error) {
+            if (!(error instanceof SimError)) throw error;
+            return false;
+        }
+        if (!node) return false;
+        if (letter === "e") return true;
+        if (letter === "f") return node.type === "f";
+        if (letter === "d") return node.type === "d";
+        if (letter === "L") return node.type === "l";
+        if (letter === "s") return node.type !== "f" || node.data.length > 0;
+        return canAccess(sh, node, { r: 4, w: 2, x: 1 }[letter]);
+    };
+    let value;
+    if (words.length === 0) {
+        value = false;
+    } else if (words.length === 1) {
+        value = words[0] !== "";
+    } else if (words.length === 2) {
+        const [op, operand] = words;
+        if (op === "-z") value = operand === "";
+        else if (op === "-n") value = operand !== "";
+        else if (/^-[efdLrwxs]$/.test(op)) value = fileTest(op[1], operand);
+        else return fail(`${op}: atteso un operatore unario`);
+    } else if (words.length === 3) {
+        const [left, op, right] = words;
+        if (op === "=" || op === "==") value = left === right;
+        else if (op === "!=") value = left !== right;
+        else if (/^-(eq|ne|lt|le|gt|ge)$/.test(op)) {
+            for (const number of [left, right]) {
+                if (!/^\s*[+-]?[0-9]+\s*$/.test(number)) return fail(`${number}: è attesa un'espressione intera`);
+            }
+            const a = Number(left), b = Number(right);
+            value = { eq: a === b, ne: a !== b, lt: a < b, le: a <= b, gt: a > b, ge: a >= b }[op.slice(1)];
+        } else return fail(`${op}: atteso un operatore binario`);
+    } else {
+        return fail("troppi argomenti (nel simulatore: una condizione alla volta, senza -a e -o)");
+    }
+    return { code: value !== negate ? 0 : 1 };
+}
+
 // bash script.sh [argomenti]: esegue lo script anche senza il permesso di esecuzione (basta
 // poterlo leggere)
 function bashRun(sh, name, args, stdin, ctx) {
@@ -1578,6 +1641,7 @@ const SIM_HELP = [
     "  permessi e utenti: chmod chown chgrp id whoami groups sudo",
     "  shell: echo export unset env type which history clear help",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
+    "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",
     "Funzionano anche | ; && || > >> < 2> 2>&1 &>, le virgolette, $VARIABILI, ~ e i caratteri jolly * ? [ ].",
     "Con ↑ e ↓ richiami i comandi precedenti."
 ];
@@ -1629,6 +1693,10 @@ const SIM_COMMANDS = {
     help: { run: () => ({ out: SIM_HELP.join("\n") + "\n" }) },
     clear: { run: () => ({ clear: true }) },
     exit: { run: exitRun },
+    test: { run: (sh, args) => testRun(sh, "test", args), help: "test -f file, test -d dir, test a = b, test 3 -lt 5" },
+    "[": { run: (sh, args) => testRun(sh, "[", args), help: "[ -f file ], [ -d dir ], [ a = b ], [ 3 -lt 5 ]" },
+    break: { run: sh => loopControl(sh, "break") },
+    continue: { run: sh => loopControl(sh, "continue") },
     bash: { run: (sh, args, stdin, ctx) => bashRun(sh, "bash", args, stdin, ctx), help: "bash script.sh argomenti" },
     sh: { run: (sh, args, stdin, ctx) => bashRun(sh, "sh", args, stdin, ctx), help: "sh script.sh argomenti" },
     true: { run: () => ({}) },

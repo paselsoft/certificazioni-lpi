@@ -29,7 +29,7 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
   rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
   risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
-- **Pratica al terminale**: 44 esercizi con i comandi dell'esame (directory, file, caratteri
+- **Pratica al terminale**: 48 esercizi con i comandi dell'esame (directory, file, caratteri
   jolly, archivi, grep e filtri, reindirizzamenti, script, permessi, link) su un piccolo Linux
   simulato nel browser, con gli obiettivi che si spuntano, suggerimento e soluzione; più un
   terminale libero. I filtri di testo vengono dal motore di Pipe Dreams; le soluzioni e oltre 200
