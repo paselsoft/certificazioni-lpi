@@ -102,10 +102,13 @@ for (const q of QUESTIONS) {
                     if (!re.test(value)) problems.push(`${name}: pattern non accetta la risposta ${answer}`);
                 }
                 for (const wrong of q.notAccepted || []) if (re.test(wrong)) problems.push(`${name}: pattern accetta la risposta sbagliata ${wrong}`);
+                // Altre forme giuste, che lo studente potrebbe scrivere: il modello le deve accettare
+                for (const right of q.alsoAccepted || []) if (!re.test(right)) problems.push(`${name}: pattern non accetta la risposta giusta ${right}`);
             } catch (error) {
                 problems.push(`${name}: pattern non valido: ${error.message}`);
             }
         }
+        if ((q.alsoAccepted || q.notAccepted) && q.pattern === undefined) problems.push(`${name}: alsoAccepted e notAccepted servono solo insieme a pattern`);
         if (q.options) problems.push(`${name}: un completamento non ha opzioni`);
     } else {
         problems.push(`${name}: tipo sconosciuto ${q.type}`);

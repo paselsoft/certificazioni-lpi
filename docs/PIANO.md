@@ -126,7 +126,7 @@ file system in memoria con utenti, gruppi, permessi (anche sticky bit, setuid, s
 simbolici e fisici; shell con virgolette, variabili, `~`, caratteri jolly, pipe, `;`, `&&`, `||` e
 i reindirizzamenti; 65 comandi più sudo (ls, cd, mkdir, cp, mv, rm, ln, find, grep, tar, gzip, bzip2,
 xz, zip, chmod, chown con sudo...). I filtri sort, uniq, cut, tr, nl, tac, rev e sed sono quelli di
-Pipe Dreams (`lib/`, copiati senza modifiche). 37 esercizi sugli obiettivi 2.1, 2.3, 2.4, 3.1, 3.2,
+Pipe Dreams (`lib/`, copiati senza modifiche). 38 esercizi sugli obiettivi 2.1, 2.3, 2.4, 3.1, 3.2,
 3.3, 5.3 e 5.4, con gli obiettivi che si spuntano dopo ogni comando, suggerimento, soluzione e
 «Ricomincia»; terminale libero. `tools/check-shell.js` (anche in CI) ricrea il file system in una
 directory vera ed esegue in Bash le soluzioni e oltre 200 casi tipici: stesso output, stessi
@@ -171,6 +171,16 @@ la palestra davvero ed esegue le soluzioni da anna.
 
 ### Dopo
 - LPIC-1, esami 101 e 102, con lo stesso schema.
+
+### Miglioramenti dopo M6
+
+- **Correzioni alle domande (15/11/2026).** Undici completamenti accettano ora anche le altre forme
+  giuste dello stesso comando (per esempio `tar cfz ...`, `tar -c -z -f ...`, `rm -rf vecchi/`,
+  `man 1 ls`, `useradd luca -m`, `ls -a` dove si chiede l'opzione `-a`). Ogni domanda elenca le forme
+  in più da accettare (`alsoAccepted`) e quelle da rifiutare (`notAccepted`): le controllano sia
+  `tools/check-questions.js` sia un test nel browser. Corretta la spiegazione della 2.4-05 (il
+  messaggio è di `rmdir`, non di Bash). Da fare: accorciare le risposte giuste, che in 111 domande
+  a scelta singola su 173 sono l'opzione più lunga.
 
 ## Regole del progetto
 

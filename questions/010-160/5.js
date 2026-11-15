@@ -117,6 +117,9 @@ addQuestions("010-160", [
         id: "5.2-01", type: "fill", ref: "5.2_01#Aggiungere ed Eliminare Account Utenti", placeholder: "comando",
         text: "Scrivi il comando (da eseguire come root) che crea l'utente `luca` con la sua directory home.",
         answers: ["useradd -m luca", "sudo useradd -m luca", "useradd --create-home luca", "sudo useradd --create-home luca"],
+        pattern: "^(sudo )?useradd ((-m|--create-home) luca|luca (-m|--create-home))$",
+        alsoAccepted: ["useradd luca -m"],
+        notAccepted: ["useradd luca", "userdel -r luca", "groupadd luca"],
         why: "`-m` crea la home e ci copia i file di `/etc/skel`. Poi si imposta la password con `passwd luca`."
     },
     {
@@ -278,6 +281,9 @@ addQuestions("010-160", [
         id: "5.3-07", type: "fill", ref: "5.3_01#Modificare la Proprietà dei File", placeholder: "comando",
         text: "Scrivi il comando (da root) che rende `luca` il proprietario del file `relazione.txt`.",
         answers: ["chown luca relazione.txt", "sudo chown luca relazione.txt"],
+        pattern: "^(sudo )?chown luca (\\./)?relazione\\.txt$",
+        alsoAccepted: ["chown luca ./relazione.txt"],
+        notAccepted: ["chmod luca relazione.txt", "chown relazione.txt luca", "chown luca: relazione.txt"],
         why: "`chown` cambia il proprietario; con `chown luca:sviluppo` cambia anche il gruppo."
     },
     {
@@ -347,6 +353,9 @@ addQuestions("010-160", [
         id: "5.4-03", type: "fill", ref: "5.4_01#Link Simbolici", placeholder: "comando",
         text: "Scrivi il comando che crea il link simbolico `collegamento` che punta a `/etc/hosts`.",
         answers: ["ln -s /etc/hosts collegamento", "ln --symbolic /etc/hosts collegamento"],
+        pattern: "^ln (-s|--symbolic) /etc/hosts (\\./)?collegamento$",
+        alsoAccepted: ["ln -s /etc/hosts ./collegamento"],
+        notAccepted: ["ln /etc/hosts collegamento", "ln -s collegamento /etc/hosts"],
         why: "L'ordine è come in `cp`: prima la destinazione esistente, poi il nome del nuovo link. Senza `-s` si crea un hard link."
     },
     {

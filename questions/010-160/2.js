@@ -146,6 +146,9 @@ addQuestions("010-160", [
         id: "2.2-01", type: "fill", ref: "2.2_01#Pagine Man", placeholder: "comando",
         text: "Scrivi il comando che apre la pagina del manuale del comando `ls`.",
         answers: ["man ls"],
+        pattern: "^man( 1| -s ?1)? ls$",
+        alsoAccepted: ["man 1 ls"],
+        notAccepted: ["man -k ls", "info ls", "man"],
         why: "`man ls` apre il manuale; si scorre con le frecce o la barra spaziatrice e si esce con `q`."
     },
     {
@@ -278,6 +281,9 @@ addQuestions("010-160", [
         id: "2.3-04", type: "fill", ref: "2.3_02#File e Directory Nascosti", placeholder: "opzione",
         text: "Quale opzione di `ls` mostra anche i file nascosti, quelli il cui nome inizia con un punto?",
         answers: ["-a", "--all", "-A", "--almost-all"],
+        pattern: "^(ls )?(-a|--all|-A|--almost-all)$",
+        alsoAccepted: ["ls -a"],
+        notAccepted: ["-l", "ls", "a"],
         why: "`ls -a` mostra tutto, anche `.` e `..`; `ls -A` mostra i file nascosti ma non `.` e `..`."
     },
     {
@@ -304,6 +310,9 @@ addQuestions("010-160", [
         id: "2.3-07", type: "fill", ref: "2.3_02#La Ricorsione in Bash", placeholder: "opzione",
         text: "Quale opzione di `ls` elenca anche il contenuto di tutte le sottodirectory (elenco ricorsivo)?",
         answers: ["-R", "--recursive"],
+        pattern: "^(ls )?(-R|--recursive)$",
+        alsoAccepted: ["ls -R"],
+        notAccepted: ["-r", "ls -r"],
         why: "`ls -R`, con la R maiuscola. Attenzione: `ls -r` (minuscola) inverte solo l'ordine dell'elenco."
     },
     {
@@ -368,6 +377,9 @@ addQuestions("010-160", [
         id: "2.4-02", type: "fill", ref: "2.4_01#Creare Directory", placeholder: "comando",
         text: "La directory `progetti` non esiste ancora. Scrivi il comando che crea `progetti/2027/foto` in un colpo solo, con le directory intermedie.",
         answers: ["mkdir -p progetti/2027/foto", "mkdir --parents progetti/2027/foto", "mkdir -p progetti/2027/foto/"],
+        pattern: "^mkdir (-p|-pv|-vp|--parents) (\\./)?progetti/2027/foto/?$",
+        alsoAccepted: ["mkdir -pv progetti/2027/foto", "mkdir -p ./progetti/2027/foto"],
+        notAccepted: ["mkdir progetti/2027/foto", "mkdir -p progetti"],
         why: "Con `-p` (parents) `mkdir` crea anche le directory che mancano lungo il percorso; senza, darebbe errore."
     },
     {
@@ -394,7 +406,7 @@ addQuestions("010-160", [
         id: "2.4-05", type: "single", ref: "2.4_01#Eliminare File e Directory",
         text: "La directory `vecchi` contiene dei file. Che cosa succede con `rmdir vecchi`?",
         options: [
-            { t: "Errore: `rmdir` elimina solo directory vuote", ok: true, why: "Bash risponde «Directory not empty». Per eliminarla con tutto il contenuto serve `rm -r vecchi`." },
+            { t: "Errore: `rmdir` elimina solo directory vuote", ok: true, why: "`rmdir` risponde «Directory not empty» (directory non vuota) e non elimina niente. Per eliminarla con tutto il contenuto serve `rm -r vecchi`." },
             { t: "Elimina la directory e tutti i file dentro", ok: false, why: "Lo fa `rm -r`, non `rmdir`." },
             { t: "Elimina i file ma lascia la directory", ok: false, why: "`rmdir` non tocca i file." },
             { t: "Sposta la directory nel cestino", ok: false, why: "I comandi della shell non usano il cestino: quello che eliminano sparisce." }
@@ -404,6 +416,9 @@ addQuestions("010-160", [
         id: "2.4-06", type: "fill", ref: "2.4_01#Eliminare File e Directory", placeholder: "comando",
         text: "Scrivi il comando che elimina la directory `vecchi` con tutto quello che contiene.",
         answers: ["rm -r vecchi", "rm -R vecchi", "rm -rf vecchi", "rm -fr vecchi", "rm -Rf vecchi", "rm --recursive vecchi", "rm -r vecchi/"],
+        pattern: "^rm (-[rRfv]*[rR][rRfv]*|--recursive)( -f| --force)? (\\./)?vecchi/?$",
+        alsoAccepted: ["rm -rf vecchi/", "rm -r ./vecchi", "rm -r -f vecchi"],
+        notAccepted: ["rm vecchi", "rm -f vecchi", "rmdir vecchi"],
         why: "`rm -r` (ricorsivo) cancella la directory e tutto il suo contenuto. Con `-f` non chiede conferme: va usato con molta attenzione."
     },
     {
