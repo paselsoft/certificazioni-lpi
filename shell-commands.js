@@ -1516,6 +1516,35 @@ function echoRun(sh, args) {
     return { out: text + (newline ? "\n" : "") };
 }
 
+// exit [codice]: in uno script lo ferma (senza codice vale quello dell'ultimo comando)
+function exitRun(sh, args) {
+    if (!sh.depth) return { err: "exit: nel simulatore il terminale resta aperto (per ricominciare l'esercizio usa «Ricomincia»)\n" };
+    if (!args.length) throw new SimExit(sh.status);
+    if (!/^[+-]?[0-9]+$/.test(args[0])) {
+        throw new SimExit(2, `exit: ${args[0]}: è necessario un argomento numerico`);
+    }
+    // Il codice di uscita sta in un byte: 256 torna 0
+    throw new SimExit(((Number(args[0]) % 256) + 256) % 256);
+}
+
+// bash script.sh [argomenti]: esegue lo script anche senza il permesso di esecuzione (basta
+// poterlo leggere)
+function bashRun(sh, name, args, stdin, ctx) {
+    if (!args.length) return { err: `${name}: nel simulatore sei già in una shell Bash. Per eseguire uno script: ${name} script.sh\n`, code: 1 };
+    if (args[0].startsWith("-")) return { err: `${name}: nel simulatore le opzioni di ${name} non sono disponibili. Per eseguire uno script: ${name} script.sh\n`, code: 2 };
+    const path = args[0];
+    try {
+        const found = simGet(sh, path);
+        if (found.node.type === "d") return { err: `${name}: ${path}: ${ERRORS.EISDIR}\n`, code: 126 };
+        if (!canAccess(sh, found.node, 4)) return { err: `${name}: ${path}: ${ERRORS.EACCES}\n`, code: 126 };
+        if (isBinary(found.node.data) || found.node.data.startsWith("#!ELF")) return { err: `${name}: ${path}: impossibile eseguire il file binario\n`, code: 126 };
+        return simRunScript(sh, found.node.data, path, args.slice(1), stdin, ctx);
+    } catch (error) {
+        if (!(error instanceof SimError)) throw error;
+        return { err: `${name}: ${path}: ${error.message}\n`, code: 127 };
+    }
+}
+
 function typeRun(sh, args) {
     const res = simOutput();
     for (const name of args) {
@@ -1548,6 +1577,7 @@ const SIM_HELP = [
     "  archivi: tar gzip gunzip bzip2 bunzip2 xz unxz zcat bzcat xzcat zip unzip",
     "  permessi e utenti: chmod chown chgrp id whoami groups sudo",
     "  shell: echo export unset env type which history clear help",
+    "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "Funzionano anche | ; && || > >> < 2> 2>&1 &>, le virgolette, $VARIABILI, ~ e i caratteri jolly * ? [ ].",
     "Con ↑ e ↓ richiami i comandi precedenti."
 ];
@@ -1598,7 +1628,9 @@ const SIM_COMMANDS = {
     history: { run: sh => ({ out: sh.history.map((line, i) => `${String(i + 1).padStart(5)}  ${line}\n`).join("") }) },
     help: { run: () => ({ out: SIM_HELP.join("\n") + "\n" }) },
     clear: { run: () => ({ clear: true }) },
-    exit: { run: () => ({ err: "exit: nel simulatore il terminale resta aperto (per ricominciare l'esercizio usa «Ricomincia»)\n" }) },
+    exit: { run: exitRun },
+    bash: { run: (sh, args, stdin, ctx) => bashRun(sh, "bash", args, stdin, ctx), help: "bash script.sh argomenti" },
+    sh: { run: (sh, args, stdin, ctx) => bashRun(sh, "sh", args, stdin, ctx), help: "sh script.sh argomenti" },
     true: { run: () => ({}) },
     false: { run: () => ({ code: 1 }) },
     man: { run: (sh, args) => ({ err: `man: nel simulatore non ci sono le pagine di manuale${args[0] ? ` (su un sistema vero: man ${args[0]})` : ""}. Le opzioni dei comandi sono spiegate nelle domande e nelle lezioni.\n`, code: 16 }) },

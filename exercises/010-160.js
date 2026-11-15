@@ -297,7 +297,69 @@ addExercises("010-160", [
         ],
         hint: "Senza editor: `echo '...' > file` scrive la prima riga, `>>` aggiunge la seconda. Poi `chmod`.",
         solution: ["echo '#!/bin/bash' > saluta.sh", "echo 'echo Ciao' >> saluta.sh", "chmod u+x saluta.sh"],
-        explain: "La prima riga (shebang) dice quale interprete usare; `chmod u+x` dà il permesso di esecuzione. Su un sistema vero lo avvieresti con `./saluta.sh` (il simulatore non esegue gli script)."
+        explain: "La prima riga (shebang) dice quale interprete usare; `chmod u+x` dà il permesso di esecuzione. Adesso puoi avviarlo con `./saluta.sh`: provalo."
+    },
+    {
+        id: "t3.3-02", title: "Senza il permesso di esecuzione",
+        task: "Nella tua home c'è lo script `orario.sh`, che non ha il permesso di esecuzione. Avvialo lo stesso, senza cambiare i permessi.",
+        setup: { files: { "/home/anna/orario.sh": "#!/bin/bash\necho La lezione comincia alle 9\n" } },
+        goals: [
+            { text: "Lo script scrive il suo messaggio", output: "same", command: "^(bash|sh)\\s" },
+            { text: "I permessi di `orario.sh` sono rimasti `rw-r--r--`", path: "/home/anna/orario.sh", mode: "644" }
+        ],
+        hint: "Prova prima `./orario.sh` e leggi l'errore. Poi passa il file all'interprete: `bash` seguito dal nome dello script.",
+        solution: ["bash orario.sh"],
+        explain: "Con `bash orario.sh` è Bash a leggere il file: basta il permesso di lettura. Per `./orario.sh` serve invece il permesso di esecuzione."
+    },
+    {
+        id: "t3.3-03", title: "Con il punto e la barra",
+        task: "Lo script `conta.sh` conta i file della directory `documenti`. Rendilo eseguibile per il proprietario e avvialo dalla tua home scrivendo il suo percorso.",
+        setup: { files: { "/home/anna/conta.sh": "#!/bin/bash\nls documenti | wc -l\n" } },
+        goals: [
+            { text: "`conta.sh` è eseguibile per il proprietario", path: "/home/anna/conta.sh", modeHas: "100" },
+            { text: "Lo hai avviato con `./conta.sh` e mostra il numero dei file", output: "same", command: "^\\./conta\\.sh\\s*$" }
+        ],
+        hint: "Prima `chmod u+x`. Poi scrivi solo `conta.sh` e guarda cosa risponde la shell: la directory corrente non è nel `PATH`, quindi serve `./` davanti.",
+        solution: ["chmod u+x conta.sh", "./conta.sh"],
+        explain: "La shell cerca i comandi solo nelle directory di `PATH`. `./conta.sh` è un percorso: «il file conta.sh in questa directory»."
+    },
+    {
+        id: "t3.3-04", title: "Il primo argomento",
+        task: "Crea lo script `ciao.sh` con una sola riga, che stampa `Ciao, ` seguito dal primo argomento ricevuto. Poi avvialo con `bash` passando l'argomento `Luca`: deve comparire `Ciao, Luca`.",
+        goals: [
+            { text: "`ciao.sh` esiste", path: "/home/anna/ciao.sh", is: "file" },
+            { text: "Avviato con l'argomento `Luca`, lo script mostra `Ciao, Luca`", output: "same", command: "^bash\\s+(\\./)?ciao\\.sh\\s+Luca\\s*$" }
+        ],
+        hint: "Dentro lo script il primo argomento è `$1`. Scrivi la riga nel file con `echo '...' > ciao.sh`: le virgolette singole servono perché `$1` arrivi nel file così com'è.",
+        solution: ["echo 'echo \"Ciao, $1\"' > ciao.sh", "bash ciao.sh Luca"],
+        explain: "`$1` è il primo argomento, `$2` il secondo e così via; `$0` è il nome dello script. Con le virgolette doppie al posto delle singole, `$1` sarebbe stato sostituito subito, prima di scrivere nel file."
+    },
+    {
+        id: "t3.3-05", title: "Quanti argomenti?",
+        task: "Lo script `quanti.sh` dice quanti argomenti ha ricevuto. Avvialo in modo che ne conti esattamente 2: il primo è `Mario Rossi` (nome e cognome insieme), il secondo è `Milano`.",
+        setup: { files: { "/home/anna/quanti.sh": { content: "#!/bin/bash\necho \"Argomenti ricevuti: $#\"\necho \"Il primo: $1\"\n", mode: "755" } } },
+        goals: [{ text: "Lo script conta 2 argomenti e il primo è `Mario Rossi`", output: "same", command: "quanti\\.sh\\s" }],
+        hint: "Lo spazio separa gli argomenti. Per tenere insieme nome e cognome servono le virgolette.",
+        solution: ["./quanti.sh 'Mario Rossi' Milano"],
+        explain: "`$#` è il numero degli argomenti. Senza virgolette, `Mario Rossi Milano` sarebbero stati 3 argomenti."
+    },
+    {
+        id: "t3.3-06", title: "Il codice di uscita",
+        task: "Lo script `cerca.sh` cerca la parola `burro` nella lista della spesa e non scrive niente. Avvialo, poi mostra il suo codice di uscita.",
+        setup: { files: { "/home/anna/cerca.sh": { content: "#!/bin/bash\ngrep -q burro documenti/spesa.txt\nexit $?\n", mode: "755" } } },
+        goals: [{ text: "Dopo lo script, `echo` mostra il suo codice di uscita", output: "same", command: "^echo\\b.*\\$\\?" }],
+        hint: "Il codice di uscita dell'ultimo comando è nella variabile speciale `$?`. Va letta subito dopo lo script.",
+        solution: ["./cerca.sh", "echo $?"],
+        explain: "0 vuol dire «tutto bene», un altro numero «qualcosa non va»: qui 1, perché `grep` non ha trovato la parola. Uno script sceglie il suo codice con `exit`."
+    },
+    {
+        id: "t3.3-07", title: "Un comando tutto tuo",
+        task: "Nella directory `/home/anna/bin` c'è lo script `saluta`, già eseguibile. Fai in modo che la shell lo trovi scrivendo solo il nome, poi avvialo così: `saluta`.",
+        setup: { files: { "/home/anna/bin/saluta": { content: "#!/bin/bash\necho Ciao da saluta\n", mode: "755" } } },
+        goals: [{ text: "Scrivendo solo `saluta` lo script parte", output: "same", command: "^saluta\\s*$" }],
+        hint: "La shell cerca i comandi nelle directory elencate in `PATH`, separate da `:`. Aggiungi `/home/anna/bin` (o `~/bin`) in fondo, senza perdere le altre: il vecchio valore è `$PATH`.",
+        solution: ["PATH=$PATH:~/bin", "saluta"],
+        explain: "Con la directory nel `PATH` lo script si usa come un comando qualsiasi, da ogni directory. Per averlo sempre, la stessa riga va in `~/.bashrc`."
     },
 
     // ---- 5.3 Permessi e proprietà ----

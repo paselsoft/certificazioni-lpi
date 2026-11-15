@@ -64,7 +64,21 @@ const CASES = [
     ["ls nonc note.txt > out.txt 2>&1", "wc -l out.txt", "rm out.txt"], ["true && echo si"], ["false || echo no"], ["false && echo mai; echo dopo"], ["echo uno; echo due | tr a-z A-Z"],
     ["echo a > f", "echo b >> f", "cat f"], ["grep pane documenti/spesa.txt | sort | uniq -c"], ["echo $?"], ["ls nonc", "echo $?"], ["cat < nonc"], ["echo x > documenti"],
     ["ls nonc &> tutto.txt", "wc -l tutto.txt", "rm tutto.txt"], ["ls note.txt nonc 2>&1 >/dev/null | wc -l"], ["echo ciao | tee copia.txt", "cat copia.txt"], ["cat /etc/hosts | grep -v '^#' | cut -f2 | sort"],
-    ["head -n 3 /var/log/app.log | tail -n 1"], ["grep -h ERROR /var/log/app.log | cut -d' ' -f2 | sort -r"], ["export X=1", "echo $X"], ["unset HOME", "echo [$HOME]"]
+    ["head -n 3 /var/log/app.log | tail -n 1"], ["grep -h ERROR /var/log/app.log | cut -d' ' -f2 | sort -r"], ["export X=1", "echo $X"], ["unset HOME", "echo [$HOME]"],
+    // Script: bash file, ./file, argomenti, exit, ambiente del processo figlio, PATH
+    ["echo 'echo ciao $1' > s.sh", "bash s.sh mondo", "sh s.sh"], ["echo 'echo $# $0' > s.sh", "bash s.sh a b c", "bash s.sh"],
+    ["echo 'echo ciao' > s.sh", "./s.sh", "chmod u+x s.sh", "./s.sh"], ["echo '#!/bin/bash' > s.sh", "echo 'echo $0 $1' >> s.sh", "chmod 755 s.sh", "./s.sh x", "sh s.sh y"],
+    ["echo 'exit 3' > s.sh", "bash s.sh", "echo $?"], ["echo 'false; exit' > s.sh", "bash s.sh", "echo $?"], ["echo 'exit 256' > s.sh", "bash s.sh", "echo $?"],
+    ["echo 'exit abc' > s.sh", "bash s.sh", "echo $?"], ["echo 'echo prima; exit 4; echo dopo' > s.sh", "bash s.sh"], ["echo 'ls nonc' > s.sh", "bash s.sh", "echo $?"],
+    ["echo 'cd documenti; pwd; X=1' > s.sh", "bash s.sh", "pwd", "echo [$X]"], ["echo 'echo [$X]' > s.sh", "X=1", "bash s.sh", "export X", "bash s.sh", "X=2 bash s.sh", "echo $X"],
+    ["echo 'echo \"$@\"; echo $*; echo \"$*\"' > s.sh", "bash s.sh 'a  b' c"], ["echo 'ls \"$@\"' > s.sh", "bash s.sh", "bash s.sh foto documenti"],
+    ["echo 'echo ${1}x ${10} $2' > s.sh", "bash s.sh a b c d e f g h i j"], ["echo 'echo \"uno $1\" due $2 [$3]' > s.sh", "bash s.sh a"],
+    ["echo 'cat' > s.sh", "echo dentro | bash s.sh", "bash s.sh < note.txt"], ["echo 'echo out; ls nonc; echo fine' > s.sh", "bash s.sh > o.txt 2> e.txt", "cat o.txt", "wc -l < e.txt", "rm e.txt"],
+    ["echo 'ls' > s.sh", "bash s.sh | head -n 2", "bash s.sh > o.txt", "head -n 3 o.txt"], ["echo 'echo a | wc -l; echo $?' > s.sh", "bash s.sh | tr a-z A-Z"],
+    ["bash nonc"], ["bash documenti"], ["./nonc"], ["./documenti"], ["echo 'echo x' > s.sh", "chmod 300 s.sh", "./s.sh", "bash s.sh"],
+    ["echo 'echo (' > s.sh", "bash s.sh", "echo $?"], ["echo 'echo uno' > a.sh", "echo 'bash a.sh; echo due $1' > b.sh", "bash b.sh x"],
+    ["mkdir bin", "echo 'echo eccomi $1' > bin/saluta", "chmod +x bin/saluta", "saluta", "PATH=$PATH:~/bin", "saluta tu", "echo 'saluta figlio' > s.sh", "bash s.sh"],
+    ["echo '# solo un commento' > s.sh", "bash s.sh", "echo $?"], ["echo 'echo $?' > s.sh", "false", "bash s.sh"], ["echo $# [$1] [$@]"]
 ];
 
 // ls a colonne su un terminale largo 80: si confronta con ls -C -w80 -T0

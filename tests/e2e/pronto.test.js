@@ -62,7 +62,9 @@ module.exports = {
         assert.equal(await page.locator(".ready-item").count(), 19);
         assert.equal(await page.locator(".ready-item.ready-new").count(), 19);
         assert.match(await page.textContent("#pronto-3-3"), /3\.3 Trasformare i Comandi in uno Script\s*peso 4\s*Da iniziare/);
-        assert.match(await page.textContent("#pronto-3-3 .ready-facts"), new RegExp(`mai viste ${IDS["3.3"].length} · lezioni lette 0 su 2 · esercizi al terminale 0 su 1\\.`));
+        const practice33 = await page.evaluate(() => EXERCISES.filter(exercise => exercise.objective === "3.3").length);
+        assert.ok(practice33 >= 7, `esercizi del 3.3: ${practice33}`);
+        assert.match(await page.textContent("#pronto-3-3 .ready-facts"), new RegExp(`mai viste ${IDS["3.3"].length} · lezioni lette 0 su 2 · esercizi al terminale 0 su ${practice33}\\.`));
         // Senza risposte l'ordine è quello del peso: 3.3 (4), poi gli obiettivi di peso 3
         const weak = await page.locator("#ready-weak li a").allTextContents();
         assert.equal(weak.length, 4);
