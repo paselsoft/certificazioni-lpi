@@ -194,6 +194,37 @@ la palestra davvero ed esegue le soluzioni da anna.
   le mai viste. Non salva dati nuovi. `tools/check-site.js` controlla anche che ogni file caricato
   dalla pagina sia tra quelli salvati per l'uso offline.
 
+### Miglioramenti ancora da fare (analisi del 15/11/2026)
+
+In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
+
+1. **Script nel simulatore (obiettivo 3.3, peso 4: il più pesante).** Oggi c'è un solo esercizio,
+   perché il simulatore non esegue script: `bash s.sh`, `./s.sh`, `for`, `if [ ... ]`, `test`
+   rispondono «comando non trovato»; mancano anche `$(...)`, `read`, `alias`. In due passi:
+   prima eseguire gli script (`bash file`, `./file`) con `$1`, `$#`, `$@`, `$0` ed `exit`, più i
+   primi esercizi; poi i cicli `for` e gli `if [ ... ]`, più gli altri (8-10 esercizi in tutto).
+   Lavoro grande; ogni novità va confrontata con Bash vero (`tools/check-shell.js`).
+2. **Esercizi per gli obiettivi senza pratica** (2.2, 4.3, 4.4, 5.1, 5.2: peso 11 su 40, zero
+   esercizi). Mancano al simulatore: `man`, `info`, `locate`/`updatedb`, `ps`, `top`, `free`,
+   `dmesg`, `ip`, `ping`, `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`;
+   `/proc` e `/dev` sono vuoti. 15-20 esercizi, divisibili per obiettivo. Le risposte sarebbero
+   finte e fisse, quindi non confrontabili con Bash vero; le schede di `man` vanno scritte da zero.
+3. **Domande: risposte giuste troppo lunghe.** In 111 domande a scelta singola su 173 la risposta
+   giusta è l'opzione più lunga: si può indovinare senza sapere. Vanno riscritte una per una
+   (accorciare la giusta o allungare i distrattori), magari con una statistica in
+   `tools/check-questions.js --stats`.
+4. **Domande nuove (25-30)** sugli argomenti con una sola domanda o nessuna: ciclo `for`, `$?`,
+   `sort`, `wc`, `head`; `&&` e `||`, `uniq`, `ifconfig` e `route`, `tail -f`.
+5. **`lpi-esercizio verifica` nella palestra**: su un Linux vero dice quali obiettivi
+   dell'esercizio sono raggiunti. Funziona bene per file, permessi e archivi; gli obiettivi del
+   tipo «l'ultimo comando mostra...» sul sistema vero non si controllano allo stesso modo.
+6. **Telefono e High Sierra**: una fila di tasti rapidi sopra la tastiera (`|`, `>`, `~`, `/`,
+   `-`, freccia su) e il completamento dei nomi con Tab. L'app usa una sola funzione recente,
+   `:has()` (Chrome 105 o successivo): se manca, l'opzione scelta resta solo meno evidenziata.
+   Da sapere: la versione di Chrome sull'iMac (High Sierra arriva al massimo alla 116).
+7. **Simulazioni per obiettivo**: oggi si salvano solo per argomento; salvandole anche per
+   obiettivo, «Sono pronto?» potrebbe mostrarle riga per riga.
+
 ## Regole del progetto
 
 - Tutto in italiano, accessibile (tastiera, lettori di schermo, contrasto), leggibile anche su
