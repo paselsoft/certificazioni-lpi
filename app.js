@@ -133,6 +133,11 @@ function renderHome(exam) {
             link("Tutte le simulazioni", "#/simulazione"));
         box.appendChild(line);
     }
+    const ready = el("p", "ready-link");
+    const readyLink = link("🎯 Sono pronto? Punti deboli e stima per l'esame", READY_HREF, "button");
+    readyLink.id = "ready-link";
+    ready.appendChild(readyLink);
+    box.appendChild(ready);
     box.appendChild(el("p", "hint", "Il peso dice quante domande, più o meno, arrivano da ogni obiettivo: le 40 domande dell'esame si dividono secondo i pesi."));
     box.id = "summary";
     page.appendChild(box);
@@ -647,7 +652,7 @@ function finishRender(title, focusTarget) {
     document.querySelectorAll(".site-nav a").forEach(anchor => {
         const href = anchor.getAttribute("href");
         const hash = location.hash || "#/";
-        const here = href === "#/" ? !/^#\/(backup|ripasso|simulazione|terminale)/.test(hash) : hash === href || hash.startsWith(`${href}/`);
+        const here = href === "#/" ? !/^#\/(backup|ripasso|pronto|simulazione|terminale)/.test(hash) : hash === href || hash.startsWith(`${href}/`);
         if (here) anchor.setAttribute("aria-current", "page");
         else anchor.removeAttribute("aria-current");
     });
@@ -672,6 +677,14 @@ function render() {
     window.scrollTo(0, 0);
     if (hash === "#/ripasso") {
         finishRender(renderReview(exam));
+        return;
+    }
+    if (hash === READY_HREF) {
+        finishRender(renderReadiness(exam));
+        return;
+    }
+    if (hash === READY_QUIZ_HREF) {
+        finishRender(renderWeakQuiz(exam));
         return;
     }
     if (hash === "#/terminale") {

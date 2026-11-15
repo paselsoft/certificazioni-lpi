@@ -182,6 +182,18 @@ la palestra davvero ed esegue le soluzioni da anna.
   messaggio è di `rmdir`, non di Bash). Da fare: accorciare le risposte giuste, che in 111 domande
   a scelta singola su 173 sono l'opzione più lunga.
 
+- **«Sono pronto?» (15/11/2026).** Pagina `#/pronto` (`readiness.js`), dal menu e dalla pagina
+  principale: per ogni obiettivo le domande con l'ultima risposta giusta sul totale (le mai viste
+  contano come non sapute), quelle sbagliate e da ripassare oggi, le lezioni lette, gli esercizi al
+  terminale e un livello (solido dall'80%, da rinforzare dal 50%, debole sotto, da iniziare). In
+  alto la stima «se l'esame fosse oggi» (ogni obiettivo pesa quanto all'esame), la media delle
+  ultime 3 simulazioni (anche per argomento) e un giudizio a parole, che non promette l'esito
+  perché la soglia vera non è pubblica: consiglia l'80% nelle domande e il 75% nelle simulazioni.
+  «Da dove conviene ripartire» elenca i 4 obiettivi dove si guadagnano più domande (peso × parte
+  non saputa) e «Allenati sui punti deboli» propone 10 domande da quelli: prima le sbagliate, poi
+  le mai viste. Non salva dati nuovi. `tools/check-site.js` controlla anche che ogni file caricato
+  dalla pagina sia tra quelli salvati per l'uso offline.
+
 ## Regole del progetto
 
 - Tutto in italiano, accessibile (tastiera, lettori di schermo, contrasto), leggibile anche su
