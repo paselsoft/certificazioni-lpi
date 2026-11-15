@@ -78,8 +78,38 @@ const CASES = [
     ["bash nonc"], ["bash documenti"], ["./nonc"], ["./documenti"], ["echo 'echo x' > s.sh", "chmod 300 s.sh", "./s.sh", "bash s.sh"],
     ["echo 'echo (' > s.sh", "bash s.sh", "echo $?"], ["echo 'echo uno' > a.sh", "echo 'bash a.sh; echo due $1' > b.sh", "bash b.sh x"],
     ["mkdir bin", "echo 'echo eccomi $1' > bin/saluta", "chmod +x bin/saluta", "saluta", "PATH=$PATH:~/bin", "saluta tu", "echo 'saluta figlio' > s.sh", "bash s.sh"],
-    ["echo '# solo un commento' > s.sh", "bash s.sh", "echo $?"], ["echo 'echo $?' > s.sh", "false", "bash s.sh"], ["echo $# [$1] [$@]"]
+    ["echo '# solo un commento' > s.sh", "bash s.sh", "echo $?"], ["echo 'echo $?' > s.sh", "false", "bash s.sh"], ["echo $# [$1] [$@]"],
+    // for, if, test e [ ] su una riga
+    ["for f in foto/*.jpg; do echo \"Foto: $f\"; done"], ["for n in 3 1 2; do echo $n; done | sort"], ["for n in a b; do echo $n; done > o.txt", "cat o.txt", "echo $n"],
+    ["for f in *.txt documenti/*.txt; do wc -l $f; done"], ["for f in nulla*; do echo [$f]; done"], ["for f in; do echo x; done", "echo $?"], ["for f in a b; do false; done", "echo $?"],
+    ["for a in 1 2; do for b in x y; do echo $a$b; done; done"], ["for f in a b c; do if [ $f = b ]; then continue; fi; echo $f; done"], ["for f in a b c; do if [ $f = b ]; then break; fi; echo $f; done", "echo $?"],
+    ["X='a b  c'", "for w in $X; do echo [$w]; done", "for w in \"$X\"; do echo [$w]; done"], ["for d in documenti foto nonc; do ls $d | wc -l; done"], ["for f in a b; do mkdir dir_$f; done", "ls -d dir_*"],
+    ["if [ -f note.txt ]; then echo si; else echo no; fi"], ["if [ -d note.txt ]; then echo si; elif [ 3 -gt 2 ]; then echo elif; else echo no; fi", "echo $?"], ["if false; then echo a; fi", "echo $?"],
+    ["if grep -q pane documenti/spesa.txt; then echo trovato; fi"], ["if ! grep -q burro documenti/spesa.txt; then echo manca; fi"], ["if true; then false; fi", "echo $?"], ["if ls nonc; then echo a; else echo b; fi 2>/dev/null"],
+    ["if [ -f note.txt ] && [ -d foto ]; then echo tutti; fi"], ["if true; then echo a; echo b; fi | wc -l"], ["! true", "echo $?", "! false", "echo $?"], ["! ls nonc 2>/dev/null", "echo $?"],
+    ["[ -f note.txt ]", "echo $?"], ["[ -f documenti ]", "echo $?"], ["[ -d documenti ]", "echo $?"], ["[ -e nonc ]", "echo $?"], ["test -e note.txt", "echo $?"], ["[ -s note.txt ]", "echo $?", "touch vuoto", "[ -s vuoto ]", "echo $?"],
+    ["[ -x note.txt ]", "echo $?", "chmod u+x note.txt", "[ -x note.txt ]", "echo $?"], ["chmod 000 note.txt", "[ -r note.txt ]", "echo $?", "[ -w note.txt ]", "echo $?", "[ -e note.txt ]", "echo $?"],
+    ["ln -s note.txt l", "[ -L l ]", "echo $?", "[ -f l ]", "echo $?", "[ -L note.txt ]", "echo $?"], ["[ a = a ]", "echo $?", "[ a != a ]", "echo $?", "[ a == b ]", "echo $?"],
+    ["[ 3 -lt 5 ]", "echo $?", "[ 10 -lt 9 ]", "echo $?", "[ 5 -ge 5 ]", "echo $?", "[ 5 -ne 5 ]", "echo $?", "[ 2 -eq 2 ]", "echo $?", "[ 7 -le 6 ]", "echo $?"],
+    ["[ -z \"\" ]", "echo $?", "[ -n \"\" ]", "echo $?", "[ -z abc ]", "echo $?", "[ abc ]", "echo $?", "[ \"\" ]", "echo $?", "[ ]", "echo $?"], ["[ ! -e nonc ]", "echo $?", "[ ! a = a ]", "echo $?", "test ! -d foto", "echo $?"],
+    ["[ -f note.txt", "echo $?"], ["[ 1 -lt x ]", "echo $?"], ["[ a b ]", "echo $?"], ["[ a foo b ]", "echo $?"], ["X=", "[ -n \"$X\" ]", "echo $?", "X=1", "[ -n \"$X\" ]", "echo $?", "[ \"$X\" -eq 1 ]", "echo $?"],
+    [...script("echo a", "for x in a"), "bash s.sh", "echo $?"], [...script("echo a", "fi"), "bash s.sh", "echo $?"], [...script("for 1a in x; do echo; done"), "bash s.sh", "echo $?"],
+    [...script("if; then echo; fi"), "bash s.sh", "echo $?"], [...script("for f in a; do done"), "bash s.sh", "echo $?"], ["echo for in do done", "echo \"if\" then fi"], ["break", "echo $?"],
+    // Script su più righe
+    [...script("for nome in \"$@\"; do", "    echo \"Ciao, $nome\"", "done"), "bash s.sh Anna \"Luca Bianchi\" Sara", "bash s.sh", "echo $?"],
+    [...script("#!/bin/bash", "# conta", "for f in foto/*", "do", "  echo $f", "done", "", "echo fine"), "bash s.sh"], [...script("for a; do echo [$a]; done"), "bash s.sh x \"y z\""],
+    [...script("if [ $# -ne 1 ]; then", "    echo \"Uso: $0 FILE\"", "    exit 1", "fi", "if [ -f \"$1\" ]; then", "    echo \"$1 esiste\"", "else", "    echo \"$1 non esiste\"", "    exit 2", "fi"), "bash s.sh", "echo $?", "bash s.sh note.txt", "echo $?", "bash s.sh nonc", "echo $?", "bash s.sh a b", "echo $?"],
+    [...script("for f in a b c; do", "  echo $f", "  if [ $f = b ]; then exit 5; fi", "done", "echo mai"), "bash s.sh", "echo $?", "bash s.sh | wc -l"],
+    [...script("if [ -d \"$1\" ]", "then", "  for f in $1/*; do echo $f; done", "elif [ -f \"$1\" ]", "then echo file", "else", "  echo niente >&2", "  exit 3", "fi"), "bash s.sh foto", "bash s.sh note.txt", "bash s.sh nonc", "echo $?", "bash s.sh nonc 2>/dev/null"],
+    [...script("echo prima", "for f in a b; do", "  echo $f"), "bash s.sh", "echo $?"], [...script("echo prima", "if true; then", "echo a", "else"), "bash s.sh", "echo $?"], [...script("echo prima", "done", "echo dopo"), "bash s.sh", "echo $?"],
+    [...script("for f in 1 2; do", "  echo $f", "done > o.txt", "wc -l < o.txt", "for f in x y; do echo $f; done | tr a-z A-Z"), "bash s.sh"], [...script("echo a # commento", "# solo commento", "echo b"), "bash s.sh"],
+    [...script("for d in \"$@\"; do", "  if [ ! -d \"$d\" ]; then", "    mkdir \"$d\"", "    echo \"creata $d\"", "  else", "    echo \"$d esiste\"", "  fi", "done"), "bash s.sh documenti nuova \"con spazio\"", "ls -d documenti nuova con*"]
 ];
+
+// Le righe che scrivono uno script in s.sh, una riga alla volta (senza apici singoli nelle righe)
+function script(...lines) {
+    return lines.map((line, index) => `echo '${line}' ${index ? ">>" : ">"} s.sh`);
+}
 
 // ls a colonne su un terminale largo 80: si confronta con ls -C -w80 -T0
 const COLUMN_CASES = ["ls", "ls -a", "ls /etc", "ls documenti foto", "ls -R", "ls /usr/share/doc /var/log"];
