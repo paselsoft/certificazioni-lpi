@@ -310,7 +310,10 @@ function renderQuizEnd(exam, objective, body) {
         again.type = "button";
         again.id = "retry-wrong";
         again.onclick = () => {
+            // La serie delle sbagliate resta dello stesso tipo (ripasso o punti deboli)
+            const kind = session.kind;
             startQuiz(exam, objective, wrong);
+            quiz.session.kind = kind;
             renderQuestion(exam, objective, body, true);
         };
         actions.appendChild(again);
@@ -325,6 +328,19 @@ function renderQuizEnd(exam, objective, body) {
         };
         actions.appendChild(restart);
         actions.appendChild(link(`Obiettivo ${objective.id}`, objectiveHref(exam, objective), "button"));
+    } else if (session.kind === "weak") {
+        // Punti deboli (readiness.js): un'altra serie, poi il riepilogo aggiornato
+        if (pickWeakQuestions(exam).length) {
+            const more = el("button", "button", "Altre domande sui punti deboli");
+            more.type = "button";
+            more.id = "weak-more";
+            more.onclick = () => {
+                startWeakQuiz(exam);
+                renderQuestion(exam, null, body, true);
+            };
+            actions.appendChild(more);
+        }
+        actions.appendChild(link("Sono pronto?", READY_HREF, "button"));
     } else {
         // Ripasso: altre domande (se ce ne sono ancora per oggi o di nuove), poi la pagina principale
         const { due, fresh } = reviewPlan(exam);

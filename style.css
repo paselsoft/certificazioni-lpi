@@ -470,3 +470,23 @@ main { display: block; }
 .result-list .is-right .mark { color: var(--ok); }
 .result-list .is-wrong .mark { color: var(--warn); }
 .quiz-result { font-size: 1.4rem; margin: 20px 0 8px; }
+
+/* ---- Sono pronto? (readiness.js) ---- */
+
+.ready-verdict { font-weight: 600; margin: 8px 0; padding: 8px 12px; border-left: 5px solid var(--border); background: var(--surface-2); border-radius: 6px; }
+.ready-verdict-solid { border-left-color: var(--ok); }
+.ready-verdict-fair { border-left-color: var(--focus); }
+.ready-verdict-weak { border-left-color: var(--warn); }
+.ready-link { margin: 10px 0 6px; }
+.ready-weak-list { padding-left: 1.5rem; display: grid; gap: 6px; }
+.ready-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ready-item { background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--border); border-radius: 10px; padding: 8px 12px; }
+.ready-item.ready-solid { border-left-color: var(--ok); }
+.ready-item.ready-fair { border-left-color: var(--focus); }
+.ready-item.ready-weak { border-left-color: var(--warn); }
+.ready-head { margin: 0 0 2px; overflow-wrap: anywhere; }
+.ready-name { font-weight: 600; }
+.ready-level { display: inline-block; border: 1px solid var(--border); border-radius: 999px; padding: 0 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+.ready-level-solid { background: var(--ok-bg); color: var(--ok); border-color: var(--ok); }
+.ready-level-weak { color: var(--warn); border-color: var(--warn); }
+.ready-facts, .ready-actions { margin: 2px 0; }

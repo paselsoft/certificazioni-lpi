@@ -23,6 +23,8 @@ const lessons = vm.runInContext("EXAMS.flatMap(exam => exam.topics.flatMap(topic
 for (const file of new Set([...used, ...appFiles.filter(file => file !== "./"), ...lessons])) {
     if (!has(file)) problems.push(`manca ${file}`);
 }
+// Ogni file caricato dalla pagina deve essere tra quelli salvati per l'uso offline
+for (const file of used) if (!appFiles.includes(file)) problems.push(`sw.js: ${file} non è tra i file salvati per l'uso offline`);
 if (!has("palestra/palestra.sh")) problems.push("manca palestra/palestra.sh");
 for (const extra of ["palestra/palestra.template.sh", "tools", "tests", "docs", "deploy", "node_modules", ".git", ".github", "README.md", "CLAUDE.md"]) {
     if (has(extra)) problems.push(`non dovrebbe esserci: ${extra}`);

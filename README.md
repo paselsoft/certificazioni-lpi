@@ -20,6 +20,10 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   risposta sbagliata riporta la domanda nella scatola 1 (torna il giorno dopo), ogni risposta
   giusta la sposta nella scatola successiva (torna dopo 2, 4, 8, poi 16 giorni). Prima le domande
   scadute, poi quelle nuove degli obiettivi che stai studiando.
+- **Sono pronto?**: un riepilogo per obiettivo che unisce domande, ripasso, simulazioni, lezioni ed
+  esercizi; la stima «se l'esame fosse oggi», gli obiettivi da cui conviene ripartire e una serie
+  di 10 domande sui punti deboli. È un'indicazione, non una promessa: la soglia vera dell'esame
+  non è pubblica.
 - **Simulazione d'esame**: 40 domande in 60 minuti, tante per obiettivo quanto il suo peso, come
   all'esame. Si può segnare una domanda e tornarci; il tempo continua anche chiudendo la pagina e
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
@@ -77,6 +81,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `quiz.js` | le domande di un obiettivo, una alla volta (`#/010-160/domande/2.1`) |
 | `exam-sim.js` | la simulazione d'esame (`#/simulazione`, `#/simulazione/risultato`) |
 | `review.js` | il ripasso di oggi (`#/ripasso`); le scatole di Leitner sono in `store.js` |
+| `readiness.js` | «Sono pronto?» (`#/pronto`, `#/pronto/domande`): riepilogo per obiettivo, stima, punti deboli |
 | `questions/010-160/1.js` ... `5.js` | le domande, un file per argomento |
 | `shell-sim.js`, `shell-commands.js` | la shell simulata: file system in memoria, interprete, comandi |
 | `lib/pipedreams-*.js` | il motore dei filtri di Pipe Dreams, copiato senza modifiche |
