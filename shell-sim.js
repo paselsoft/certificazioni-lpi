@@ -240,7 +240,10 @@ function createShell(setup = {}) {
         cwd: "/home/anna", user: "anna", clock: SIM_START, status: 0, history: [], columns: 80,
         vars: { HOME: "/home/anna", USER: "anna", LOGNAME: "anna", SHELL: "/bin/bash", PATH: "/usr/local/bin:/usr/bin:/bin", PWD: "/home/anna", LANG: "C" },
         exported: new Set(["HOME", "USER", "LOGNAME", "SHELL", "PATH", "PWD", "LANG"]),
-        lastOutput: "", lastErrors: "", lastCommand: "", tty: true
+        lastOutput: "", lastErrors: "", lastCommand: "", tty: true,
+        // Gli argomenti dello script in esecuzione ($1, $2..., $#, $@), il suo nome ($0), quanti
+        // script sono aperti uno dentro l'altro e lo stdin che lo script ha ricevuto
+        args: [], arg0: "bash", depth: 0, stdin: null
     };
     const base = simBaseTree();
     const add = (type, list) => Object.entries(list || {}).forEach(([path, spec]) => {
@@ -302,7 +305,7 @@ function simTokenize(text) {
         else word.push({ t: "lit", text: textPart, q });
     };
     const readVar = (i, q) => {
-        // $NOME, ${NOME}, $?, $$ ; restituisce l'indice dell'ultimo carattere letto
+        // $NOME, ${NOME}, $?, $$, $#, $@, $*, $0-$9 ; restituisce l'indice dell'ultimo carattere letto
         word = word || [];
         if (text[i + 1] === "{") {
             const end = text.indexOf("}", i + 2);
@@ -310,7 +313,7 @@ function simTokenize(text) {
             word.push({ t: "var", name: text.slice(i + 2, end), q });
             return end;
         }
-        if (text[i + 1] === "?" || text[i + 1] === "$" || text[i + 1] === "#") {
+        if (/^[?$#@*0-9]$/.test(text[i + 1] || "")) {
             word.push({ t: "var", name: text[i + 1], q });
             return i + 1;
         }
@@ -321,6 +324,13 @@ function simTokenize(text) {
         }
         word.push({ t: "var", name: match[0], q });
         return i + match[0].length;
+    };
+    // In un'assegnazione ~ vale anche dopo = e dopo ogni : (PATH=$PATH:~/bin)
+    const tildeInAssignment = () => {
+        const first = word && word[0];
+        if (!first || first.t !== "lit" || first.q || !/^[A-Za-z_][A-Za-z0-9_]*=/.test(first.text)) return false;
+        const last = word[word.length - 1];
+        return last.t === "lit" && !last.q && /[=:]$/.test(last.text);
     };
     for (let i = 0; i < text.length; i++) {
         const c = text[i];
@@ -359,10 +369,11 @@ function simTokenize(text) {
             i = readVar(i, false);
         } else if (c === "`") {
             throw new SimSyntaxError("bash: la sostituzione di comandi con `...` non è disponibile nel simulatore");
-        } else if (c === "~" && atWordStart) {
-            const match = /^~([a-z_][a-z0-9_-]*)?(?=$|[\/\s;|&<>])/.exec(text.slice(i));
+        } else if (c === "~" && (atWordStart || tildeInAssignment())) {
+            const match = /^~([a-z_][a-z0-9_-]*)?(?=$|[\/\s;|&<>:])/.exec(text.slice(i));
             if (match) {
-                word = [{ t: "tilde", user: match[1] || "" }];
+                word = word || [];
+                word.push({ t: "tilde", user: match[1] || "" });
                 i += match[0].length - 1;
             } else {
                 addLit("~", false);
@@ -457,7 +468,10 @@ function simParse(text) {
 function simVar(sh, name) {
     if (name === "?") return String(sh.status);
     if (name === "$") return "4242";
-    if (name === "#") return "0";
+    if (name === "#") return String(sh.args.length);
+    if (name === "@" || name === "*") return sh.args.join(" ");
+    if (name === "0") return sh.arg0;
+    if (/^[0-9]+$/.test(name)) return sh.args[Number(name) - 1] ?? "";
     return sh.vars[name] ?? "";
 }
 
@@ -474,6 +488,13 @@ function simExpandWord(sh, parts, { glob = true } = {}) {
         } else if (part.t === "tilde") {
             const home = part.user ? (SIM_USERS[part.user] || {}).home : sh.vars.HOME;
             fields[fields.length - 1].push({ text: home || `~${part.user}`, active: false });
+        } else if (part.name === "@" && part.q) {
+            // "$@": ogni argomento resta una parola a sé, anche con gli spazi; senza argomenti, niente
+            sh.args.forEach((arg, index) => {
+                if (index > 0) fields.push([]);
+                fields[fields.length - 1].push({ text: arg, active: false });
+                quotedSomething = true;
+            });
         } else {
             const value = simVar(sh, part.name);
             if (part.q) {
@@ -599,6 +620,18 @@ function simRun(sh, text) {
         sh.status = 2;
         return { lines: display, clear: false };
     }
+    const clear = simRunList(sh, list, display);
+    sh.clock += 60000;
+    const lines = [];
+    for (const chunk of display) {
+        textLines(chunk.text).forEach(line => lines.push({ text: line, err: chunk.err }));
+    }
+    return { lines, clear };
+}
+
+// Esegue i comandi di una riga già analizzata (collegati da ;, && e ||), scrivendo in display.
+// Restituisce true se lo schermo va pulito (clear)
+function simRunList(sh, list, display) {
     let clear = false;
     let previous = null;
     for (const item of list) {
@@ -617,12 +650,7 @@ function simRun(sh, text) {
         }
         previous = item;
     }
-    sh.clock += 60000;
-    const lines = [];
-    for (const chunk of display) {
-        textLines(chunk.text).forEach(line => lines.push({ text: line, err: chunk.err }));
-    }
-    return { lines, clear };
+    return clear;
 }
 
 // Testo → righe da mostrare (senza l'a capo finale)
@@ -632,8 +660,9 @@ function textLines(text) {
 }
 
 function simRunPipeline(sh, pipeline, display) {
-    let input = null;
-    let inputInfo = null;
+    // Dentro uno script il primo comando legge lo stdin dello script (./conta.sh < file)
+    let input = sh.stdin;
+    let inputInfo = input === null ? null : { regular: false };
     let clear = false;
     sh.lastOutput = "";
     for (let index = 0; index < pipeline.length; index++) {
@@ -685,10 +714,13 @@ function simRunPipeline(sh, pipeline, display) {
             result = simExecute(sh, words, stdin, { stdinInfo, tty: sh.tty && route[1].kind === "terminal" });
             if (result.clear) clear = true;
         }
-        // Consegna stdout e stderr secondo la loro destinazione (prima stdout, poi stderr)
+        // Consegna stdout e stderr secondo la loro destinazione (prima stdout, poi stderr; uno
+        // script li consegna nell'ordine in cui i suoi comandi li hanno scritti)
         let piped = "";
-        for (const fd of [1, 2]) {
-            const text = fd === 1 ? result.out : result.err;
+        const chunks = result.chunks || [{ text: result.out, err: false }, { text: result.err, err: true }];
+        for (const chunk of chunks) {
+            const fd = chunk.err ? 2 : 1;
+            const text = chunk.text;
             if (!text) continue;
             const target = route[fd];
             if (target.kind === "terminal") {
@@ -751,6 +783,8 @@ function simExecute(sh, words, stdin, ctx) {
     const assignments = [];
     while (i < words.length && /^[A-Za-z_][A-Za-z0-9_]*=/.test(words[i])) assignments.push(words[i++]);
     const rest = words.slice(i);
+    // Davanti a un comando valgono solo per lui: X=1 ./script.sh
+    if (rest.length && assignments.length) ctx = { ...ctx, env: { ...(ctx.env || {}), ...Object.fromEntries(assignments.map(word => [word.slice(0, word.indexOf("=")), word.slice(word.indexOf("=") + 1)])) } };
     if (!rest.length) {
         assignments.forEach(word => {
             const at = word.indexOf("=");
@@ -762,7 +796,7 @@ function simExecute(sh, words, stdin, ctx) {
     if (name === "sudo") {
         if (!args.length) return { out: "", err: "sudo: scrivi il comando da eseguire come root, per esempio sudo chown luca file\n", code: 1 };
         if (SIM_BUILTINS.has(args[0])) return { out: "", err: `sudo: ${args[0]}: comando non trovato (è un comando interno della shell)\n`, code: 1 };
-        if (["-i", "-s", "su", "bash"].includes(args[0])) return { out: "", err: "sudo: nel simulatore usa sudo davanti a un comando alla volta, per esempio sudo chown luca file\n", code: 1 };
+        if (["-i", "-s", "su"].includes(args[0]) || (args[0] === "bash" && args.length === 1)) return { out: "", err: "sudo: nel simulatore usa sudo davanti a un comando alla volta, per esempio sudo chown luca file\n", code: 1 };
         const user = sh.user;
         sh.user = "root";
         try {
@@ -774,7 +808,10 @@ function simExecute(sh, words, stdin, ctx) {
     const command = SIM_COMMANDS[name];
     if (!command) {
         if (SIM_UNAVAILABLE[name]) return { out: "", err: `${name}: ${SIM_UNAVAILABLE[name]}\n`, code: 127 };
-        if (name.includes("/")) return simRunPath(sh, name);
+        if (name.includes("/")) return simRunPath(sh, name, args, stdin, ctx);
+        // Come Bash: il nome si cerca nelle directory di PATH (la directory corrente non c'è)
+        const inPath = simSearchPath(sh, name);
+        if (inPath) return simRunPath(sh, inPath, args, stdin, ctx);
         return { out: "", err: `bash: ${name}: comando non trovato\n`, code: 127 };
     }
     if (args.includes("--help")) {
@@ -782,24 +819,117 @@ function simExecute(sh, words, stdin, ctx) {
     }
     try {
         const result = command.run(sh, args, stdin, ctx) || {};
-        return { out: result.out || "", err: result.err || "", code: result.code || 0, clear: result.clear };
+        return { out: result.out || "", err: result.err || "", code: result.code || 0, clear: result.clear, chunks: result.chunks };
     } catch (error) {
         if (error instanceof SimUsage) return { out: "", err: `${name}: ${error.message}\n`, code: error.code };
         throw error;
     }
 }
 
-// ./script.sh o /percorso/programma: il simulatore non esegue programmi, ma dà gli errori giusti
-function simRunPath(sh, path) {
+// Il primo file eseguibile con questo nome nelle directory di PATH (i comandi del simulatore
+// sono già stati riconosciuti prima)
+function simSearchPath(sh, name) {
+    for (const dir of (sh.vars.PATH || "").split(":")) {
+        if (!dir) continue;
+        const path = `${dir.replace(/\/+$/, "")}/${name}`;
+        try {
+            const found = simLookup(sh, path);
+            if (found.node && found.node.type === "f" && canAccess(sh, found.node, 1)) return path;
+        } catch (error) {
+            if (!(error instanceof SimError)) throw error;
+        }
+    }
+    return null;
+}
+
+// ./script.sh o /percorso/programma: serve il permesso di esecuzione. Uno script (un file di
+// testo, con o senza #!/bin/bash in testa) viene eseguito; i programmi in /usr/bin sono i comandi
+// del simulatore
+function simRunPath(sh, path, args = [], stdin = null, ctx = {}) {
     try {
         const found = simGet(sh, path);
         if (found.node.type === "d") return { out: "", err: `bash: ${path}: ${ERRORS.EISDIR}\n`, code: 126 };
         if (!canAccess(sh, found.node, 1)) return { out: "", err: `bash: ${path}: ${ERRORS.EACCES}\n`, code: 126 };
-        return { out: "", err: `bash: ${path}: il simulatore non esegue programmi e script (il permesso di esecuzione c'è: su un sistema vero partirebbe)\n`, code: 126 };
+        const data = found.node.data;
+        if (data.startsWith("#!ELF")) {
+            const command = baseName(path);
+            if (SIM_COMMANDS[command] && !SIM_BUILTINS.has(command)) return simExecute(sh, [command, ...args], stdin, ctx);
+        }
+        if (data.startsWith("#!ELF") || isBinary(data)) return { out: "", err: `bash: ${path}: impossibile eseguire il file binario: il simulatore esegue solo script\n`, code: 126 };
+        // Per leggere lo script serve anche il permesso di lettura
+        if (!canAccess(sh, found.node, 4)) return { out: "", err: `bash: ${path}: ${ERRORS.EACCES}\n`, code: 126 };
+        const shebang = /^#!\s*(\S+)(?:[ \t]+(\S+))?/.exec(data);
+        if (shebang) {
+            const interpreter = baseName(shebang[1]) === "env" ? shebang[2] || "" : baseName(shebang[1]);
+            if (!["bash", "sh"].includes(interpreter)) return { out: "", err: `bash: ${path}: ${shebang[1]}: interprete non disponibile nel simulatore (qui gli script sono di Bash: #!/bin/bash)\n`, code: 126 };
+        }
+        return simRunScript(sh, data, path, args, stdin, ctx);
     } catch (error) {
         if (error instanceof SimError) return { out: "", err: `bash: ${path}: ${error.message}\n`, code: 127 };
         throw error;
     }
+}
+
+// exit dentro uno script: lo ferma con questo codice di uscita
+class SimExit extends Error {
+    constructor(code, complaint = "") {
+        super("exit");
+        this.code = code;
+        this.complaint = complaint;
+    }
+}
+
+const SIM_MAX_DEPTH = 20;
+
+// Esegue il testo di uno script, una riga alla volta, come un processo figlio: riceve solo le
+// variabili esportate, e quello che cambia (variabili, directory corrente) non torna a chi lo ha
+// lanciato. name diventa $0, args diventano $1, $2... Restituisce stdout e stderr (chunks li tiene
+// nell'ordine in cui sono stati scritti) e il codice di uscita: quello dell'ultimo comando, o di exit.
+function simRunScript(sh, text, name, args, stdin, ctx = {}) {
+    if (sh.depth >= SIM_MAX_DEPTH) return { out: "", err: `bash: ${name}: troppi script aperti uno dentro l'altro (lo script richiama se stesso?)\n`, code: 126 };
+    const saved = {};
+    for (const key of ["vars", "exported", "cwd", "args", "arg0", "tty", "stdin", "lastOutput", "lineOutput", "lastErrors"]) saved[key] = sh[key];
+    const env = ctx.env || {};
+    sh.vars = { ...Object.fromEntries([...sh.exported].filter(key => sh.vars[key] !== undefined).map(key => [key, sh.vars[key]])), ...env };
+    sh.exported = new Set([...sh.exported, ...Object.keys(env)]);
+    sh.args = args;
+    sh.arg0 = name;
+    sh.tty = Boolean(ctx.tty);
+    sh.stdin = stdin;
+    sh.depth++;
+    sh.status = 0;
+    const display = [];
+    let code;
+    try {
+        const lines = text.split("\n");
+        for (let i = 0; i < lines.length; i++) {
+            let list;
+            try {
+                list = simParse(lines[i]);
+            } catch (error) {
+                if (!(error instanceof SimSyntaxError)) throw error;
+                // Come Bash: un errore di sintassi ferma lo script
+                display.push({ text: `${name}: riga ${i + 1}: ${error.message.replace(/^bash: /, "")}\n`, err: true });
+                sh.status = 2;
+                break;
+            }
+            simRunList(sh, list, display);
+        }
+        code = sh.status;
+    } catch (error) {
+        if (!(error instanceof SimExit)) throw error;
+        if (error.complaint) display.push({ text: `${name}: ${error.complaint}\n`, err: true });
+        code = error.code;
+    } finally {
+        Object.assign(sh, saved);
+        sh.depth--;
+    }
+    return {
+        chunks: display,
+        out: display.filter(chunk => !chunk.err).map(chunk => chunk.text).join(""),
+        err: display.filter(chunk => chunk.err).map(chunk => chunk.text).join(""),
+        code
+    };
 }
 
 // Errore d'uso di un comando (opzione non valida, argomento mancante)

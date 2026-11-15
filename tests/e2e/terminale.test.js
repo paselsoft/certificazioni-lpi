@@ -89,6 +89,33 @@ module.exports = {
         assert.equal(Object.keys((await stored(page)).practice).length, exercises.length);
     },
 
+    "script: bash file, ./file con il permesso, argomenti, exit e PATH": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").pop();
+        await type(page, "echo '#!/bin/bash' > ciao.sh");
+        await type(page, "echo 'echo \"Ciao, $1 ($# argomenti, sono $0)\"' >> ciao.sh");
+        await type(page, "echo 'exit 3' >> ciao.sh");
+        await type(page, "./ciao.sh");
+        assert.equal(await page.textContent(".terminal-error"), "bash: ./ciao.sh: Permesso negato");
+        await type(page, "bash ciao.sh Luca 'due parole'");
+        assert.equal(await last(), "Ciao, Luca (2 argomenti, sono ciao.sh)");
+        await type(page, "echo $?");
+        assert.equal(await last(), "3");
+        await type(page, "chmod u+x ciao.sh");
+        await type(page, "./ciao.sh | tr a-z A-Z");
+        assert.equal(await last(), "CIAO,  (0 ARGOMENTI, SONO ./CIAO.SH)");
+        // Lo script è un processo a parte: la directory e le variabili di chi lo lancia non cambiano
+        await type(page, "echo 'cd documenti; X=1; pwd' > va.sh; bash va.sh; pwd; echo [$X]");
+        assert.match(await outputText(page), /\/home\/anna\/documenti\n\/home\/anna\n\[\]$/);
+        // Solo il nome: la shell cerca nelle directory di PATH
+        await type(page, "ciao.sh");
+        assert.equal(await last(), "bash: ciao.sh: comando non trovato");
+        await type(page, "mkdir bin; mv ciao.sh bin; PATH=$PATH:~/bin; ciao.sh Anna");
+        assert.equal(await last(), "Ciao, Anna (1 argomenti, sono /home/anna/bin/ciao.sh)");
+        await type(page, "help");
+        assert.match(await outputText(page), /script: bash script\.sh, \.\/script\.sh/);
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");

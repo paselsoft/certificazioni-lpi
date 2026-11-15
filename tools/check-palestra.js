@@ -144,9 +144,11 @@ if (process.argv.includes("--installa")) {
         check("anna non legge il segreto di luca", asAnna("cat /home/luca/segreto.txt").status !== 0);
         for (const exercise of exercises.filter(item => item.bash !== false)) {
             const setup = exercise.setup || {};
-            const lines = [`lpi-esercizio ${exercise.id} >/dev/null`, `cd ${setup.cwd || "/home/anna"}`, ...exercise.solution].join(" && ");
+            // Il codice di uscita finale deve essere quello del simulatore (uno script può uscire con 1)
+            const expected = vm.runInContext(`(exercise => { const sh = exerciseShell(exercise); exercise.solution.forEach(line => simRun(sh, line)); return sh.status; })`, context)(exercise);
+            const lines = `lpi-esercizio ${exercise.id} >/dev/null && cd ${setup.cwd || "/home/anna"} || exit 99\n${exercise.solution.join("\n")}`;
             const result = asAnna(lines);
-            if (result.status !== 0) problems.push(`installa: ${exercise.id}, la soluzione non funziona da anna: ${result.error || result.stderr}`);
+            if (result.status !== expected) problems.push(`installa: ${exercise.id}, da anna la soluzione esce con ${result.status} invece di ${expected}: ${result.error || result.stderr}`);
         }
         // Dopo la soluzione (chmod 600) l'esercizio ripreparato torna come all'inizio
         const again = asAnna("lpi-esercizio t5.3-01 >/dev/null && stat -c '%a %U' diario.txt");

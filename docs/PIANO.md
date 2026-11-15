@@ -194,16 +194,27 @@ la palestra davvero ed esegue le soluzioni da anna.
   le mai viste. Non salva dati nuovi. `tools/check-site.js` controlla anche che ogni file caricato
   dalla pagina sia tra quelli salvati per l'uso offline.
 
+- **Script nel simulatore, primo passo (15/11/2026).** Il simulatore esegue gli script:
+  `bash file` e `sh file` (basta il permesso di lettura), `./file` e i percorsi (serve il permesso
+  di esecuzione; lo shebang deve indicare bash o sh), il solo nome se il file sta in una directory
+  di `PATH` (`~` vale anche dopo `:` nelle assegnazioni). Dentro lo script: `$1`...`$9`, `${10}`,
+  `$#`, `$@` (`"$@"` tiene separati gli argomenti), `$*`, `$0`, `exit` con o senza codice. Lo
+  script è un processo figlio: riceve solo le variabili esportate (e `X=1 ./script`), e la sua
+  directory e le sue variabili non tornano a chi lo lancia; riceve lo stdin (`| bash s.sh`) e il
+  suo output si può reindirizzare. Un errore di sintassi ferma lo script con il numero di riga.
+  Sei esercizi nuovi per il 3.3 (da 1 a 7): avviare senza permesso, `./`, `$1`, `$#` e virgolette,
+  `$?`, `PATH`. 31 sequenze in più confrontate con Bash vero; la palestra controlla il codice di
+  uscita della soluzione invece di pretendere 0.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
-1. **Script nel simulatore (obiettivo 3.3, peso 4: il più pesante).** Oggi c'è un solo esercizio,
-   perché il simulatore non esegue script: `bash s.sh`, `./s.sh`, `for`, `if [ ... ]`, `test`
-   rispondono «comando non trovato»; mancano anche `$(...)`, `read`, `alias`. In due passi:
-   prima eseguire gli script (`bash file`, `./file`) con `$1`, `$#`, `$@`, `$0` ed `exit`, più i
-   primi esercizi; poi i cicli `for` e gli `if [ ... ]`, più gli altri (8-10 esercizi in tutto).
-   Lavoro grande; ogni novità va confrontata con Bash vero (`tools/check-shell.js`).
+1. **Script nel simulatore (obiettivo 3.3, peso 4: il più pesante), secondo passo.** Il primo
+   passo è fatto (vedi sopra). Restano i cicli `for` e gli `if [ ... ]` con `test`, più gli altri
+   esercizi (3-4, per arrivare a 10 circa); poi, se servono, `$(...)`, `read`, `alias`. Le righe di
+   uno script oggi si eseguono una alla volta: `for` e `if` chiedono di leggere più righe insieme.
+   Ogni novità va confrontata con Bash vero (`tools/check-shell.js`).
 2. **Esercizi per gli obiettivi senza pratica** (2.2, 4.3, 4.4, 5.1, 5.2: peso 11 su 40, zero
    esercizi). Mancano al simulatore: `man`, `info`, `locate`/`updatedb`, `ps`, `top`, `free`,
    `dmesg`, `ip`, `ping`, `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`;
