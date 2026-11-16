@@ -149,6 +149,55 @@ module.exports = {
         assert.match(await outputText(page), /cicli e condizioni: for f in/);
     },
 
+    "aiuto: man, man -k, sezioni, --help, help, info, /usr/share/doc, locate e updatedb": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").pop();
+        await type(page, "man cp");
+        const manual = await outputText(page);
+        assert.match(manual, /CP\(1\)  Comandi utente  CP\(1\)/);
+        for (const part of ["NOME", "SINTASSI", "DESCRIZIONE", "OPZIONI", "VEDI ANCHE", "cp - copia file e directory", "-r, -R, --recursive"]) assert.ok(manual.includes(part), part);
+        await type(page, "clear");
+        await type(page, "man -k comprime");
+        assert.equal(await outputText(page), "anna@lpi:~$ man -k comprime\ngzip (1)             - comprime o espande file\nzip (1)              - comprime file in un archivio zip");
+        await type(page, "apropos comprime | wc -l");
+        assert.equal(await last(), "2");
+        await type(page, "whatis passwd");
+        assert.match(await outputText(page), /passwd \(1\) +- cambia la password di un utente\npasswd \(5\) +- il file degli utenti, \/etc\/passwd$/);
+        await type(page, "man 5 passwd | head -n 1");
+        assert.equal(await last(), "PASSWD(5)  Formati dei file  PASSWD(5)");
+        await type(page, "man passwd | head -n 1");
+        assert.equal(await last(), "PASSWD(1)  Comandi utente  PASSWD(1)");
+        await type(page, "man 8 ls");
+        assert.equal(await last(), "Nessuna voce di manuale per ls nella sezione 8");
+        await type(page, "man nonesiste");
+        assert.equal(await last(), "Nessuna voce di manuale per nonesiste");
+        await type(page, "mkdir --help | head -n 2");
+        assert.match(await outputText(page), /Uso: mkdir \[OPZIONE\]\.\.\. DIRECTORY\.\.\.\nCrea directory\.$/);
+        await type(page, "help cd | head -n 1");
+        assert.equal(await last(), "cd: cd [DIRECTORY]");
+        await type(page, "help ls");
+        assert.match(await last(), /È un programma, non un comando interno: prova «man ls» o «ls --help»/);
+        await type(page, "info tar | head -n 1");
+        assert.equal(await last(), "File: tar.info,  Node: Top,  Up: (dir)");
+        await type(page, "ls /usr/share/doc/tar");
+        assert.match(await last(), /NEWS\s+README\s+copyright/);
+        // locate cerca nel database: i file nuovi li conosce solo dopo sudo updatedb
+        await type(page, "locate lettera");
+        assert.equal(await last(), "/home/anna/documenti/lettera.txt");
+        await type(page, "touch nuovo.txt; locate nuovo.txt; echo $?");
+        assert.equal(await last(), "1");
+        await type(page, "updatedb");
+        assert.match(await last(), /Permesso negato \(il database si aggiorna da amministratore: sudo updatedb\)/);
+        await type(page, "sudo updatedb; locate -c nuovo.txt; locate segreto; echo $?");
+        assert.match(await outputText(page), /\n1\n1$/, "trova nuovo.txt, ma non il file nella home di luca");
+        // A 320 px la pagina di manuale va a capo, senza scorrimento orizzontale
+        await page.setViewportSize({ width: 320, height: 700 });
+        await go(page, "#/terminale/t2.2-01");
+        await type(page, "man cp");
+        await page.waitForSelector("#practice-success:not([hidden])");
+        assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");

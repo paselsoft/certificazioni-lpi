@@ -197,7 +197,7 @@ function simBaseTree() {
         dirs: {
             "/root": { owner: "root", mode: "700" },
             "/bin": { owner: "root" }, "/usr": { owner: "root" }, "/usr/bin": { owner: "root" }, "/usr/local/bin": { owner: "root" },
-            "/usr/share/doc": { owner: "root" }, "/usr/share/doc/bash": { owner: "root" },
+            "/usr/share/doc": { owner: "root" }, "/usr/share/doc/bash": { owner: "root" }, "/usr/share/doc/tar": { owner: "root" }, "/usr/share/doc/grep": { owner: "root" },
             "/etc": { owner: "root" }, "/etc/skel": { owner: "root" }, "/var": { owner: "root" }, "/var/log": { owner: "root" },
             "/var/www": { owner: "root" },
             "/tmp": { owner: "root", mode: "1777" }, "/var/tmp": { owner: "root", mode: "1777" },
@@ -227,7 +227,13 @@ function simBaseTree() {
                 owner: "root", mode: "644",
                 content: "2026-11-12 08:00:01 INFO avvio del servizio\n2026-11-12 08:05:12 WARN disco quasi pieno\n2026-11-12 08:10:30 ERROR connessione al database fallita\n2026-11-12 08:10:31 INFO nuovo tentativo\n2026-11-12 08:10:35 ERROR connessione al database fallita\n2026-11-12 08:11:00 INFO connessione riuscita\n2026-11-12 09:00:00 error utente sconosciuto: mario\n"
             },
-            "/usr/share/doc/bash/README": { owner: "root", content: "Bash: la shell del progetto GNU.\n" }
+            "/usr/share/doc/bash/README": { owner: "root", content: "Bash: la shell del progetto GNU.\n" },
+            // La documentazione che i pacchetti installano in /usr/share/doc (testi scritti per l'app)
+            "/usr/share/doc/tar/README": { owner: "root", content: "tar: il programma per gli archivi\n\nQuesto pacchetto installa il comando tar e la sua documentazione.\nLa pagina di manuale si legge con: man tar\nLe novita' di ogni versione sono nel file NEWS.\n" },
+            "/usr/share/doc/tar/NEWS": { owner: "root", content: "Versione 1.35: correzioni e piccoli miglioramenti.\nVersione 1.34: gli archivi .tar.xz si riconoscono da soli.\n" },
+            "/usr/share/doc/tar/copyright": { owner: "root", content: "tar e' software libero, distribuito con la licenza GNU GPL versione 3 o successive.\n" },
+            "/usr/share/doc/grep/README": { owner: "root", content: "grep: cerca le righe che corrispondono a un modello\n\nLa pagina di manuale si legge con: man grep\n" },
+            "/usr/share/doc/grep/copyright": { owner: "root", content: "grep e' software libero, distribuito con la licenza GNU GPL versione 3 o successive.\n" }
         },
         links: {}
     };
@@ -272,7 +278,23 @@ function createShell(setup = {}) {
         sh.cwd = setup.cwd;
         sh.vars.PWD = setup.cwd;
     }
+    // Il database di locate: i percorsi che esistono adesso (lo aggiorna solo updatedb)
+    sh.locateDb = simAllPaths(sh);
     return sh;
+}
+
+// Tutti i percorsi del file system, in ordine (per il database di locate)
+function simAllPaths(sh) {
+    const paths = [];
+    const walk = (node, path) => sortedNames(node).forEach(name => {
+        const child = node.children[name];
+        const childPath = `${path}/${name}`;
+        if (childPath === "/proc" || childPath === "/sys" || childPath === "/dev" || childPath === "/tmp") return;
+        paths.push(childPath);
+        if (child.type === "d") walk(child, childPath);
+    });
+    walk(sh.root, "");
+    return paths;
 }
 
 // Nodo a un percorso assoluto senza controlli (per costruire il file system)
@@ -1023,6 +1045,9 @@ function simExecute(sh, words, stdin, ctx) {
         return { out: "", err: `bash: ${name}: comando non trovato\n`, code: 127 };
     }
     if (args.includes("--help")) {
+        // L'aiuto breve del comando (shell-help.js), per quelli che hanno una pagina di manuale
+        const usage = simHelpText(name);
+        if (usage) return { out: usage, err: "", code: 0 };
         return { out: `${name}: nel simulatore --help non è disponibile. Le opzioni si ripassano nelle lezioni: ${command.help || "vedi l'elenco con il comando help"}\n`, err: "", code: 0 };
     }
     try {

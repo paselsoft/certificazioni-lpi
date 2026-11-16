@@ -15,7 +15,7 @@
 # modificarlo a mano. https://github.com/paselsoft/certificazioni-lpi
 set -euo pipefail
 
-ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
+ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
 APP_LOG=$'2026-11-12 08:00:01 INFO avvio del servizio\n2026-11-12 08:05:12 WARN disco quasi pieno\n2026-11-12 08:10:30 ERROR connessione al database fallita\n2026-11-12 08:10:31 INFO nuovo tentativo\n2026-11-12 08:10:35 ERROR connessione al database fallita\n2026-11-12 08:11:00 INFO connessione riuscita\n2026-11-12 09:00:00 error utente sconosciuto: mario\n'
 SEGRETO=$'solo per luca\n'
 
@@ -157,6 +157,148 @@ esercizio() {
         COMPITO=$'Scopri con un solo comando se cd e cp sono comandi interni della shell o programmi esterni.'
         PARTENZA=$''
         SOLUZIONE=$'type cd cp'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-01)
+        TITOLO=$'La pagina di manuale'
+        COMPITO=$'Apri la pagina di manuale del comando cp e cerca l\'opzione che serve per copiare una directory.'
+        PARTENZA=$''
+        SOLUZIONE=$'man cp'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-02)
+        TITOLO=$'Non ricordo il nome'
+        COMPITO=$'Non ricordi come si chiama il comando che comprime i file. Cerca nel manuale tutte le pagine che parlano di comprime.'
+        PARTENZA=$''
+        SOLUZIONE=$'man -k comprime'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-03)
+        TITOLO=$'La sezione giusta'
+        COMPITO=$'passwd è sia un comando sia un file di configurazione. Apri la pagina di manuale che descrive il file /etc/passwd, non quella del comando.'
+        PARTENZA=$''
+        SOLUZIONE=$'man 5 passwd'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-04)
+        TITOLO=$'L\'aiuto veloce'
+        COMPITO=$'Senza aprire il manuale, fatti dire da mkdir stesso come si usa e quali opzioni ha.'
+        PARTENZA=$''
+        SOLUZIONE=$'mkdir --help'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-05)
+        TITOLO=$'Un comando interno'
+        COMPITO=$'cd è un comando interno della shell e non ha una sua pagina di manuale. Mostra il suo aiuto.'
+        PARTENZA=$''
+        SOLUZIONE=$'help cd'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-06)
+        TITOLO=$'La documentazione dei pacchetti'
+        COMPITO=$'I pacchetti installano la loro documentazione in una directory apposta sotto /usr/share. Trova lì dentro il file README del pacchetto tar e mostralo.'
+        PARTENZA=$''
+        SOLUZIONE=$'cat /usr/share/doc/tar/README'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-07)
+        TITOLO=$'Dov\'è quel file?'
+        COMPITO=$'Da qualche parte nella tua home c\'è un file che si chiama stile.css. Trovalo con il comando che cerca nel database dei nomi dei file.'
+        PARTENZA=$''
+        SOLUZIONE=$'locate stile.css'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        cartella progetti/sito
+        cartella progetti/sito/css
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        file progetti/sito/css/stile.css 644 4320 $'h1 { color: navy; }\n'
+        file progetti/sito/index.html 644 4320 $'<h1>Ciao</h1>\n'
+        data progetti/sito/css 755 0
+        data progetti/sito 755 0
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.2-08)
+        TITOLO=$'Il database non lo sa ancora'
+        COMPITO=$'Crea il file vuoto appena-nato.txt e cercalo con locate: non lo trova. Aggiorna il database di locate e cercalo di nuovo.'
+        PARTENZA=$''
+        SOLUZIONE=$'touch appena-nato.txt\nlocate appena-nato\nsudo updatedb\nlocate appena-nato'
         cartella documenti
         cartella foto
         cartella progetti

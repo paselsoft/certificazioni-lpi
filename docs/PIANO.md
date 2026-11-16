@@ -218,6 +218,17 @@ la palestra davvero ed esegue le soluzioni da anna.
   a 11): un ciclo su una riga, `"$@"` in uno script, `if [ -f ... ]`, leggere uno script con `$#`
   ed `exit`. 65 sequenze in più confrontate con Bash vero (345 in tutto).
 
+- **Aiuto dalla riga di comando, obiettivo 2.2 (16/11/2026).** `shell-help.js`: 20 pagine di
+  manuale scritte da zero per l'app, in italiano e in breve, con la forma di quelle vere (NOME,
+  SINTASSI, DESCRIZIONE, OPZIONI, VEDI ANCHE) e a capo sulla larghezza del terminale. `man PAGINA`,
+  `man SEZIONE PAGINA` (`passwd` è nelle sezioni 1 e 5), `man -k` e `apropos`, `man -f` e `whatis`,
+  `info` (menu di partenza e un nodo per argomento), `COMANDO --help` per i comandi che hanno una
+  pagina, `help NOME` per i comandi interni. `/usr/share/doc` ha la documentazione di `tar` e
+  `grep`. `locate` (anche `-i`, `-c` e i caratteri jolly) cerca in un database fatto all'inizio
+  dell'esercizio e mostra solo i percorsi a cui l'utente può arrivare; `updatedb` lo rifà, solo
+  da root. Otto esercizi (il 2.2 ne aveva zero), tutti `bash: false`: le risposte sono del
+  simulatore. Nella palestra, su un Linux vero, gli stessi esercizi si fanno con il `man` vero.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -225,11 +236,11 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 1. **Script nel simulatore: quello che resta.** I due passi sono fatti (vedi sopra): il 3.3 ha 11
    esercizi. Solo se servono: `$(...)`, `read`, `alias`, i cicli `while` (chiedono anche `$((...))`),
    `-a` e `-o` in `test`.
-2. **Esercizi per gli obiettivi senza pratica** (2.2, 4.3, 4.4, 5.1, 5.2: peso 11 su 40, zero
-   esercizi). Mancano al simulatore: `man`, `info`, `locate`/`updatedb`, `ps`, `top`, `free`,
-   `dmesg`, `ip`, `ping`, `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`;
-   `/proc` e `/dev` sono vuoti. 15-20 esercizi, divisibili per obiettivo. Le risposte sarebbero
-   finte e fisse, quindi non confrontabili con Bash vero; le schede di `man` vanno scritte da zero.
+2. **Esercizi per gli obiettivi senza pratica** (restano 4.3, 4.4, 5.1, 5.2: peso 9 su 40, zero
+   esercizi; il 2.2 è fatto, vedi sopra). Mancano al simulatore: `ps`, `top`, `free`, `dmesg`,
+   `ip`, `ping`, `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`; `/proc` e
+   `/dev` sono vuoti. Un obiettivo alla volta. Le risposte sono finte e fisse, quindi non
+   confrontabili con Bash vero.
 3. **Domande: risposte giuste troppo lunghe.** In 111 domande a scelta singola su 173 la risposta
    giusta è l'opzione più lunga: si può indovinare senza sapere. Vanno riscritte una per una
    (accorciare la giusta o allungare i distrattori), magari con una statistica in
