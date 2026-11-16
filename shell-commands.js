@@ -1640,6 +1640,7 @@ const SIM_HELP = [
     "  archivi: tar gzip gunzip bzip2 bunzip2 xz unxz zcat bzcat xzcat zip unzip",
     "  permessi e utenti: chmod chown chgrp id whoami groups sudo",
     "  shell: echo export unset env type which history clear help",
+    "  aiuto: man (anche man -k e man 5 passwd), apropos, whatis, info, COMANDO --help, help cd, locate, updatedb",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",
     "Funzionano anche | ; && || > >> < 2> 2>&1 &>, le virgolette, $VARIABILI, ~ e i caratteri jolly * ? [ ].",
@@ -1690,7 +1691,6 @@ const SIM_COMMANDS = {
     type: { run: typeRun },
     which: { run: whichRun },
     history: { run: sh => ({ out: sh.history.map((line, i) => `${String(i + 1).padStart(5)}  ${line}\n`).join("") }) },
-    help: { run: () => ({ out: SIM_HELP.join("\n") + "\n" }) },
     clear: { run: () => ({ clear: true }) },
     exit: { run: exitRun },
     test: { run: (sh, args) => testRun(sh, "test", args), help: "test -f file, test -d dir, test a = b, test 3 -lt 5" },
@@ -1701,8 +1701,6 @@ const SIM_COMMANDS = {
     sh: { run: (sh, args, stdin, ctx) => bashRun(sh, "sh", args, stdin, ctx), help: "sh script.sh argomenti" },
     true: { run: () => ({}) },
     false: { run: () => ({ code: 1 }) },
-    man: { run: (sh, args) => ({ err: `man: nel simulatore non ci sono le pagine di manuale${args[0] ? ` (su un sistema vero: man ${args[0]})` : ""}. Le opzioni dei comandi sono spiegate nelle domande e nelle lezioni.\n`, code: 16 }) },
-    info: { run: () => ({ err: "info: nel simulatore non ci sono le pagine info.\n", code: 1 }) },
     id: {
         run: (sh, args) => {
             const name = args[0] || sh.user;

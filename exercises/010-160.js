@@ -51,6 +51,77 @@ addExercises("010-160", [
         explain: "`cd` è un comando interno (deve cambiare la directory della shell stessa); `cp` è un programma in `/usr/bin`."
     },
 
+    // ---- 2.2 Aiuto dalla riga di comando ----
+    // (le pagine del simulatore sono scritte per l'app: non si confrontano con un sistema vero)
+    {
+        id: "t2.2-01", title: "La pagina di manuale", bash: false,
+        task: "Apri la pagina di manuale del comando `cp` e cerca l'opzione che serve per copiare una directory.",
+        goals: [{ text: "Sullo schermo c'è la pagina di manuale di `cp`", output: "same", command: "^man\\s+(1\\s+)?cp\\s*$" }],
+        hint: "Il manuale si apre con `man` seguito dal nome del comando.",
+        solution: ["man cp"],
+        explain: "Ogni pagina ha le stesse parti: NOME, SINTASSI, DESCRIZIONE, OPZIONI. Su un sistema vero si scorre con le frecce, si cerca con `/parola` e si esce con `q`. L'opzione cercata è `-r`."
+    },
+    {
+        id: "t2.2-02", title: "Non ricordo il nome", bash: false,
+        task: "Non ricordi come si chiama il comando che comprime i file. Cerca nel manuale tutte le pagine che parlano di `comprime`.",
+        goals: [{ text: "Compare l'elenco delle pagine che contengono `comprime`", output: "same", command: "^(man\\s+-k|apropos)\\s+comprime\\s*$" }],
+        hint: "`man` ha un'opzione per cercare una parola nelle descrizioni brevi di tutte le pagine: `-k`. C'è anche un comando che fa solo questo.",
+        solution: ["man -k comprime"],
+        explain: "`man -k parola` e `apropos parola` sono la stessa cosa: cercano nel nome e nella descrizione breve di ogni pagina. Tra parentesi c'è il numero della sezione."
+    },
+    {
+        id: "t2.2-03", title: "La sezione giusta", bash: false,
+        task: "`passwd` è sia un comando sia un file di configurazione. Apri la pagina di manuale che descrive il file `/etc/passwd`, non quella del comando.",
+        goals: [{ text: "Sullo schermo c'è la pagina `PASSWD(5)`", output: "same", command: "^man\\s+5\\s+passwd\\s*$" }],
+        hint: "Scopri in quali sezioni c'è `passwd` con `whatis passwd` (o `man -f passwd`). Il numero della sezione si scrive tra `man` e il nome.",
+        solution: ["man 5 passwd"],
+        explain: "Le sezioni più usate: 1 comandi utente, 5 formati dei file di configurazione, 8 comandi di amministrazione. Senza numero, `man passwd` apre la prima che trova: la 1."
+    },
+    {
+        id: "t2.2-04", title: "L'aiuto veloce", bash: false,
+        task: "Senza aprire il manuale, fatti dire da `mkdir` stesso come si usa e quali opzioni ha.",
+        goals: [{ text: "`mkdir` mostra il suo aiuto breve", output: "same", command: "^mkdir\\s+--help\\s*$" }],
+        hint: "Quasi tutti i programmi accettano un'opzione lunga che stampa un riassunto: due trattini e la parola inglese per «aiuto».",
+        solution: ["mkdir --help"],
+        explain: "`--help` è scritto dal programma stesso ed è più corto della pagina di manuale: comodo per ricordare un'opzione al volo."
+    },
+    {
+        id: "t2.2-05", title: "Un comando interno", bash: false,
+        task: "`cd` è un comando interno della shell e non ha una sua pagina di manuale. Mostra il suo aiuto.",
+        goals: [{ text: "Compare l'aiuto di `cd`", output: "same", command: "^help\\s+cd\\s*$" }],
+        hint: "Prova `type cd` e poi `man cd`. Per i comandi interni Bash ha un suo comando di aiuto.",
+        solution: ["help cd"],
+        explain: "`type` dice se un nome è un comando interno. Per quelli c'è `help nome`; per i programmi `man nome` e `nome --help`."
+    },
+    {
+        id: "t2.2-06", title: "La documentazione dei pacchetti", bash: false,
+        task: "I pacchetti installano la loro documentazione in una directory apposta sotto `/usr/share`. Trova lì dentro il file `README` del pacchetto `tar` e mostralo.",
+        goals: [{ text: "Sullo schermo c'è il `README` di `tar`", output: "same", command: "/usr/share/doc/tar/README|^cd\\b.*&&|README" }],
+        hint: "La directory è `/usr/share/doc`: dentro c'è una directory per ogni pacchetto. Guarda con `ls`, poi usa `cat`.",
+        solution: ["cat /usr/share/doc/tar/README"],
+        explain: "In `/usr/share/doc/PACCHETTO` si trovano di solito `README`, le novità delle versioni e la licenza: informazioni che nelle pagine di manuale non ci sono."
+    },
+    {
+        id: "t2.2-07", title: "Dov'è quel file?", bash: false,
+        task: "Da qualche parte nella tua home c'è un file che si chiama `stile.css`. Trovalo con il comando che cerca nel database dei nomi dei file.",
+        setup: { files: { "/home/anna/progetti/sito/css/stile.css": "h1 { color: navy; }\n", "/home/anna/progetti/sito/index.html": "<h1>Ciao</h1>\n" } },
+        goals: [{ text: "`locate` mostra il percorso di `stile.css`", output: "same", command: "^locate\\s" }],
+        hint: "Il comando è `locate` seguito da una parte del nome.",
+        solution: ["locate stile.css"],
+        explain: "`locate` non guarda il disco: cerca in un database, per questo risponde subito. `find ~ -name stile.css` trova lo stesso file leggendo le directory una per una."
+    },
+    {
+        id: "t2.2-08", title: "Il database non lo sa ancora", bash: false,
+        task: "Crea il file vuoto `appena-nato.txt` e cercalo con `locate`: non lo trova. Aggiorna il database di `locate` e cercalo di nuovo.",
+        goals: [
+            { text: "`appena-nato.txt` esiste", path: "/home/anna/appena-nato.txt", is: "file" },
+            { text: "Dopo l'aggiornamento `locate` lo trova", output: "same", command: "^locate\\s" }
+        ],
+        hint: "Il database si aggiorna con `updatedb`, che deve leggere tutto il disco: serve `sudo`.",
+        solution: ["touch appena-nato.txt", "locate appena-nato", "sudo updatedb", "locate appena-nato"],
+        explain: "Il database di `locate` viene rifatto di solito una volta al giorno. Per i file appena creati serve `sudo updatedb`, oppure `find`, che guarda sempre il disco."
+    },
+
     // ---- 2.3 Directory ed elenchi di file ----
     {
         id: "t2.3-01", title: "Dove sono?",

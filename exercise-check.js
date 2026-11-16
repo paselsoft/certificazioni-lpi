@@ -8,6 +8,8 @@ function exerciseShell(exercise, columns = 80) {
     const sh = createShell(setup);
     sh.columns = columns;
     (setup.prepare || []).forEach(command => simRun(sh, command));
+    // locate conosce i file preparati per l'esercizio, non quelli creati dopo
+    sh.locateDb = simAllPaths(sh);
     if (setup.cwd) {
         sh.cwd = setup.cwd;
         sh.vars.PWD = setup.cwd;
