@@ -243,6 +243,18 @@ la palestra davvero ed esegue le soluzioni da anna.
   `self` (i file risultano grandi 0); `/sys` con disco e schede di rete; `/etc/fstab` e
   `/etc/os-release`. Dieci esercizi (il 4.3 ne aveva zero), tutti `bash: false`.
 
+- **Il computer in rete, obiettivo 4.4 (18/11/2026).** `shell-network.js`: una LAN finta
+  `192.168.1.0/24` (il computer è `192.168.1.50` sulla scheda `enp0s3`, con IPv6 `fe80::` e
+  `2001:db8:1::`; il router `192.168.1.1` fa anche da DNS; il NAS è `192.168.1.10`). `ip addr`,
+  `ip link`, `ip route` (anche abbreviati, con `-4`/`-6` e una scheda; per cambiare la rete dice
+  che si può solo guardare), `ifconfig`, `route` (`-n`), `ss` e `netstat` (`-t -u -l -a -n -p`,
+  i processi solo da root; `netstat -r`), `ping` (`-c`, `-4`, `-6`, `ping6`: senza `-c` si ferma
+  dopo 4 pacchetti e lo dice; legge `/etc/hosts`, poi il DNS; nessuno risponde agli altri
+  indirizzi della LAN), `host` (chiede al DNS e non guarda `/etc/hosts`; `-t A|AAAA`, ricerca
+  inversa), `hostname -I -f -d -i`. Gli indirizzi su Internet sono di quelli riservati agli
+  esempi (203.0.113.x, 198.51.100.x, 2001:db8::). `/etc/hosts` ha anche la riga IPv6 di `::1`.
+  Dieci esercizi (il 4.4 ne aveva zero), tutti `bash: false`.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -250,10 +262,9 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 1. **Script nel simulatore: quello che resta.** I due passi sono fatti (vedi sopra): il 3.3 ha 11
    esercizi. Solo se servono: `$(...)`, `read`, `alias`, i cicli `while` (chiedono anche `$((...))`),
    `-a` e `-o` in `test`.
-2. **Esercizi per gli obiettivi senza pratica** (restano 4.4, 5.1, 5.2: peso 6 su 40, zero
-   esercizi; il 2.2 e il 4.3 sono fatti, vedi sopra). Mancano al simulatore: `ip`, `ping`,
-   `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`. Un obiettivo alla
-   volta. Le risposte sono finte e fisse, quindi non confrontabili con Bash vero.
+2. **Esercizi per gli obiettivi senza pratica** (restano 5.1 e 5.2: peso 4 su 40, zero esercizi;
+   2.2, 4.3 e 4.4 sono fatti, vedi sopra). Mancano al simulatore: `who`, `w`, `last`, `su`,
+   `useradd`, `groupadd`, `passwd`. Un obiettivo alla volta.
 3. **Domande: risposte giuste troppo lunghe.** In 111 domande a scelta singola su 173 la risposta
    giusta è l'opzione più lunga: si può indovinare senza sapere. Vanno riscritte una per una
    (accorciare la giusta o allungare i distrattori), magari con una statistica in

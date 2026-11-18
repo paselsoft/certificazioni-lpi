@@ -220,7 +220,7 @@ function simBaseTree() {
             "/etc/group": { owner: "root", content: groupText() },
             "/etc/shadow": { owner: "root", group: "root", mode: "640", content: "root:*:20000:0:99999:7:::\nanna:$6$sale$hash:20000:0:99999:7:::\n" },
             "/etc/hostname": { owner: "root", content: "lpi\n" },
-            "/etc/hosts": { owner: "root", content: "127.0.0.1\tlocalhost\n127.0.1.1\tlpi\n192.168.1.10\tnas\n" },
+            "/etc/hosts": { owner: "root", content: "127.0.0.1\tlocalhost\n127.0.1.1\tlpi\n192.168.1.10\tnas\n::1\tlocalhost ip6-localhost ip6-loopback\n" },
             "/etc/resolv.conf": { owner: "root", content: "nameserver 192.168.1.1\nsearch casa.lan\n" },
             "/etc/skel/.bashrc": { owner: "root", content: "# ~/.bashrc: letto da Bash a ogni nuova shell\nalias ll='ls -l'\n" },
             "/home/anna/.bashrc": { content: "# ~/.bashrc: letto da Bash a ogni nuova shell\nalias ll='ls -l'\n", age: 60 * 24 * 30 },

@@ -550,6 +550,89 @@ addExercises("010-160", [
         explain: "La prima lettera `b` vuol dire dispositivo a blocchi (dischi); `c` a caratteri (come `/dev/null`). Al posto della dimensione ci sono due numeri, maggiore e minore. `sda` è il primo disco, `sda1` la sua prima partizione, `sdb` la chiavetta inserita."
     },
 
+    // ---- 4.4 Il computer in rete ----
+    // (la rete del simulatore è finta e fissa; gli indirizzi su Internet sono quelli riservati agli esempi)
+    {
+        id: "t4.4-01", title: "Il mio indirizzo IP", bash: false,
+        task: "Mostra gli indirizzi di rete del computer con il comando `ip`, e trova l'indirizzo IPv4 della scheda `enp0s3`.",
+        goals: [{ text: "Compaiono gli indirizzi, con `192.168.1.50/24`", output: "words", words: ["192.168.1.50/24"], command: "^ip\\s+(-4\\s+)?(a|ad|addr|address)(\\s+(show|list))?(\\s+(dev\\s+)?enp0s3)?\\s*$" }],
+        hint: "Il comando è `ip addr show`, che si può abbreviare in `ip a`. L'indirizzo IPv4 è sulla riga che inizia con `inet`.",
+        solution: ["ip addr show"],
+        explain: "`192.168.1.50/24`: l'indirizzo e, dopo la barra, quanti bit indicano la rete (24, cioè 255.255.255.0). `lo` è l'interfaccia di loopback, sempre `127.0.0.1`: il computer che parla con se stesso."
+    },
+    {
+        id: "t4.4-02", title: "Il vecchio ifconfig", bash: false,
+        task: "Mostra la configurazione della scheda `enp0s3` con il comando storico, quello che c'era prima di `ip`.",
+        goals: [{ text: "Compaiono indirizzo e maschera di rete di `enp0s3`", output: "words", words: ["192.168.1.50", "netmask", "255.255.255.0"], command: "^ifconfig\\b" }],
+        hint: "Il comando storico è `ifconfig` (pacchetto net-tools). Seguito dal nome della scheda mostra solo quella.",
+        solution: ["ifconfig enp0s3"],
+        explain: "`ifconfig` scrive la maschera per esteso (`netmask 255.255.255.0`), `ip` la scrive come `/24`. Sui sistemi recenti `ifconfig` spesso non è installato: si usa `ip`."
+    },
+    {
+        id: "t4.4-03", title: "La porta verso Internet", bash: false,
+        task: "Mostra la tabella di instradamento con il comando `ip`, e trova l'indirizzo del router (il gateway predefinito).",
+        goals: [{ text: "Compare la riga `default via 192.168.1.1`", output: "words", words: ["default", "via", "192.168.1.1"], command: "^ip\\s+(-4\\s+)?(r|ro|rou|rout|route)(\\s+(show|list))?\\s*$" }],
+        hint: "Il comando è `ip route show` (o solo `ip route`, `ip r`).",
+        solution: ["ip route show"],
+        explain: "La riga `default` dice dove vanno i pacchetti per tutte le reti che il computer non conosce: al router `192.168.1.1`. L'altra riga dice che la rete locale `192.168.1.0/24` si raggiunge direttamente."
+    },
+    {
+        id: "t4.4-04", title: "La tabella di route", bash: false,
+        task: "Mostra la stessa tabella con il comando storico `route`, con gli indirizzi in numeri invece che in nomi.",
+        goals: [{ text: "`route` mostra il gateway `192.168.1.1`", output: "same", command: "^route\\s+-n\\s*$" }],
+        hint: "L'opzione per avere solo numeri è `-n`, la stessa di `netstat` e `ss`.",
+        solution: ["route -n"],
+        explain: "Con `-n` non si traducono i numeri in nomi: `0.0.0.0` al posto di `default`, `192.168.1.1` al posto di `_gateway`. Il flag `G` indica la riga che passa da un gateway."
+    },
+    {
+        id: "t4.4-05", title: "Quale server DNS?", bash: false,
+        task: "Mostra il file di configurazione che dice al computer a quale server DNS chiedere gli indirizzi dei nomi.",
+        goals: [{ text: "Compare il contenuto di `/etc/resolv.conf`", output: "same", command: "/etc/resolv\\.conf" }],
+        hint: "È un file in `/etc` che si chiama `resolv.conf`.",
+        solution: ["cat /etc/resolv.conf"],
+        explain: "`nameserver` è il server DNS, qui il router `192.168.1.1`; `search casa.lan` aggiunge quel dominio ai nomi brevi, così `nas` diventa `nas.casa.lan`."
+    },
+    {
+        id: "t4.4-06", title: "Nomi senza DNS", bash: false,
+        task: "Nel file dove si scrivono a mano i nomi dei computer della rete, trova la riga del `nas` e mostrala.",
+        goals: [{ text: "Compare la riga del `nas` di `/etc/hosts`", output: "words", words: ["192.168.1.10", "nas"], command: "/etc/hosts" }],
+        hint: "Il file è `/etc/hosts`. Cerca la riga con `grep`.",
+        solution: ["grep nas /etc/hosts"],
+        explain: "In `/etc/hosts` ogni riga è un indirizzo seguito da uno o più nomi. Il computer lo guarda prima di chiedere al DNS: va bene per pochi computer di casa."
+    },
+    {
+        id: "t4.4-07", title: "Il NAS risponde?", bash: false,
+        task: "Controlla se il `nas` è raggiungibile, mandandogli esattamente 3 pacchetti.",
+        goals: [{ text: "`ping` manda 3 pacchetti al `nas` e riceve 3 risposte", output: "same", command: "^ping\\b(?=.*\\s-c\\s*3\\b)(?=.*\\snas\\b)" }],
+        hint: "Il comando è `ping`. Su un sistema vero continua all'infinito: il numero di pacchetti si sceglie con `-c`.",
+        solution: ["ping -c 3 nas"],
+        explain: "Ogni risposta mostra il tempo di andata e ritorno. `0% packet loss` vuol dire che il NAS è acceso e raggiungibile. Senza `-c`, su Linux `ping` si ferma con Ctrl+C."
+    },
+    {
+        id: "t4.4-08", title: "Chiedere al DNS", bash: false,
+        task: "Chiedi al server DNS gli indirizzi di `www.lpi.org`.",
+        goals: [{ text: "Compaiono l'indirizzo IPv4 e quello IPv6 di `www.lpi.org`", output: "same", command: "^host\\s+www\\.lpi\\.org\\.?\\s*$" }],
+        hint: "Il comando che interroga il DNS è `host`, seguito dal nome.",
+        solution: ["host www.lpi.org"],
+        explain: "`has address` è l'indirizzo IPv4 (record A), `has IPv6 address` quello IPv6 (record AAAA). `host` chiede direttamente al DNS e non guarda `/etc/hosts`. Gli indirizzi del simulatore sono di esempio, non quelli veri."
+    },
+    {
+        id: "t4.4-09", title: "Chi è in ascolto?", bash: false,
+        task: "Mostra le porte TCP in ascolto sul computer, con i numeri delle porte invece dei nomi dei servizi.",
+        goals: [{ text: "Compaiono le porte in ascolto, con la 22 di ssh", output: "words", words: ["LISTEN", "0.0.0.0:22"], command: "^(ss|netstat)\\s+-(?=[tulnp]*t)(?=[tulnp]*l)(?=[tulnp]*n)[tulnp]+\\s*$" }],
+        hint: "Il comando moderno è `ss` (quello storico `netstat`). Le opzioni: `-t` TCP, `-l` in ascolto, `-n` numeri; si scrivono insieme.",
+        solution: ["ss -tln"],
+        explain: "La porta 22 è quella di `ssh`; `0.0.0.0` vuol dire «su tutti gli indirizzi», `127.0.0.1` solo dal computer stesso. Con `-u` si aggiungono le porte UDP, con `-p` (da root) i programmi."
+    },
+    {
+        id: "t4.4-10", title: "Gli indirizzi IPv6", bash: false,
+        task: "Mostra solo gli indirizzi IPv6 del computer.",
+        goals: [{ text: "Compaiono solo righe `inet6`, con l'indirizzo `fe80::`", output: "words", words: ["inet6", "fe80::a00:27ff:fe4e:66a1/64"], command: "^ip\\s+-6\\s+(a|ad|addr|address)(\\s+(show|list))?(\\s+\\S+)?\\s*$" }],
+        hint: "`ip` ha un'opzione per scegliere la famiglia di indirizzi: `-4` o `-6`, prima di `addr`.",
+        solution: ["ip -6 addr show"],
+        explain: "Gli indirizzi IPv6 sono lunghi 128 bit e si scrivono in esadecimale; `::` sostituisce una serie di zeri. `fe80::` è l'indirizzo locale al collegamento, sempre presente; `::1` è il loopback."
+    },
+
     // ---- 5.3 Permessi e proprietà ----
     {
         id: "t5.3-01", title: "Solo per me",
