@@ -105,9 +105,13 @@ module.exports = {
         assert.match(await page.textContent("#pronto-2-1 .ready-facts"),
             new RegExp(`mai viste ${n21 - half - 2} · sbagliate l'ultima volta 2 · da ripassare oggi 2 · lezioni lette 1 su 2 · esercizi al terminale 2 su 4\\.`));
         assert.equal(await page.getAttribute("#pronto-2-1 .ready-actions a", "href"), "#/010-160/domande/2.1");
-        // 4.3: 2 giuste su 15, debole; niente esercizi al terminale
+        // 4.3: 2 giuste su 15, debole; gli esercizi al terminale ci sono, ma nessuno è fatto
         assert.equal(await page.textContent("#pronto-4-3 .ready-level"), "Debole");
-        assert.doesNotMatch(await page.textContent("#pronto-4-3 .ready-facts"), /esercizi/);
+        const practice43 = await page.evaluate(() => EXERCISES.filter(exercise => exercise.objective === "4.3").length);
+        assert.match(await page.textContent("#pronto-4-3 .ready-facts"), new RegExp(`esercizi al terminale 0 su ${practice43}\\.`));
+        // Un obiettivo senza esercizi al terminale non li nomina
+        const withoutPractice = await page.evaluate(() => EXAMS[0].topics.flatMap(topic => topic.objectives).map(objective => objective.id).find(id => !EXERCISES.some(exercise => exercise.objective === id)));
+        if (withoutPractice) assert.doesNotMatch(await page.textContent(`#pronto-${withoutPractice.replace(".", "-")} .ready-facts`), /esercizi/);
         assert.equal(await page.textContent("#pronto-1-1 .ready-level"), "Da iniziare");
         // Simulazioni per argomento (somma delle ultime)
         assert.match(await page.textContent("#pronto-argomento-4 ~ .ready-topic-sims"), /Nelle ultime 2 simulazioni: 7 giuste su 16 \(44%\)\./);

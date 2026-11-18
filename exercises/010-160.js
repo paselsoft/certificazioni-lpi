@@ -309,7 +309,7 @@ addExercises("010-160", [
     {
         id: "t3.2-03", title: "I nomi degli utenti",
         task: "Salva nel file `utenti.txt` i nomi degli utenti del sistema: il primo campo di ogni riga di `/etc/passwd`, dove i campi sono separati da `:`.",
-        goals: [{ text: "`utenti.txt` contiene i nomi, uno per riga", path: "/home/anna/utenti.txt", is: "file", content: "root\nanna\nluca\nwww-data\n" }],
+        goals: [{ text: "`utenti.txt` contiene i nomi, uno per riga", path: "/home/anna/utenti.txt", is: "file", content: "root\nanna\nluca\nwww-data\nsyslog\n" }],
         hint: "`cut` con il separatore (`-d`) e il campo (`-f`); poi `>` per scrivere nel file.",
         solution: ["cut -d: -f1 /etc/passwd > utenti.txt"],
         explain: "`cut -d: -f1` taglia ogni riga ai `:` e tiene il primo pezzo; `>` crea (o sostituisce) il file con l'output."
@@ -465,6 +465,89 @@ addExercises("010-160", [
         hint: "Senza argomenti (o con più di uno) lo script esce con 1. Con un argomento solo guarda se è un file: prova con un nome che non esiste.",
         solution: ["./controlla.sh nonesiste.txt", "echo $?"],
         explain: "`$# -ne 1` vuol dire «il numero degli argomenti è diverso da 1». Il ramo `else` scatta quando `[ -f \"$1\" ]` è falso: lì lo script sceglie di uscire con 2."
+    },
+
+    // ---- 4.3 Dove sono memorizzati i dati ----
+    // (processi, memoria, kernel e registri sono quelli di un computer finto: non si confrontano con Bash)
+    {
+        id: "t4.3-01", title: "I processi del terminale", bash: false,
+        task: "Mostra i processi che stai usando in questo terminale.",
+        goals: [{ text: "Compare l'elenco con la tua shell (`bash`) e il comando stesso", output: "words", words: ["PID", "bash", "ps"], command: "^ps\\s*$" }],
+        hint: "Il comando che elenca i processi è `ps`; da solo mostra quelli del terminale corrente.",
+        solution: ["ps"],
+        explain: "Ogni programma in esecuzione è un processo con un numero, il PID. Nell'elenco c'è anche `ps`, che quando lo leggi è già finito: ogni volta ha un PID nuovo. Il PID della shell è anche in `$$`."
+    },
+    {
+        id: "t4.3-02", title: "Tutti i processi", bash: false,
+        task: "Mostra tutti i processi del sistema, di tutti gli utenti, con il nome dell'utente di ognuno.",
+        goals: [{ text: "Compaiono anche i processi di root e di luca", output: "words", words: ["root", "luca", "syslog"], command: "^ps\\s+(aux|-ef|-eF|-e\\s+-f|-f\\s+-e|axu|uax)\\s*$" }],
+        hint: "Ci sono due modi classici: lo stile BSD, tre lettere senza trattino (`aux`), e lo stile Unix, `-ef`.",
+        solution: ["ps aux"],
+        explain: "`ps aux` mostra utente, PID, uso di CPU e memoria, stato e comando; `ps -ef` mostra anche il PPID, il processo padre. Il processo con PID 1 è il primo avviato dal kernel: `/sbin/init` (systemd)."
+    },
+    {
+        id: "t4.3-03", title: "Trova un processo", bash: false,
+        task: "Dall'elenco di tutti i processi tieni solo le righe che contengono `sshd`, il server per collegarsi da remoto.",
+        goals: [{ text: "Compaiono solo le righe con `sshd`", output: "words", words: ["sshd"], command: "^ps\\s.*\\|\\s*grep\\s.*sshd" }],
+        hint: "Manda l'uscita di `ps aux` a `grep` con una pipe.",
+        solution: ["ps aux | grep sshd"],
+        explain: "Nell'elenco compare anche `grep sshd`: mentre `ps` legge i processi, `grep` è già in esecuzione. Su un sistema vero capita lo stesso."
+    },
+    {
+        id: "t4.3-04", title: "Quanta memoria?", bash: false,
+        task: "Mostra quanta memoria RAM e quanto spazio di swap ha il computer, con le unità leggibili (Mi, Gi).",
+        goals: [{ text: "`free` mostra la memoria in Mi e Gi", output: "same", command: "^free\\s+(-h|--human)\\s*$" }],
+        hint: "Il comando è `free`; l'opzione per le unità leggibili è la stessa di `ls` e `du`.",
+        solution: ["free -h"],
+        explain: "`total` è la RAM installata, `used` quella usata dai programmi, `buff/cache` quella che il kernel usa come cache e libera quando serve, `available` quella davvero disponibile. Swap è la memoria sul disco."
+    },
+    {
+        id: "t4.3-05", title: "La memoria vista dal kernel", bash: false,
+        task: "Il kernel mostra lo stato della memoria in un file dentro `/proc`. Trova in quel file la riga `MemTotal` e mostrala.",
+        goals: [{ text: "Compare la riga `MemTotal` letta da `/proc/meminfo`", output: "words", words: ["MemTotal:"], command: "/proc/meminfo" }],
+        hint: "Guarda cosa c'è in `/proc` con `ls /proc`. Il file è `meminfo`: cerca la riga con `grep`.",
+        solution: ["grep MemTotal /proc/meminfo"],
+        explain: "`/proc` non è sul disco: i suoi file li crea il kernel nel momento in cui li leggi, per questo `ls -l` li mostra grandi 0. `free` legge proprio `/proc/meminfo`."
+    },
+    {
+        id: "t4.3-06", title: "La cartella di un processo", bash: false,
+        task: "Ogni processo ha una directory in `/proc` con il suo PID. Mostra il file `status` di quella della tua shell.",
+        goals: [{ text: "Compare lo stato della shell: `Name: bash`", output: "words", words: ["Name:", "bash", "4242"], command: "^(cat|head|less|more)\\s.*/proc/(4242|self|\\$\\$|\\$\\{\\$\\})/status" }],
+        hint: "Il PID della shell è nella variabile speciale `$$`: prova `echo $$`. Il file è `/proc/PID/status`.",
+        solution: ["cat /proc/$$/status"],
+        explain: "In `/proc/PID/` ci sono le informazioni di quel processo: `status`, `cmdline` (il comando con cui è partito) e altre. `/proc/self` è un link al processo che lo legge."
+    },
+    {
+        id: "t4.3-07", title: "I messaggi del kernel", bash: false,
+        task: "Mostra solo i messaggi del kernel che parlano di dispositivi USB (la parola `usb`, maiuscola o minuscola).",
+        goals: [{ text: "Compaiono i messaggi del kernel sull'USB", output: "same", command: "dmesg\\b.*\\|\\s*grep\\s" }],
+        hint: "I messaggi del kernel si leggono con `dmesg`. Prova prima da solo: su molti sistemi serve `sudo`. Poi filtra con `grep -i`.",
+        solution: ["sudo dmesg | grep -i usb"],
+        explain: "Il kernel tiene i suoi messaggi in memoria (il ring buffer): avvio, dischi, schede di rete, chiavette inserite. Il numero tra parentesi quadre sono i secondi dall'accensione."
+    },
+    {
+        id: "t4.3-08", title: "Il registro di sistema", bash: false,
+        task: "Mostra le ultime 5 righe del registro di sistema `/var/log/syslog`.",
+        goals: [{ text: "Compaiono le ultime 5 righe di `syslog`", output: "same", command: "tail\\b.*syslog" }],
+        hint: "Le ultime righe si leggono con `tail -n 5`. Il file appartiene al gruppo `adm`: se ti dice «Permesso negato», usa `sudo`.",
+        solution: ["sudo tail -n 5 /var/log/syslog"],
+        explain: "In `/var/log` ci sono i registri: `syslog` (messaggi generali), `auth.log` (accessi e `sudo`), `kern.log` (kernel). Sui sistemi con systemd gli stessi messaggi si leggono anche con `journalctl`."
+    },
+    {
+        id: "t4.3-09", title: "Il kernel sul disco", bash: false,
+        task: "Mostra in formato lungo il contenuto della directory dove stanno il kernel di Linux e i file per avviarlo.",
+        goals: [{ text: "Compare il contenuto di `/boot`, con `vmlinuz`", output: "same", command: "^ls\\s+-[a-zA-Z]*l[a-zA-Z]*\\s+/boot/?\\s*$" }],
+        hint: "La directory è `/boot`. Per il formato lungo `ls -l`.",
+        solution: ["ls -l /boot"],
+        explain: "`vmlinuz-VERSIONE` è il kernel compresso, `initrd.img-VERSIONE` il piccolo sistema che lo aiuta a partire, `grub` il boot loader. La versione è la stessa di `uname -r`."
+    },
+    {
+        id: "t4.3-10", title: "I dischi sono file", bash: false,
+        task: "In Linux anche i dischi compaiono come file, in `/dev`. Mostra in formato lungo tutti quelli che iniziano con `sd`.",
+        goals: [{ text: "Compaiono `sda`, le sue partizioni e la chiavetta `sdb`", output: "same", command: "^ls\\s+-[a-zA-Z]*l[a-zA-Z]*\\s+/dev/sd\\*\\s*$" }],
+        hint: "Usa `ls -l` con il carattere jolly: `/dev/sd*`.",
+        solution: ["ls -l /dev/sd*"],
+        explain: "La prima lettera `b` vuol dire dispositivo a blocchi (dischi); `c` a caratteri (come `/dev/null`). Al posto della dimensione ci sono due numeri, maggiore e minore. `sda` è il primo disco, `sda1` la sua prima partizione, `sdb` la chiavetta inserita."
     },
 
     // ---- 5.3 Permessi e proprietà ----

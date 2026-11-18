@@ -123,7 +123,7 @@ function linkCount(sh, node) {
 }
 
 function modeString(node) {
-    const type = node.type === "d" ? "d" : node.type === "l" ? "l" : "-";
+    const type = node.type === "d" ? "d" : node.type === "l" ? "l" : node.device ? node.device.kind : "-";
     const bits = node.mode;
     const triplet = (shift, special, letter) => {
         const r = bits >> shift & 4 ? "r" : "-";
@@ -237,7 +237,8 @@ function lsRun(sh, args, stdin, ctx) {
         if (flags.l) {
             const rows = list.map(({ name, node }) => ({
                 mode: modeString(node), links: String(linkCount(sh, node)), owner: node.owner, group: node.group,
-                size: flags.h ? humanSize(fileSize(node)) : String(fileSize(node)), date: lsDate(sh, node.mtime),
+                // Per i dispositivi, al posto della dimensione: numero maggiore e minore
+                size: node.device ? `${node.device.major}, ${node.device.minor}` : flags.h ? humanSize(fileSize(node)) : String(fileSize(node)), date: lsDate(sh, node.mtime),
                 name: name + (node.type === "l" ? ` -> ${node.target}` : suffix(node))
             }));
             const width = key => Math.max(0, ...rows.map(row => row[key].length));
@@ -1448,6 +1449,8 @@ function fileRun(sh, args) {
             let kind;
             if (node.type === "d") kind = "directory";
             else if (node.type === "l") kind = `symbolic link to ${node.target}`;
+            else if (node.device) kind = `${node.device.kind === "b" ? "block" : "character"} special (${node.device.major}/${node.device.minor})`;
+            else if (node.fakeSize === 0) kind = "empty";
             else if (!canAccess(sh, node, 4)) kind = "regular file, no read permission";
             else if (node.data === "") kind = "empty";
             else if (isBinary(node.data)) kind = { tar: "POSIX tar archive (GNU)", gzip: "gzip compressed data", bzip2: "bzip2 compressed data, block size = 900k", xz: "XZ compressed data, checksum CRC64", zip: "Zip archive data", elf: "ELF 64-bit LSB pie executable" }[binaryKind(node.data)];
@@ -1556,10 +1559,11 @@ function testRun(sh, name, args) {
         }
         if (!node) return false;
         if (letter === "e") return true;
-        if (letter === "f") return node.type === "f";
+        if (letter === "f") return node.type === "f" && !node.device;
+        if (letter === "b" || letter === "c") return Boolean(node.device) && node.device.kind === letter;
         if (letter === "d") return node.type === "d";
         if (letter === "L") return node.type === "l";
-        if (letter === "s") return node.type !== "f" || node.data.length > 0;
+        if (letter === "s") return node.type !== "f" || fileSize(node) > 0;
         return canAccess(sh, node, { r: 4, w: 2, x: 1 }[letter]);
     };
     let value;
@@ -1571,7 +1575,7 @@ function testRun(sh, name, args) {
         const [op, operand] = words;
         if (op === "-z") value = operand === "";
         else if (op === "-n") value = operand !== "";
-        else if (/^-[efdLrwxs]$/.test(op)) value = fileTest(op[1], operand);
+        else if (/^-[efdLrwxsbc]$/.test(op)) value = fileTest(op[1], operand);
         else return fail(`${op}: atteso un operatore unario`);
     } else if (words.length === 3) {
         const [left, op, right] = words;
@@ -1640,6 +1644,7 @@ const SIM_HELP = [
     "  archivi: tar gzip gunzip bzip2 bunzip2 xz unxz zcat bzcat xzcat zip unzip",
     "  permessi e utenti: chmod chown chgrp id whoami groups sudo",
     "  shell: echo export unset env type which history clear help",
+    "  sistema: ps (anche ps aux, ps -ef), top, uptime, free, dmesg, journalctl; /proc, /dev, /sys, /boot, /var/log",
     "  aiuto: man (anche man -k e man 5 passwd), apropos, whatis, info, COMANDO --help, help cd, locate, updatedb",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",

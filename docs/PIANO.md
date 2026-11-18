@@ -229,6 +229,20 @@ la palestra davvero ed esegue le soluzioni da anna.
   da root. Otto esercizi (il 2.2 ne aveva zero), tutti `bash: false`: le risposte sono del
   simulatore. Nella palestra, su un Linux vero, gli stessi esercizi si fanno con il `man` vero.
 
+- **Dove sono memorizzati i dati, obiettivo 4.3 (18/11/2026).** `shell-system.js` aggiunge un
+  piccolo computer finto e fisso, acceso da due giorni: 14 processi (systemd, sshd, cron,
+  rsyslogd, la sessione di luca con `top`, la shell di anna con PID 4242 come `$$`); `ps` (da solo,
+  `-e`, `-f`, `-ef`, `-u`, `-p`, `aux`, `ax`, `u`, `x`; mostra anche gli altri comandi della
+  pipeline, come `grep`; sullo schermo taglia le righe alla larghezza del terminale), `top` (una
+  schermata sola), `uptime`, `free` (`-h`, `-m`, `-g`), `dmesg` (solo da root, come su Ubuntu),
+  `journalctl` (`-n`, `-k`, `-u`; root o gruppo adm). File nuovi: `/var/log/syslog`, `kern.log`,
+  `auth.log` (gruppo adm) e `dpkg.log`; `/boot` con kernel, initrd, config e `grub/grub.cfg`;
+  `/dev` con dispositivi a blocchi e a caratteri (`ls -l` mostra `b`/`c` e i numeri maggiore e
+  minore, `file` e `test -b`/`-c` li riconoscono), compresa la chiavetta `sdb`; `/proc` con
+  `cpuinfo`, `meminfo`, `version`, `uptime`, `partitions`, le directory dei processi 1 e 4242 e
+  `self` (i file risultano grandi 0); `/sys` con disco e schede di rete; `/etc/fstab` e
+  `/etc/os-release`. Dieci esercizi (il 4.3 ne aveva zero), tutti `bash: false`.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -236,11 +250,10 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 1. **Script nel simulatore: quello che resta.** I due passi sono fatti (vedi sopra): il 3.3 ha 11
    esercizi. Solo se servono: `$(...)`, `read`, `alias`, i cicli `while` (chiedono anche `$((...))`),
    `-a` e `-o` in `test`.
-2. **Esercizi per gli obiettivi senza pratica** (restano 4.3, 4.4, 5.1, 5.2: peso 9 su 40, zero
-   esercizi; il 2.2 è fatto, vedi sopra). Mancano al simulatore: `ps`, `top`, `free`, `dmesg`,
-   `ip`, `ping`, `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`; `/proc` e
-   `/dev` sono vuoti. Un obiettivo alla volta. Le risposte sono finte e fisse, quindi non
-   confrontabili con Bash vero.
+2. **Esercizi per gli obiettivi senza pratica** (restano 4.4, 5.1, 5.2: peso 6 su 40, zero
+   esercizi; il 2.2 e il 4.3 sono fatti, vedi sopra). Mancano al simulatore: `ip`, `ping`,
+   `host`, `ss`, `who`, `w`, `last`, `su`, `useradd`, `groupadd`, `passwd`. Un obiettivo alla
+   volta. Le risposte sono finte e fisse, quindi non confrontabili con Bash vero.
 3. **Domande: risposte giuste troppo lunghe.** In 111 domande a scelta singola su 173 la risposta
    giusta è l'opzione più lunga: si può indovinare senza sapere. Vanno riscritte una per una
    (accorciare la giusta o allungare i distrattori), magari con una statistica in
