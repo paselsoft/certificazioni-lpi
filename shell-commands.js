@@ -1645,6 +1645,7 @@ const SIM_HELP = [
     "  permessi e utenti: chmod chown chgrp id whoami groups sudo",
     "  shell: echo export unset env type which history clear help",
     "  sistema: ps (anche ps aux, ps -ef), top, uptime, free, dmesg, journalctl; /proc, /dev, /sys, /boot, /var/log",
+    "  rete: ip addr, ip route, ifconfig, route, ss, netstat, ping, host, hostname -I; /etc/hosts, /etc/resolv.conf",
     "  aiuto: man (anche man -k e man 5 passwd), apropos, whatis, info, COMANDO --help, help cd, locate, updatedb",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",
@@ -1717,7 +1718,6 @@ const SIM_COMMANDS = {
     },
     whoami: { run: sh => ({ out: `${sh.user}\n` }) },
     groups: { run: (sh, args) => ({ out: `${args[0] ? `${args[0]} : ` : ""}${(SIM_USERS[args[0] || sh.user] || { groups: [] }).groups.join(" ")}\n` }) },
-    hostname: { run: () => ({ out: "lpi\n" }) },
     uname: {
         run: (sh, args) => {
             const { flags } = parseOptions(args, "asnrm", "", { all: "a" });

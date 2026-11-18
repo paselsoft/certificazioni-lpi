@@ -248,6 +248,53 @@ module.exports = {
         assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
     },
 
+    "rete: ip, ifconfig, route, ss, netstat, ping, host e i file di configurazione": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").pop();
+        await type(page, "ip a show enp0s3 | grep -w inet");
+        assert.match(await last(), /^ +inet 192\.168\.1\.50\/24 brd 192\.168\.1\.255 scope global/);
+        await type(page, "ip -6 addr | grep -c inet6");
+        assert.equal(await last(), "3");
+        await type(page, "ip route | head -n 1");
+        assert.equal(await last(), "default via 192.168.1.1 dev enp0s3 proto dhcp src 192.168.1.50 metric 100");
+        await type(page, "ifconfig enp0s3 | head -n 2");
+        assert.match(await last(), /inet 192\.168\.1\.50  netmask 255\.255\.255\.0  broadcast 192\.168\.1\.255/);
+        await type(page, "route -n | tail -n 2 | head -n 1");
+        assert.match(await last(), /^0\.0\.0\.0 +192\.168\.1\.1 +0\.0\.0\.0 +UG/);
+        await type(page, "ip addr add 10.0.0.1/8 dev lo");
+        assert.match(await last(), /si può solo guardare/);
+        // Le porte in ascolto: ss e netstat
+        await type(page, "ss -tln | grep -c LISTEN");
+        assert.equal(await last(), "4");
+        await type(page, "netstat -tln | grep ':22 '");
+        assert.match(await outputText(page), /\ntcp +0 +0 0\.0\.0\.0:22 +0\.0\.0\.0:\* +LISTEN\ntcp6 +0 +0 :::22 +:::\* +LISTEN$/);
+        // ping guarda /etc/hosts; host chiede al DNS
+        await type(page, "ping -c 2 nas | tail -n 2 | head -n 1");
+        assert.equal(await last(), "2 packets transmitted, 2 received, 0% packet loss, time 1002ms");
+        await type(page, "ping -c 1 192.168.1.99 > /dev/null; echo $?");
+        assert.equal(await last(), "1");
+        await type(page, "ping -c 1 sitoinesistente");
+        assert.equal(await last(), "ping: sitoinesistente: Nome o servizio sconosciuto");
+        await type(page, "ping 192.168.1.1");
+        assert.match(await last(), /si ferma dopo 4 pacchetti; su un sistema vero continua finché premi Ctrl\+C/);
+        await type(page, "host www.lpi.org");
+        assert.match(await outputText(page), /www\.lpi\.org has address 203\.0\.113\.80\nwww\.lpi\.org has IPv6 address 2001:db8:80::1$/);
+        await type(page, "host nas");
+        assert.equal(await last(), "nas.casa.lan has address 192.168.1.10");
+        await type(page, "cat /etc/resolv.conf");
+        assert.match(await outputText(page), /nameserver 192\.168\.1\.1\nsearch casa\.lan$/);
+        await type(page, "hostname -I");
+        assert.equal(await last(), "192.168.1.50 2001:db8:1::a00:27ff:fe4e:66a1 ");
+        await type(page, "help");
+        assert.match(await outputText(page), /rete: ip addr, ip route, ifconfig, route, ss, netstat, ping, host/);
+        // A 320 px le righe lunghe di ip addr vanno a capo, senza scorrimento orizzontale
+        await page.setViewportSize({ width: 320, height: 700 });
+        await go(page, "#/terminale/t4.4-01");
+        await type(page, "ip addr show");
+        await page.waitForSelector("#practice-success:not([hidden])");
+        assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");
