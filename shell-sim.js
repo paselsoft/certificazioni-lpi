@@ -16,9 +16,10 @@ const SIM_USERS = {
     root: { uid: 0, gid: 0, home: "/root", shell: "/bin/bash", groups: ["root"] },
     anna: { uid: 1000, gid: 1000, home: "/home/anna", shell: "/bin/bash", groups: ["anna", "sudo", "sviluppo"], name: "Anna Rossi" },
     luca: { uid: 1001, gid: 1001, home: "/home/luca", shell: "/bin/bash", groups: ["luca", "sviluppo"], name: "Luca Bianchi" },
-    "www-data": { uid: 33, gid: 33, home: "/var/www", shell: "/usr/sbin/nologin", groups: ["www-data"], name: "www-data" }
+    "www-data": { uid: 33, gid: 33, home: "/var/www", shell: "/usr/sbin/nologin", groups: ["www-data"], name: "www-data" },
+    syslog: { uid: 104, gid: 110, home: "/home/syslog", shell: "/usr/sbin/nologin", groups: ["syslog", "adm"], name: "" }
 };
-const SIM_GROUPS = { root: 0, adm: 4, sudo: 27, "www-data": 33, anna: 1000, luca: 1001, sviluppo: 1002 };
+const SIM_GROUPS = { root: 0, adm: 4, tty: 5, disk: 6, cdrom: 24, sudo: 27, "www-data": 33, input: 105, syslog: 110, anna: 1000, luca: 1001, sviluppo: 1002 };
 const SIM_UMASK = 0o022;
 
 const ERRORS = {
@@ -64,7 +65,8 @@ function byteCompare(a, b) {
     return x.length - y.length;
 }
 
-const fileSize = node => node.type === "f" ? new TextEncoder().encode(node.data).length : node.type === "l" ? node.target.length : 4096;
+// I file di /proc risultano vuoti e quelli di /sys grandi 4096 byte (fakeSize), come su un sistema vero
+const fileSize = node => node.fakeSize !== undefined ? node.fakeSize : node.type === "f" ? new TextEncoder().encode(node.data).length : node.type === "l" ? node.target.length : 4096;
 
 // ---- Percorsi ----
 
@@ -171,6 +173,12 @@ function simFromSpec(type, spec) {
     if (options.mode) node.mode = parseInt(options.mode, 8);
     else node.mode = type === "d" ? 0o755 : 0o644;
     if (type === "f") node.data = options.content || "";
+    // Un dispositivo: "b 8 0" (a blocchi, maggiore 8, minore 0) o "c 1 3" (a caratteri)
+    if (options.device) {
+        const [kind, major, minor] = options.device.split(" ");
+        node.device = { kind, major: Number(major), minor: Number(minor) };
+    }
+    if (options.fakeSize !== undefined) node.fakeSize = options.fakeSize;
     if (type === "l") {
         node.target = options.target;
         node.mode = 0o777;
@@ -193,7 +201,7 @@ function groupText() {
 // Il file system di base, uguale in tutti gli esercizi: la home di anna con qualche file, i file
 // di sistema dell'esame (/etc, /var/log, /tmp...) e i programmi in /usr/bin
 function simBaseTree() {
-    return {
+    const base = {
         dirs: {
             "/root": { owner: "root", mode: "700" },
             "/bin": { owner: "root" }, "/usr": { owner: "root" }, "/usr/bin": { owner: "root" }, "/usr/local/bin": { owner: "root" },
@@ -237,6 +245,12 @@ function simBaseTree() {
         },
         links: {}
     };
+    // Processi, registri, /boot, /dev, /proc e /sys (shell-system.js)
+    if (typeof simSystemTree === "function") {
+        const system = simSystemTree();
+        for (const key of ["dirs", "files", "links"]) base[key] = { ...base[key], ...system[key] };
+    }
+    return base;
 }
 
 // Una shell nuova. setup aggiunge o sostituisce file, directory e link: { dirs, files, links, cwd }
@@ -253,7 +267,7 @@ function createShell(setup = {}) {
     };
     const base = simBaseTree();
     const add = (type, list) => Object.entries(list || {}).forEach(([path, spec]) => {
-        const node = simFromSpec(type, type === "l" ? { target: spec.target || spec, owner: spec.owner } : spec);
+        const node = simFromSpec(type, type === "l" ? { target: spec.target || spec, owner: spec.owner, group: spec.group } : spec);
         // Una directory che esiste già (creata come intermedia) prende le proprietà indicate
         const existing = type === "d" && simFindRaw(sh, path);
         if (existing && existing.type === "d") Object.assign(existing, { mode: node.mode, owner: node.owner, group: node.group, mtime: node.mtime });
@@ -815,6 +829,8 @@ function textLines(text) {
 }
 
 function simRunPipeline(sh, pipeline, display) {
+    // I comandi della pipeline, come li vedrebbe ps (che mostra anche gli altri processi della riga)
+    const siblings = pipeline.map(command => command.kind ? command.kind : command.words.map(parts => parts.map(part => part.t === "lit" ? part.text : part.t === "tilde" ? `~${part.user}` : `$${part.name}`).join("")).join(" "));
     // Dentro uno script il primo comando legge lo stdin dello script (./conta.sh < file)
     let input = sh.stdin;
     let inputInfo = input === null ? null : { regular: false };
@@ -871,7 +887,7 @@ function simRunPipeline(sh, pipeline, display) {
                 result = simRunCompound(sh, command, stdin, tty);
             } else {
                 const words = command.words.flatMap(parts => simExpandWord(sh, parts));
-                result = simExecute(sh, words, stdin, { stdinInfo, tty });
+                result = simExecute(sh, words, stdin, { stdinInfo, tty, siblings, index });
             }
             if (result.clear) clear = true;
         }

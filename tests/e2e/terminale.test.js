@@ -198,6 +198,56 @@ module.exports = {
         assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
     },
 
+    "sistema: ps, top, free, dmesg, registri, /proc, /dev e /boot": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").pop();
+        await type(page, "ps");
+        assert.match(await outputText(page), /    PID TTY          TIME CMD\n   4242 pts\/0    00:00:00 bash\n   \d{4} pts\/0    00:00:00 ps$/);
+        await type(page, "echo $$");
+        assert.equal(await last(), "4242");
+        // ps aux: tutti i processi; con grep compare anche il grep stesso
+        await type(page, "ps aux | grep sshd | wc -l");
+        assert.equal(await last(), "6");
+        await type(page, "ps -ef | head -n 2");
+        assert.match(await outputText(page), /UID          PID    PPID  C STIME TTY          TIME CMD\nroot           1       0  0 \w{3}\d{2} \?        00:00:04 \/sbin\/init splash$/);
+        await type(page, "free -h");
+        assert.match(await outputText(page), /total +used +free +shared +buff\/cache +available\nMem: +3\.8Gi +813Mi +1\.8Gi +12Mi +1\.2Gi +2\.8Gi\nSwap: +2\.0Gi +0B +2\.0Gi$/);
+        await type(page, "top");
+        assert.match(await outputText(page), /top - \d\d:\d\d:\d\d up 2 days/);
+        assert.match(await last(), /si esce con q/);
+        // dmesg e i registri: servono i permessi dell'amministratore
+        await type(page, "dmesg");
+        assert.equal(await last(), "dmesg: lettura del buffer del kernel non riuscita: Operazione non permessa");
+        await type(page, "sudo dmesg | grep -c usb");
+        assert.equal(await last(), "5");
+        await type(page, "tail -n 1 /var/log/syslog");
+        assert.equal(await last(), "tail: impossibile aprire '/var/log/syslog' per la lettura: Permesso negato");
+        await type(page, "sudo tail -n 1 /var/log/syslog");
+        assert.match(await last(), /^Nov 12 09:58:00 lpi CRON\[4290\]: \(root\) CMD/);
+        await type(page, "sudo journalctl -u ssh | grep -c Failed");
+        assert.equal(await last(), "1");
+        // /proc: i file del kernel, grandi 0 per ls -l
+        await type(page, "grep MemTotal /proc/meminfo");
+        assert.equal(await last(), "MemTotal:        4009140 kB");
+        await type(page, "ls -l /proc/meminfo");
+        assert.match(await last(), /^-r--r--r-- 1 root root 0 /);
+        await type(page, "head -n 1 /proc/self/status");
+        assert.equal(await last(), "Name:\tbash");
+        // /dev: dispositivi a blocchi e a caratteri; /boot: il kernel
+        await type(page, "ls -l /dev/sda /dev/null");
+        assert.match(await outputText(page), /crw-rw-rw- 1 root root 1, 3 .* \/dev\/null\nbrw-rw---- 1 root disk 8, 0 .* \/dev\/sda$/);
+        await type(page, "ls /boot | grep vmlinuz; uname -r");
+        assert.match(await outputText(page), /vmlinuz-6\.8\.0-49-generic\n6\.8\.0-49-generic$/);
+        await type(page, "help");
+        assert.match(await outputText(page), /sistema: ps \(anche ps aux, ps -ef\), top/);
+        // A 320 px ps aux si taglia alla larghezza del terminale: niente scorrimento orizzontale
+        await page.setViewportSize({ width: 320, height: 700 });
+        await go(page, "#/terminale/t4.3-02");
+        await type(page, "ps aux");
+        await page.waitForSelector("#practice-success:not([hidden])");
+        assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");

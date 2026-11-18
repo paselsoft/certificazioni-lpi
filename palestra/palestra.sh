@@ -15,7 +15,7 @@
 # modificarlo a mano. https://github.com/paselsoft/certificazioni-lpi
 set -euo pipefail
 
-ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
+ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
 APP_LOG=$'2026-11-12 08:00:01 INFO avvio del servizio\n2026-11-12 08:05:12 WARN disco quasi pieno\n2026-11-12 08:10:30 ERROR connessione al database fallita\n2026-11-12 08:10:31 INFO nuovo tentativo\n2026-11-12 08:10:35 ERROR connessione al database fallita\n2026-11-12 08:11:00 INFO connessione riuscita\n2026-11-12 09:00:00 error utente sconosciuto: mario\n'
 SEGRETO=$'solo per luca\n'
 
@@ -949,6 +949,176 @@ esercizio() {
         cartella foto
         cartella progetti
         file controlla.sh 755 4320 $'#!/bin/bash\nif [ $# -ne 1 ]; then\n    echo "Uso: $0 FILE"\n    exit 1\nfi\nif [ -f "$1" ]; then\n    echo "$1 esiste"\nelse\n    echo "$1 non esiste"\n    exit 2\nfi\n'
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-01)
+        TITOLO=$'I processi del terminale'
+        COMPITO=$'Mostra i processi che stai usando in questo terminale.'
+        PARTENZA=$''
+        SOLUZIONE=$'ps'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-02)
+        TITOLO=$'Tutti i processi'
+        COMPITO=$'Mostra tutti i processi del sistema, di tutti gli utenti, con il nome dell\'utente di ognuno.'
+        PARTENZA=$''
+        SOLUZIONE=$'ps aux'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-03)
+        TITOLO=$'Trova un processo'
+        COMPITO=$'Dall\'elenco di tutti i processi tieni solo le righe che contengono sshd, il server per collegarsi da remoto.'
+        PARTENZA=$''
+        SOLUZIONE=$'ps aux | grep sshd'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-04)
+        TITOLO=$'Quanta memoria?'
+        COMPITO=$'Mostra quanta memoria RAM e quanto spazio di swap ha il computer, con le unità leggibili (Mi, Gi).'
+        PARTENZA=$''
+        SOLUZIONE=$'free -h'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-05)
+        TITOLO=$'La memoria vista dal kernel'
+        COMPITO=$'Il kernel mostra lo stato della memoria in un file dentro /proc. Trova in quel file la riga MemTotal e mostrala.'
+        PARTENZA=$''
+        SOLUZIONE=$'grep MemTotal /proc/meminfo'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-06)
+        TITOLO=$'La cartella di un processo'
+        COMPITO=$'Ogni processo ha una directory in /proc con il suo PID. Mostra il file status di quella della tua shell.'
+        PARTENZA=$''
+        SOLUZIONE=$'cat /proc/$$/status'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-07)
+        TITOLO=$'I messaggi del kernel'
+        COMPITO=$'Mostra solo i messaggi del kernel che parlano di dispositivi USB (la parola usb, maiuscola o minuscola).'
+        PARTENZA=$''
+        SOLUZIONE=$'sudo dmesg | grep -i usb'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-08)
+        TITOLO=$'Il registro di sistema'
+        COMPITO=$'Mostra le ultime 5 righe del registro di sistema /var/log/syslog.'
+        PARTENZA=$''
+        SOLUZIONE=$'sudo tail -n 5 /var/log/syslog'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-09)
+        TITOLO=$'Il kernel sul disco'
+        COMPITO=$'Mostra in formato lungo il contenuto della directory dove stanno il kernel di Linux e i file per avviarlo.'
+        PARTENZA=$''
+        SOLUZIONE=$'ls -l /boot'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.3-10)
+        TITOLO=$'I dischi sono file'
+        COMPITO=$'In Linux anche i dischi compaiono come file, in /dev. Mostra in formato lungo tutti quelli che iniziano con sd.'
+        PARTENZA=$''
+        SOLUZIONE=$'ls -l /dev/sd*'
+        cartella documenti
+        cartella foto
+        cartella progetti
         file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
         file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
         file foto/mare.jpg 644 14400 $'JPEG mare\n'
