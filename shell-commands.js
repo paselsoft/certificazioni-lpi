@@ -1131,7 +1131,7 @@ function tarRun(sh, args) {
             const size = entry.type === "f" ? new TextEncoder().encode(entry.data).length : 0;
             const date = new Date(entry.mtime);
             const stamp = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-            res.print(`${modeString({ type: entry.type, mode: entry.mode })} ${sh.user}/${SIM_USERS[sh.user].groups[0]} ${String(size).padStart(5)} ${stamp} ${entry.name}${entry.type === "l" ? ` -> ${entry.target}` : ""}`);
+            res.print(`${modeString({ type: entry.type, mode: entry.mode })} ${sh.user}/${usersOf(sh)[sh.user].groups[0]} ${String(size).padStart(5)} ${stamp} ${entry.name}${entry.type === "l" ? ` -> ${entry.target}` : ""}`);
         });
         return res;
     }
@@ -1408,12 +1408,12 @@ function chownRun(name) {
         else {
             const at = spec.search(/[:.]/);
             owner = at === -1 ? spec : spec.slice(0, at) || null;
-            group = at === -1 ? null : spec.slice(at + 1) || (owner && SIM_USERS[owner] ? SIM_USERS[owner].groups[0] : null);
+            group = at === -1 ? null : spec.slice(at + 1) || (owner && usersOf(sh)[owner] ? usersOf(sh)[owner].groups[0] : null);
         }
-        if (owner && !SIM_USERS[owner]) throw new SimUsage(`utente non valido: ${quote(owner)}`);
-        if (group && SIM_GROUPS[group] === undefined) throw new SimUsage(`gruppo non valido: ${quote(group)}`);
+        if (owner && !usersOf(sh)[owner]) throw new SimUsage(`utente non valido: ${quote(owner)}`);
+        if (group && groupsOf(sh)[group] === undefined) throw new SimUsage(`gruppo non valido: ${quote(group)}`);
         const change = (label, node) => {
-            const allowed = sh.user === "root" || (!owner || owner === node.owner) && node.owner === sh.user && (!group || SIM_USERS[sh.user].groups.includes(group));
+            const allowed = sh.user === "root" || (!owner || owner === node.owner) && node.owner === sh.user && (!group || usersOf(sh)[sh.user].groups.includes(group));
             if (!allowed) {
                 res.fail(`${name}: modifica ${owner ? "del proprietario" : "del gruppo"} di ${quote(label)}: ${ERRORS.EPERM}`);
                 return;
@@ -1613,6 +1613,21 @@ function bashRun(sh, name, args, stdin, ctx) {
     }
 }
 
+// id [-u|-g|-G] [-n] [UTENTE]: i numeri (o con -n i nomi) dell'utente e dei suoi gruppi
+function idRun(sh, args) {
+    const { flags, operands } = parseOptions(args, "ugGn", "", { user: "u", group: "g", groups: "G", name: "n" });
+    const name = operands[0] || sh.user;
+    const user = usersOf(sh)[name];
+    if (!user) return { err: `id: ${quote(name)}: utente inesistente\n`, code: 1 };
+    const gid = group => groupsOf(sh)[group];
+    if (flags.n && !(flags.u || flags.g || flags.G)) return { err: "id: si può stampare solo nomi o ID nel formato predefinito\n", code: 1 };
+    if (flags.u) return { out: `${flags.n ? name : user.uid}\n` };
+    if (flags.g) return { out: `${flags.n ? user.groups[0] : user.gid}\n` };
+    if (flags.G) return { out: `${user.groups.map(group => flags.n ? group : gid(group)).join(" ")}\n` };
+    const groups = user.groups.map(group => `${gid(group)}(${group})`).join(",");
+    return { out: `uid=${user.uid}(${name}) gid=${user.gid}(${user.groups[0]}) groups=${groups}\n` };
+}
+
 function typeRun(sh, args) {
     const res = simOutput();
     for (const name of args) {
@@ -1648,6 +1663,7 @@ const SIM_HELP = [
     "  sistema: ps (anche ps aux, ps -ef), top, uptime, free, dmesg, journalctl; /proc, /dev, /sys, /boot, /var/log",
     "  rete: ip addr, ip route, ifconfig, route, ss, netstat, ping, host, hostname -I; /etc/hosts, /etc/resolv.conf",
     "  utenti: id, who, w, last, sudo (anche -l, -u, -i), su (da root o con sudo su - UTENTE), exit, getent; /etc/passwd, /etc/shadow, /etc/group",
+    "  account: useradd, groupadd, usermod, userdel, groupdel, passwd (-S, -l, -u), chpasswd; /etc/skel",
     "  aiuto: man (anche man -k e man 5 passwd), apropos, whatis, info, COMANDO --help, help cd, locate, updatedb",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",
@@ -1709,17 +1725,15 @@ const SIM_COMMANDS = {
     sh: { run: (sh, args, stdin, ctx) => bashRun(sh, "sh", args, stdin, ctx), help: "sh script.sh argomenti" },
     true: { run: () => ({}) },
     false: { run: () => ({ code: 1 }) },
-    id: {
+    id: { run: idRun },
+    whoami: { run: sh => ({ out: `${sh.user}\n` }) },
+    groups: {
         run: (sh, args) => {
-            const name = args[0] || sh.user;
-            const user = SIM_USERS[name];
-            if (!user) return { err: `id: ${quote(name)}: utente inesistente\n`, code: 1 };
-            const groups = user.groups.map(group => `${SIM_GROUPS[group]}(${group})`).join(",");
-            return { out: `uid=${user.uid}(${name}) gid=${user.gid}(${user.groups[0]}) groups=${groups}\n` };
+            const user = usersOf(sh)[args[0] || sh.user];
+            if (!user) return { err: `groups: ${quote(args[0])}: utente inesistente\n`, code: 1 };
+            return { out: `${args[0] ? `${args[0]} : ` : ""}${user.groups.join(" ")}\n` };
         }
     },
-    whoami: { run: sh => ({ out: `${sh.user}\n` }) },
-    groups: { run: (sh, args) => ({ out: `${args[0] ? `${args[0]} : ` : ""}${(SIM_USERS[args[0] || sh.user] || { groups: [] }).groups.join(" ")}\n` }) },
     uname: {
         run: (sh, args) => {
             const { flags } = parseOptions(args, "asnrm", "", { all: "a" });

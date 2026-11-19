@@ -349,6 +349,52 @@ module.exports = {
         assert.match(await outputText(page), /utenti: id, who, w, last, sudo/);
     },
 
+    "account: useradd, groupadd, usermod, passwd, chpasswd, userdel e /etc/skel": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").pop();
+        // Senza sudo non si può
+        await type(page, "useradd luigi");
+        assert.equal(await last(), "useradd: impossibile bloccare /etc/passwd; riprovare più tardi.");
+        await type(page, "sudo useradd -m -c 'Luigi Verdi' -s /bin/bash luigi");
+        await type(page, "tail -n 1 /etc/passwd");
+        assert.equal(await last(), "luigi:x:1002:1003:Luigi Verdi:/home/luigi:/bin/bash");
+        await type(page, "ls -ld /home/luigi");
+        assert.match(await last(), /^drwxr-x--- \d+ luigi luigi /);
+        await type(page, "sudo ls -A /home/luigi");
+        assert.match(await last(), /\.bashrc\s+\.profile/);
+        await type(page, "sudo useradd luigi");
+        assert.equal(await last(), "useradd: l'utente «luigi» esiste già");
+        // Gruppi: -G senza -a sostituisce
+        await type(page, "sudo groupadd progetto; sudo usermod -aG progetto luigi; sudo usermod -aG sviluppo luigi; id -Gn luigi");
+        assert.equal(await last(), "luigi progetto sviluppo");
+        await type(page, "sudo usermod -G sviluppo luigi; groups luigi");
+        assert.equal(await last(), "luigi : luigi sviluppo");
+        // Password: stato, chpasswd, blocco
+        await type(page, "sudo passwd -S luigi");
+        assert.match(await last(), /^luigi L \d{4}-\d{2}-\d{2} 0 99999 7 -1$/);
+        await type(page, "passwd");
+        assert.match(await outputText(page), /non si può digitare\. Per impostarla senza digitarla: echo 'anna:NUOVAPASSWORD' \| sudo chpasswd/);
+        await type(page, "echo 'luigi:Primavera26' | sudo chpasswd; sudo passwd -S luigi");
+        assert.match(await last(), /^luigi P /);
+        await type(page, "sudo passwd -l luca; sudo grep -c '^luca:!' /etc/shadow");
+        assert.equal(await last(), "1");
+        // Utente di sistema e cancellazione
+        await type(page, "sudo useradd -r -s /usr/sbin/nologin servizio; id -u servizio");
+        assert.equal(await last(), "999");
+        await type(page, "sudo userdel luca");
+        assert.match(await last(), /^userdel: l'utente luca è attualmente usato dal processo \d+$/);
+        await type(page, "sudo userdel -r luigi; ls /home; grep -c luigi /etc/passwd");
+        assert.match(await outputText(page), /anna\s+luca\n0$/);
+        await type(page, "help");
+        assert.match(await outputText(page), /account: useradd, groupadd, usermod, userdel/);
+        // Ogni esercizio riparte con gli utenti di sempre
+        await go(page, "#/terminale/t5.2-01");
+        await type(page, "id luigi");
+        assert.equal(await last(), "id: 'luigi': utente inesistente");
+        await type(page, "sudo useradd -m luigi");
+        await page.waitForSelector("#practice-success:not([hidden])");
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");

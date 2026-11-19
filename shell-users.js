@@ -91,7 +91,7 @@ function getentRun(sh, args) {
     const [database, key] = args;
     if (!["passwd", "group", "shadow"].includes(database)) return { err: "getent: nel simulatore ci sono i database passwd, group e shadow (per esempio getent passwd anna)\n", code: 1 };
     if (database === "shadow" && sh.user !== "root") return { code: 2 };
-    const text = database === "passwd" ? passwdText() : database === "group" ? groupText() : shadowText();
+    const text = database === "passwd" ? passwdText(sh) : database === "group" ? groupText(sh) : shadowText(sh);
     const lines = text.trim().split("\n").filter(line => !key || line.split(":")[0] === key || line.split(":")[2] === key);
     if (!lines.length) return { code: 2 };
     return { out: lines.join("\n") + "\n" };
@@ -102,7 +102,7 @@ function getentRun(sh, args) {
 // Una shell nuova di un altro utente, dentro quella di prima: exit la chiude e torna indietro.
 // login (su -, sudo -i): la home dell'utente e le sue variabili; altrimenti si resta nella directory
 function startSession(sh, user, login) {
-    const info = SIM_USERS[user];
+    const info = usersOf(sh)[user];
     if (!info) return { err: `su: l'utente ${user} non esiste\n`, code: 1 };
     if (/nologin|false/.test(info.shell)) return { out: "This account is currently not available.\n", code: 1 };
     sh.sessions = sh.sessions || [];
@@ -139,7 +139,7 @@ function suRun(sh, args, asRoot = false) {
         else words.push(args[i]);
     }
     const user = words[0] || "root";
-    if (!SIM_USERS[user]) return { err: `su: l'utente ${user} non esiste o la voce utente non contiene tutti i campi richiesti\n`, code: 1 };
+    if (!usersOf(sh)[user]) return { err: `su: l'utente ${user} non esiste o la voce utente non contiene tutti i campi richiesti\n`, code: 1 };
     // Da root su non chiede password; agli altri chiederebbe quella dell'utente di destinazione
     if (sh.user !== "root" && !asRoot) {
         return { err: `Password: \nsu: nel simulatore la password non si può scrivere. Chi ha i permessi di amministratore usa sudo: sudo su - ${user === "root" ? "" : user}`.trimEnd() + (user === "root" ? " (oppure sudo -i)" : "") + "\n", code: 1 };
@@ -168,20 +168,20 @@ function suCommand(sh, user, command) {
     }
 }
 
-const canSudo = user => user === "root" || (SIM_USERS[user] && SIM_USERS[user].groups.includes("sudo"));
+const canSudo = (sh, user) => user === "root" || Boolean(usersOf(sh)[user] && usersOf(sh)[user].groups.includes("sudo"));
 
 // sudo COMANDO (come root), sudo -u UTENTE COMANDO, sudo -l, sudo -i / -s / su / bash (una shell)
 function simSudo(sh, args, stdin, ctx) {
     if (!args.length) return { out: "", err: "sudo: scrivi il comando da eseguire come root, per esempio sudo chown luca file\n", code: 1 };
     // Solo chi è nel gruppo sudo (lo dice /etc/sudoers) può usarlo
-    if (!canSudo(sh.user)) return { out: "", err: `${sh.user} is not in the sudoers file.\n`, code: 1 };
+    if (!canSudo(sh, sh.user)) return { out: "", err: `${sh.user} is not in the sudoers file.\n`, code: 1 };
     let target = "root";
     let words = [...args];
     if (words[0] === "-l") return { out: `User ${sh.user} may run the following commands on lpi:\n    (ALL : ALL) ALL\n` };
     if (words[0] === "-u") {
         target = words[1];
         if (!target) return { err: "sudo: dopo -u serve il nome di un utente\n", code: 1 };
-        if (!SIM_USERS[target]) return { err: `sudo: unknown user ${target}\n`, code: 1 };
+        if (!usersOf(sh)[target]) return { err: `sudo: unknown user ${target}\n`, code: 1 };
         words = words.slice(2);
         if (!words.length) return { err: "sudo: dopo sudo -u UTENTE scrivi il comando\n", code: 1 };
     }

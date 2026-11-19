@@ -66,10 +66,33 @@ function archiveEntries(node, kind) {
     }
 }
 
+// Gli utenti e i gruppi della shell (useradd e compagni li cambiano: shell-accounts.js)
+const usersGroups = sh => sh.groups || SIM_GROUPS;
+function accountMatches(sh, goal) {
+    const user = (sh.users || SIM_USERS)[goal.account];
+    if (goal.exists === false) return !user;
+    if (!user) return false;
+    if (goal.shell !== undefined && user.shell !== goal.shell) return false;
+    if (goal.comment !== undefined && user.name !== goal.comment) return false;
+    if (goal.uidBelow !== undefined && !(user.uid < goal.uidBelow)) return false;
+    if (goal.groups !== undefined && !goal.groups.every(group => user.groups.includes(group))) return false;
+    const entry = sh.shadow && sh.shadow[goal.account];
+    const hash = typeof entry === "object" ? entry.hash : entry || "!";
+    if (goal.locked !== undefined && hash.startsWith("!") !== goal.locked) return false;
+    if (goal.password && !/^\$/.test(hash)) return false;
+    return true;
+}
+
 function goalMet(sh, exercise, goal) {
     if (goal.command && !new RegExp(goal.command).test(sh.lastCommand.trim())) return false;
     if (goal.cwd !== undefined && sh.cwd.replace(/\/+$/, "") !== goal.cwd) return false;
     if (goal.user !== undefined && sh.user !== goal.user) return false;
+    if (goal.account !== undefined && !accountMatches(sh, goal)) return false;
+    if (goal.group !== undefined && goal.path === undefined) {
+        const gid = usersGroups(sh)[goal.group];
+        if (goal.exists === false) return gid === undefined;
+        if (gid === undefined || (goal.gid !== undefined && gid !== goal.gid)) return false;
+    }
     if (goal.history !== undefined && !sh.history.some(line => new RegExp(goal.history).test(line.trim()))) return false;
     if (goal.variable !== undefined) {
         if (sh.vars[goal.variable] !== goal.value) return false;

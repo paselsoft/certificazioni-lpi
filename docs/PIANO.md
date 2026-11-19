@@ -267,6 +267,20 @@ la palestra davvero ed esegue le soluzioni da anna.
   (chi è l'utente della shell) e `history` (uno dei comandi scritti). Dieci esercizi (il 5.1 ne
   aveva zero), tutti `bash: false`.
 
+- **Creazione di utenti e gruppi, obiettivo 5.2 (19/11/2026).** Gli utenti, i gruppi e le
+  password sono ora di ogni shell (`sh.users`, `sh.groups`, `sh.shadow`, copiati da quelli fissi;
+  `usersOf(sh)` e `groupsOf(sh)` li leggono) e `shell-accounts.js` li cambia, riscrivendo
+  `/etc/passwd`, `/etc/group` e `/etc/shadow`: `useradd` (`-m`, `-d`, `-s`, `-c`, `-g`, `-G`, `-u`,
+  `-r`; come su Ubuntu senza `-m` niente home, shell `/bin/sh`, un gruppo con lo stesso nome, home
+  750 con la copia di `/etc/skel`, che ora ha anche `.profile`), `groupadd` (`-g`, `-r`), `usermod`
+  (`-aG`, `-G` che sostituisce, `-g`, `-s`, `-c`, `-d`, `-L`, `-U`), `userdel` (`-r`; non chi è
+  collegato; i file rimasti mostrano l'UID), `groupdel` (non il gruppo principale di un utente),
+  `passwd` (`-S`, `-l`, `-u`, `-d`; la password non si digita e il messaggio propone `chpasswd`),
+  `chpasswd`, `id -u -g -G -n`. Solo root li usa. Nuovi obiettivi degli esercizi `account` e
+  `group`. Undici esercizi (il 5.2 ne aveva zero), tutti `bash: false`. La palestra non esegue mai
+  da sola i comandi con `sudo` della preparazione (creerebbero utenti veri): li mostra prima del
+  compito; `tools/check-palestra.js` lo controlla.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -274,10 +288,9 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 1. **Script nel simulatore: quello che resta.** I due passi sono fatti (vedi sopra): il 3.3 ha 11
    esercizi. Solo se servono: `$(...)`, `read`, `alias`, i cicli `while` (chiedono anche `$((...))`),
    `-a` e `-o` in `test`.
-2. **Esercizi per l'ultimo obiettivo senza pratica: il 5.2** (creare utenti e gruppi, peso 2;
-   2.2, 4.3, 4.4 e 5.1 sono fatti, vedi sopra). Mancano al simulatore `useradd`, `userdel`,
-   `groupadd`, `groupdel`, `usermod`, `passwd`: oggi `/etc/passwd` e `/etc/group` sono calcolati
-   dagli utenti fissi, e andrebbero resi modificabili.
+2. **Esercizi per tutti gli obiettivi: fatto.** Dal 15 al 19/11/2026 gli obiettivi senza pratica
+   (2.2, 4.3, 4.4, 5.1, 5.2) hanno avuto 10 esercizi ciascuno o quasi (vedi sopra). Ora ogni
+   obiettivo d'esame che si può provare al terminale ha i suoi esercizi.
 3. **Domande: risposte giuste troppo lunghe.** In 111 domande a scelta singola su 173 la risposta
    giusta è l'opzione più lunga: si può indovinare senza sapere. Vanno riscritte una per una
    (accorciare la giusta o allungare i distrattori), magari con una statistica in

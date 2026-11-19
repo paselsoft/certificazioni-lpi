@@ -21,6 +21,10 @@ const SIM_USERS = {
 };
 const SIM_GROUPS = { root: 0, adm: 4, tty: 5, disk: 6, cdrom: 24, sudo: 27, shadow: 42, "www-data": 33, input: 105, syslog: 110, anna: 1000, luca: 1001, sviluppo: 1002 };
 const SIM_UMASK = 0o022;
+// Gli utenti e i gruppi di una shell: all'inizio quelli fissi qui sopra, poi useradd, groupadd,
+// usermod e userdel li cambiano (shell-accounts.js). Senza shell, quelli fissi
+const usersOf = sh => (sh && sh.users) || SIM_USERS;
+const groupsOf = sh => (sh && sh.groups) || SIM_GROUPS;
 
 const ERRORS = {
     ENOENT: "File o directory non esistente",
@@ -48,7 +52,7 @@ function simNode(type, sh, extra = {}) {
         type,
         mode: type === "d" ? 0o777 & ~SIM_UMASK : type === "l" ? 0o777 : 0o666 & ~SIM_UMASK,
         owner: sh ? sh.user : "root",
-        group: sh ? SIM_USERS[sh.user].groups[0] : "root",
+        group: sh ? usersOf(sh)[sh.user].groups[0] : "root",
         mtime: sh ? sh.clock : SIM_START
     };
     if (type === "d") node.children = Object.create(null);
@@ -92,7 +96,7 @@ const baseName = path => {
 // Permessi dell'utente corrente su un nodo: bit 4 lettura, 2 scrittura, 1 esecuzione
 function canAccess(sh, node, bit) {
     if (sh.user === "root") return bit !== 1 || node.type === "d" || (node.mode & 0o111) !== 0;
-    const user = SIM_USERS[sh.user];
+    const user = usersOf(sh)[sh.user] || { groups: [] };
     const shift = node.owner === sh.user ? 6 : user.groups.includes(node.group) ? 3 : 0;
     return ((node.mode >> shift) & bit) !== 0;
 }
@@ -186,22 +190,30 @@ function simFromSpec(type, spec) {
     return node;
 }
 
-// Testo di /etc/passwd e /etc/group dagli utenti del simulatore
-function passwdText() {
-    return Object.entries(SIM_USERS).map(([name, user]) =>
-        `${name}:x:${user.uid}:${user.gid}:${user.name || name}:${user.home}:${user.shell}`).join("\n") + "\n";
+// Testo di /etc/passwd e /etc/group dagli utenti della shell (o da quelli fissi)
+function passwdText(sh) {
+    return Object.entries(usersOf(sh)).map(([name, user]) =>
+        `${name}:x:${user.uid}:${user.gid}:${user.name ?? name}:${user.home}:${user.shell}`).join("\n") + "\n";
 }
-function groupText() {
-    return Object.entries(SIM_GROUPS).map(([name, gid]) => {
-        const members = Object.entries(SIM_USERS).filter(([user, info]) => info.groups.includes(name) && info.groups[0] !== name).map(([user]) => user);
+function groupText(sh) {
+    return Object.entries(groupsOf(sh)).map(([name, gid]) => {
+        const members = Object.entries(usersOf(sh)).filter(([user, info]) => info.groups.includes(name) && info.groups[0] !== name).map(([user]) => user);
         return `${name}:x:${gid}:${members.join(",")}`;
     }).join("\n") + "\n";
 }
 
 // /etc/shadow: le password cifrate (solo per gli utenti veri; * e ! vogliono dire «nessuna password»)
 const SIM_SHADOW = { root: "*", anna: "$6$Kq3vT8e1$Yb7n2Q0cW4x9Lr", luca: "$6$pR5sZ2a7$Fd8m1T6vH3k0Wq", "www-data": "*", syslog: "*" };
-function shadowText() {
-    return Object.keys(SIM_USERS).map(name => `${name}:${SIM_SHADOW[name] || "!"}:20390:0:99999:7:::`).join("\n") + "\n";
+// Il giorno dell'ultimo cambio di password, in giorni dal 1/1/1970 (per quelli fissi: 29/10/2025)
+const SIM_SHADOW_DAY = 20390;
+function shadowText(sh) {
+    const hashes = (sh && sh.shadow) || SIM_SHADOW;
+    return Object.keys(usersOf(sh)).map(name => {
+        const entry = hashes[name];
+        const hash = typeof entry === "object" ? entry.hash : entry || "!";
+        const day = typeof entry === "object" ? entry.day : SIM_SHADOW_DAY;
+        return `${name}:${hash}:${day}:0:99999:7:::`;
+    }).join("\n") + "\n";
 }
 
 // Il file system di base, uguale in tutti gli esercizi: la home di anna con qualche file, i file
@@ -230,6 +242,7 @@ function simBaseTree() {
             "/etc/hosts": { owner: "root", content: "127.0.0.1\tlocalhost\n127.0.1.1\tlpi\n192.168.1.10\tnas\n::1\tlocalhost ip6-localhost ip6-loopback\n" },
             "/etc/resolv.conf": { owner: "root", content: "nameserver 192.168.1.1\nsearch casa.lan\n" },
             "/etc/skel/.bashrc": { owner: "root", content: "# ~/.bashrc: letto da Bash a ogni nuova shell\nalias ll='ls -l'\n" },
+            "/etc/skel/.profile": { owner: "root", content: "# ~/.profile: letto da una shell di login\nif [ -f \"$HOME/.bashrc\" ]; then . \"$HOME/.bashrc\"; fi\n" },
             "/home/anna/.bashrc": { content: "# ~/.bashrc: letto da Bash a ogni nuova shell\nalias ll='ls -l'\n", age: 60 * 24 * 30 },
             "/home/anna/note.txt": { content: "Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n", age: 60 * 5 },
             "/home/anna/documenti/lettera.txt": { content: "Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n", age: 60 * 24 },
@@ -272,7 +285,9 @@ function createShell(setup = {}) {
         // script sono aperti uno dentro l'altro e lo stdin che lo script ha ricevuto
         args: [], arg0: "bash", depth: 0, stdin: null, loops: 0,
         // Le shell aperte con su o sudo -i, una dentro l'altra: exit torna a quella di prima
-        sessions: []
+        sessions: [],
+        // Utenti, gruppi e password di questa shell: si possono cambiare (shell-accounts.js)
+        users: JSON.parse(JSON.stringify(SIM_USERS)), groups: { ...SIM_GROUPS }, shadow: { ...SIM_SHADOW }
     };
     const base = simBaseTree();
     const add = (type, list) => Object.entries(list || {}).forEach(([path, spec]) => {
@@ -661,7 +676,7 @@ function simExpandWord(sh, parts, { glob = true } = {}) {
             if (part.q) quotedSomething = true;
             fields[fields.length - 1].push({ text: part.text, active: !part.q });
         } else if (part.t === "tilde") {
-            const home = part.user ? (SIM_USERS[part.user] || {}).home : sh.vars.HOME;
+            const home = part.user ? (usersOf(sh)[part.user] || {}).home : sh.vars.HOME;
             fields[fields.length - 1].push({ text: home || `~${part.user}`, active: false });
         } else if (part.name === "@" && part.q) {
             // "$@": ogni argomento resta una parola a sé, anche con gli spazi; senza argomenti, niente

@@ -5,6 +5,8 @@
 //     { cwd }                                    la directory corrente
 //     { user }                                   l'utente della shell (dopo su o sudo -i)
 //     { history: "regex" }                       uno dei comandi scritti nell'esercizio
+//     { account, exists, shell, comment, uidBelow, groups, locked, password }   un utente
+//     { group, exists, gid }                     un gruppo
 //     { path, is: "dir" | "file" | "link" | "absent", content, mode, owner, target, sameAs }
 //     { path, archive: "tar" | "tar.gz" | "gzip" | "zip", has: [nomi] }
 //     { variable, value, exported }
@@ -723,6 +725,116 @@ addExercises("010-160", [
         hint: "Per una shell di login di root c'è `sudo -i`. Per tornare indietro: `exit`.",
         solution: ["sudo -i", "pwd", "exit"],
         explain: "Il prompt di root finisce con `#`, quello degli utenti normali con `$`. La home di root è `/root`, non `/home/root`. Da root niente è vietato: meglio usarlo il meno possibile, e uscire subito."
+    },
+
+    // ---- 5.2 Creazione di utenti e gruppi ----
+    // (gli utenti si creano nel simulatore: sul Linux vero della palestra resterebbero, quindi niente confronto con Bash)
+    {
+        id: "t5.2-01", title: "Un nuovo utente", bash: false,
+        task: "Crea l'utente `luigi` in modo che abbia anche la sua directory home in `/home`.",
+        goals: [
+            { text: "L'utente `luigi` esiste", account: "luigi" },
+            { text: "C'è la sua home, `/home/luigi`, di sua proprietà", path: "/home/luigi", is: "dir", owner: "luigi" }
+        ],
+        hint: "Il comando è `useradd`, e serve `sudo`. Senza l'opzione `-m` (make home) la home non viene creata.",
+        solution: ["sudo useradd -m luigi"],
+        explain: "`useradd` scrive l'utente in `/etc/passwd`, `/etc/shadow` e `/etc/group` (un gruppo con lo stesso nome). Con `-m` crea la home copiandoci dentro i file di `/etc/skel`."
+    },
+    {
+        id: "t5.2-02", title: "Nome completo e shell", bash: false,
+        task: "Crea l'utente `sara`, con la home, con il nome completo `Sara Neri` e con la shell `/bin/bash` (quella predefinita è `/bin/sh`).",
+        goals: [
+            { text: "`sara` esiste, si chiama `Sara Neri` e usa `/bin/bash`", account: "sara", comment: "Sara Neri", shell: "/bin/bash" },
+            { text: "C'è la sua home", path: "/home/sara", is: "dir", owner: "sara" }
+        ],
+        hint: "`-c` per il commento (il nome completo, tra virgolette perché ha uno spazio), `-s` per la shell, `-m` per la home.",
+        solution: ["sudo useradd -m -c 'Sara Neri' -s /bin/bash sara"],
+        explain: "Il nome completo finisce nel quinto campo di `/etc/passwd`, la shell nel settimo. Controlla con `grep sara /etc/passwd`."
+    },
+    {
+        id: "t5.2-03", title: "La riga del nuovo utente", bash: false,
+        task: "L'utente `luigi` è già stato creato. Mostra la sua riga in `/etc/passwd` e guarda il suo UID: il primo numero libero da 1000 in su.",
+        setup: { prepare: ["sudo useradd -m -c 'Luigi Verdi' -s /bin/bash luigi"] },
+        goals: [{ text: "Compare la riga di `luigi`, con UID 1002", output: "words", words: ["luigi:x:1002:1003:Luigi", "Verdi:/home/luigi:/bin/bash"], command: "/etc/passwd|getent\\s+passwd" }],
+        hint: "Cerca la riga con `grep` in `/etc/passwd`.",
+        solution: ["grep luigi /etc/passwd"],
+        explain: "UID 1002: 1000 è anna, 1001 è luca. Il GID è 1003 e non 1002, perché il numero 1002 è già del gruppo `sviluppo`: `useradd` prende il primo libero."
+    },
+    {
+        id: "t5.2-04", title: "Il modello delle home", bash: false,
+        task: "Mostra tutto il contenuto, compresi i file nascosti, della directory che viene copiata nella home di ogni nuovo utente.",
+        goals: [{ text: "Compaiono `.bashrc` e `.profile` di `/etc/skel`", output: "same", command: "^ls\\s+-[a-zA-Z]*[aA][a-zA-Z]*\\s+/etc/skel/?\\s*$" }],
+        hint: "La directory è `/etc/skel` (da «skeleton», scheletro). I file iniziano con un punto: serve `ls -a`.",
+        solution: ["ls -a /etc/skel"],
+        explain: "Quello che metti in `/etc/skel` arriva nella home di ogni utente creato dopo con `useradd -m`: per esempio un `.bashrc` con gli alias per tutti."
+    },
+    {
+        id: "t5.2-05", title: "Un gruppo nuovo", bash: false,
+        task: "Crea il gruppo `progetto`.",
+        goals: [{ text: "Il gruppo `progetto` esiste", group: "progetto" }],
+        hint: "Il comando è `groupadd`, con `sudo`.",
+        solution: ["sudo groupadd progetto"],
+        explain: "Il gruppo finisce in `/etc/group` con il primo GID libero da 1000 in su; con `-g NUMERO` lo scegli tu. Guarda con `tail -n 1 /etc/group`."
+    },
+    {
+        id: "t5.2-06", title: "Aggiungere a un gruppo", bash: false,
+        task: "`luigi` fa già parte del gruppo `progetto`. Aggiungilo anche al gruppo `sviluppo`, senza toglierlo da `progetto`.",
+        setup: { prepare: ["sudo groupadd progetto", "sudo useradd -m -G progetto luigi"] },
+        goals: [{ text: "`luigi` è sia in `progetto` sia in `sviluppo`", account: "luigi", groups: ["progetto", "sviluppo"] }],
+        hint: "`usermod -G` imposta i gruppi secondari; da solo SOSTITUISCE quelli che c'erano. Con `-a` (append) li aggiunge.",
+        solution: ["sudo usermod -aG sviluppo luigi"],
+        explain: "Errore classico: `usermod -G sviluppo luigi`, senza `-a`, avrebbe tolto luigi da `progetto`. Controlla con `id luigi` o `groups luigi`."
+    },
+    {
+        id: "t5.2-07", title: "Una password per luigi", bash: false,
+        task: "`luigi` non ha ancora una password (account bloccato). Impostagli la password `Primavera26` e poi controlla lo stato della password.",
+        setup: { prepare: ["sudo useradd -m luigi"] },
+        goals: [
+            { text: "`luigi` ha una password", account: "luigi", password: true },
+            { text: "`passwd -S` mostra lo stato `P` (password impostata)", output: "words", words: ["luigi", "P"], command: "^sudo\\s+passwd\\s+-S\\s+luigi\\s*$" }
+        ],
+        hint: "Di solito si usa `sudo passwd luigi`, che chiede la password due volte. Nel simulatore non si può digitare: usa `echo 'luigi:Primavera26' | sudo chpasswd`. Poi `sudo passwd -S luigi`.",
+        solution: ["echo 'luigi:Primavera26' | sudo chpasswd", "sudo passwd -S luigi"],
+        explain: "`passwd -S` mostra lo stato: `L` bloccato, `P` password impostata, `NP` nessuna password. In `/etc/shadow` la password è cifrata (`$6$...`): non si può leggere."
+    },
+    {
+        id: "t5.2-08", title: "Bloccare un account", bash: false,
+        task: "luca è in vacanza: blocca la sua password, senza cancellarla, in modo che nessuno possa entrare come luca.",
+        goals: [{ text: "La password di luca è bloccata", account: "luca", locked: true }],
+        hint: "`passwd` ha un'opzione per bloccare (lock) e una per sbloccare (unlock).",
+        solution: ["sudo passwd -l luca"],
+        explain: "Il blocco mette un `!` davanti alla password cifrata in `/etc/shadow`: guarda con `sudo grep luca /etc/shadow`. Con `sudo passwd -u luca` torna com'era."
+    },
+    {
+        id: "t5.2-09", title: "Un utente di sistema", bash: false,
+        task: "Crea l'utente di sistema `servizio`, per un programma: senza home e con la shell `/usr/sbin/nologin`, così nessuno può entrare con lui.",
+        goals: [
+            { text: "`servizio` esiste, con UID sotto 1000 e shell `nologin`", account: "servizio", uidBelow: 1000, shell: "/usr/sbin/nologin" },
+            { text: "Non ha una home", path: "/home/servizio", is: "absent" }
+        ],
+        hint: "L'opzione per un utente di sistema è `-r`; la shell si sceglie con `-s`.",
+        solution: ["sudo useradd -r -s /usr/sbin/nologin servizio"],
+        explain: "Gli utenti di sistema hanno UID sotto 1000 (`useradd -r` parte da 999 e scende) e servono ai programmi, non alle persone: come `www-data` per il server web."
+    },
+    {
+        id: "t5.2-10", title: "Eliminare un utente", bash: false,
+        task: "L'utente `prova` non serve più: eliminalo insieme alla sua directory home.",
+        setup: { prepare: ["sudo useradd -m prova"] },
+        goals: [
+            { text: "L'utente `prova` non c'è più", account: "prova", exists: false },
+            { text: "Anche la sua home è sparita", path: "/home/prova", is: "absent" }
+        ],
+        hint: "Il comando è `userdel`; da solo lascia la home. L'opzione per rimuoverla è `-r`.",
+        solution: ["sudo userdel -r prova"],
+        explain: "Senza `-r` la home resta, e `ls -l` mostra come proprietario un numero (l'UID) invece del nome. Un utente collegato non si elimina: prova `sudo userdel luca`."
+    },
+    {
+        id: "t5.2-11", title: "Il numero di un utente", bash: false,
+        task: "Mostra solo il numero dell'utente (UID) di `luca`, senza il resto.",
+        goals: [{ text: "Compare l'UID di luca: `1001`", output: "same", command: "^id\\s+-u\\s+luca\\s*$" }],
+        hint: "`id` ha un'opzione per mostrare solo l'UID: `-u` (user).",
+        solution: ["id -u luca"],
+        explain: "`id -u` mostra l'UID, `id -g` il GID del gruppo principale, `id -G` tutti i gruppi; con `-n` i nomi al posto dei numeri. root ha sempre UID 0."
     },
 
     // ---- 5.3 Permessi e proprietà ----

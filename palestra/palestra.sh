@@ -15,7 +15,7 @@
 # modificarlo a mano. https://github.com/paselsoft/certificazioni-lpi
 set -euo pipefail
 
-ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.1-01  Chi sono io?\nt5.1-02  Chi è collegato?\nt5.1-03  Che cosa stanno facendo?\nt5.1-04  Gli accessi di luca\nt5.1-05  Un utente di sistema\nt5.1-06  Dove stanno le password\nt5.1-07  Che cosa posso fare con sudo?\nt5.1-08  Diventare luca\nt5.1-09  Un comando come un altro utente\nt5.1-10  Il prompt di root\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
+ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.1-01  Chi sono io?\nt5.1-02  Chi è collegato?\nt5.1-03  Che cosa stanno facendo?\nt5.1-04  Gli accessi di luca\nt5.1-05  Un utente di sistema\nt5.1-06  Dove stanno le password\nt5.1-07  Che cosa posso fare con sudo?\nt5.1-08  Diventare luca\nt5.1-09  Un comando come un altro utente\nt5.1-10  Il prompt di root\nt5.2-01  Un nuovo utente\nt5.2-02  Nome completo e shell\nt5.2-03  La riga del nuovo utente\nt5.2-04  Il modello delle home\nt5.2-05  Un gruppo nuovo\nt5.2-06  Aggiungere a un gruppo\nt5.2-07  Una password per luigi\nt5.2-08  Bloccare un account\nt5.2-09  Un utente di sistema\nt5.2-10  Eliminare un utente\nt5.2-11  Il numero di un utente\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
 APP_LOG=$'2026-11-12 08:00:01 INFO avvio del servizio\n2026-11-12 08:05:12 WARN disco quasi pieno\n2026-11-12 08:10:30 ERROR connessione al database fallita\n2026-11-12 08:10:31 INFO nuovo tentativo\n2026-11-12 08:10:35 ERROR connessione al database fallita\n2026-11-12 08:11:00 INFO connessione riuscita\n2026-11-12 09:00:00 error utente sconosciuto: mario\n'
 SEGRETO=$'solo per luca\n'
 
@@ -98,13 +98,15 @@ base() {
     data documenti 755 4320
 }
 
-# esercizio ID: imposta TITOLO, COMPITO, PARTENZA e SOLUZIONE (e, con PREPARA=1, prepara la home)
+# esercizio ID: imposta TITOLO, COMPITO, PARTENZA, PRIMA (i comandi da scrivere prima, con sudo) e
+# SOLUZIONE (e, con PREPARA=1, prepara la home)
 esercizio() {
     case "$1" in
     t2.1-01)
         TITOLO=$'Una variabile'
         COMPITO=$'Crea la variabile CITTA con il valore Roma, poi stampane il valore con echo.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'CITTA=Roma\necho $CITTA'
         cartella documenti
         cartella foto
@@ -122,6 +124,7 @@ esercizio() {
         TITOLO=$'Il dollaro tra virgolette'
         COMPITO=$'Stampa con echo esattamente questa frase, simbolo del dollaro compreso: Il biglietto costa $5'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'echo \'Il biglietto costa $5\''
         cartella documenti
         cartella foto
@@ -139,6 +142,7 @@ esercizio() {
         TITOLO=$'Allungare il PATH'
         COMPITO=$'I tuoi script stanno in /home/anna/bin. Aggiungi questa directory in fondo alla variabile PATH, senza perdere quelle che ci sono già, e rendi la variabile disponibile ai programmi.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'export PATH=$PATH:/home/anna/bin'
         cartella documenti
         cartella foto
@@ -156,6 +160,7 @@ esercizio() {
         TITOLO=$'Che tipo di comando è?'
         COMPITO=$'Scopri con un solo comando se cd e cp sono comandi interni della shell o programmi esterni.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'type cd cp'
         cartella documenti
         cartella foto
@@ -173,6 +178,7 @@ esercizio() {
         TITOLO=$'La pagina di manuale'
         COMPITO=$'Apri la pagina di manuale del comando cp e cerca l\'opzione che serve per copiare una directory.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'man cp'
         cartella documenti
         cartella foto
@@ -190,6 +196,7 @@ esercizio() {
         TITOLO=$'Non ricordo il nome'
         COMPITO=$'Non ricordi come si chiama il comando che comprime i file. Cerca nel manuale tutte le pagine che parlano di comprime.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'man -k comprime'
         cartella documenti
         cartella foto
@@ -207,6 +214,7 @@ esercizio() {
         TITOLO=$'La sezione giusta'
         COMPITO=$'passwd è sia un comando sia un file di configurazione. Apri la pagina di manuale che descrive il file /etc/passwd, non quella del comando.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'man 5 passwd'
         cartella documenti
         cartella foto
@@ -224,6 +232,7 @@ esercizio() {
         TITOLO=$'L\'aiuto veloce'
         COMPITO=$'Senza aprire il manuale, fatti dire da mkdir stesso come si usa e quali opzioni ha.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'mkdir --help'
         cartella documenti
         cartella foto
@@ -241,6 +250,7 @@ esercizio() {
         TITOLO=$'Un comando interno'
         COMPITO=$'cd è un comando interno della shell e non ha una sua pagina di manuale. Mostra il suo aiuto.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'help cd'
         cartella documenti
         cartella foto
@@ -258,6 +268,7 @@ esercizio() {
         TITOLO=$'La documentazione dei pacchetti'
         COMPITO=$'I pacchetti installano la loro documentazione in una directory apposta sotto /usr/share. Trova lì dentro il file README del pacchetto tar e mostralo.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'cat /usr/share/doc/tar/README'
         cartella documenti
         cartella foto
@@ -275,6 +286,7 @@ esercizio() {
         TITOLO=$'Dov\'è quel file?'
         COMPITO=$'Da qualche parte nella tua home c\'è un file che si chiama stile.css. Trovalo con il comando che cerca nel database dei nomi dei file.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'locate stile.css'
         cartella documenti
         cartella foto
@@ -298,6 +310,7 @@ esercizio() {
         TITOLO=$'Il database non lo sa ancora'
         COMPITO=$'Crea il file vuoto appena-nato.txt e cercalo con locate: non lo trova. Aggiorna il database di locate e cercalo di nuovo.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'touch appena-nato.txt\nlocate appena-nato\nsudo updatedb\nlocate appena-nato'
         cartella documenti
         cartella foto
@@ -315,6 +328,7 @@ esercizio() {
         TITOLO=$'Dove sono?'
         COMPITO=$'Entra nella directory documenti della tua home e poi mostra il percorso completo della directory in cui ti trovi.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'cd documenti\npwd'
         cartella documenti
         cartella foto
@@ -332,6 +346,7 @@ esercizio() {
         TITOLO=$'I file nascosti'
         COMPITO=$'Elenca il contenuto della tua home mostrando anche i file nascosti.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ls -a'
         cartella documenti
         cartella foto
@@ -349,6 +364,7 @@ esercizio() {
         TITOLO=$'Tutto il contenuto, anche dentro'
         COMPITO=$'Elenca il contenuto della directory progetti e di tutte le sue sottodirectory, con un solo comando.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ls -R progetti'
         cartella documenti
         cartella foto
@@ -373,6 +389,7 @@ esercizio() {
         TITOLO=$'Percorso relativo'
         COMPITO=$'Sei in /home/anna/foto. Spostati in /home/anna/documenti usando un percorso relativo (che non inizia con /).'
         PARTENZA=$'/home/anna/foto'
+        PRIMA=$''
         SOLUZIONE=$'cd ../documenti'
         cartella documenti
         cartella foto
@@ -390,6 +407,7 @@ esercizio() {
         TITOLO=$'Il più recente per primo'
         COMPITO=$'Elenca i file della directory documenti in formato lungo, mettendo per primi quelli modificati più di recente.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ls -lt documenti'
         cartella documenti
         cartella foto
@@ -407,6 +425,7 @@ esercizio() {
         TITOLO=$'Directory annidate'
         COMPITO=$'Crea la struttura di directory viaggi/2027/foto con un solo comando (nessuna delle tre esiste).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'mkdir -p viaggi/2027/foto'
         cartella documenti
         cartella foto
@@ -424,6 +443,7 @@ esercizio() {
         TITOLO=$'Rinominare'
         COMPITO=$'Rinomina il file bozza.txt in relazione.txt.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'mv bozza.txt relazione.txt'
         cartella documenti
         cartella foto
@@ -442,6 +462,7 @@ esercizio() {
         TITOLO=$'Copiare una directory'
         COMPITO=$'Copia la directory foto, con tutto il contenuto, in una nuova directory foto-backup.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'cp -r foto foto-backup'
         cartella documenti
         cartella foto
@@ -459,6 +480,7 @@ esercizio() {
         TITOLO=$'Eliminare una directory piena'
         COMPITO=$'Elimina la directory vecchi con tutto quello che contiene.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'rm -r vecchi'
         cartella documenti
         cartella foto
@@ -482,6 +504,7 @@ esercizio() {
         TITOLO=$'Tutti i .jpg in un colpo'
         COMPITO=$'Nella tua home ci sono tre foto .jpg e due file .txt. Sposta tutte le foto nella directory foto con un solo comando, lasciando i .txt dove sono.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'mv *.jpg foto'
         cartella documenti
         cartella foto
@@ -503,6 +526,7 @@ esercizio() {
         TITOLO=$'Un solo carattere'
         COMPITO=$'Ci sono report1.txt ... report9.txt e report10.txt. Elimina con un solo comando i report da 1 a 9, ma non report10.txt.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'rm report?.txt'
         cartella documenti
         cartella foto
@@ -530,6 +554,7 @@ esercizio() {
         TITOLO=$'Un archivio compresso'
         COMPITO=$'Crea l\'archivio documenti.tar.gz, compresso con gzip, con dentro la directory documenti.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'tar -czf documenti.tar.gz documenti'
         cartella documenti
         cartella foto
@@ -547,6 +572,7 @@ esercizio() {
         TITOLO=$'Estrarre un archivio'
         COMPITO=$'Nella tua home c\'è sito.tar.gz. Estrai il suo contenuto nella directory corrente.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'tar -xzf sito.tar.gz'
         cartella documenti
         cartella foto
@@ -572,6 +598,7 @@ esercizio() {
         TITOLO=$'Guardare dentro senza estrarre'
         COMPITO=$'Mostra l\'elenco dei file contenuti in backup.tar.gz senza estrarli.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'tar -tzf backup.tar.gz'
         cartella documenti
         cartella foto
@@ -595,6 +622,7 @@ esercizio() {
         TITOLO=$'Comprimere un file'
         COMPITO=$'Comprimi il file registro.log con gzip (al suo posto deve restare solo la versione compressa).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'gzip registro.log'
         cartella documenti
         cartella foto
@@ -613,6 +641,7 @@ esercizio() {
         TITOLO=$'Un file zip'
         COMPITO=$'Crea l\'archivio foto.zip con dentro la directory foto e tutto il suo contenuto.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'zip -r foto.zip foto'
         cartella documenti
         cartella foto
@@ -630,6 +659,7 @@ esercizio() {
         TITOLO=$'Gli errori nel log'
         COMPITO=$'Mostra le righe del file /var/log/app.log che contengono la parola ERROR (in maiuscolo).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'grep ERROR /var/log/app.log'
         cartella documenti
         cartella foto
@@ -647,6 +677,7 @@ esercizio() {
         TITOLO=$'Quanti errori?'
         COMPITO=$'Conta quante righe di /var/log/app.log contengono «error», scritto in qualsiasi modo (maiuscole o minuscole).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'grep -ic error /var/log/app.log'
         cartella documenti
         cartella foto
@@ -664,6 +695,7 @@ esercizio() {
         TITOLO=$'I nomi degli utenti'
         COMPITO=$'Salva nel file utenti.txt i nomi degli utenti del sistema: il primo campo di ogni riga di /etc/passwd, dove i campi sono separati da :.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'cut -d: -f1 /etc/passwd > utenti.txt'
         cartella documenti
         cartella foto
@@ -681,6 +713,7 @@ esercizio() {
         TITOLO=$'Ordinata e senza doppioni'
         COMPITO=$'Scrivi nel file spesa-ordinata.txt la lista di documenti/spesa.txt in ordine alfabetico e senza ripetizioni.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sort documenti/spesa.txt | uniq > spesa-ordinata.txt'
         cartella documenti
         cartella foto
@@ -698,6 +731,7 @@ esercizio() {
         TITOLO=$'Aggiungere in fondo'
         COMPITO=$'Aggiungi la riga burro in fondo a documenti/spesa.txt, senza cancellare quello che c\'è già.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'echo burro >> documenti/spesa.txt'
         cartella documenti
         cartella foto
@@ -715,6 +749,7 @@ esercizio() {
         TITOLO=$'L\'inizio del log'
         COMPITO=$'Mostra solo le prime 3 righe di /var/log/app.log.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'head -n 3 /var/log/app.log'
         cartella documenti
         cartella foto
@@ -732,6 +767,7 @@ esercizio() {
         TITOLO=$'Senza messaggi di errore'
         COMPITO=$'Cerca con find, partendo da /, i file che si chiamano passwd, senza far comparire i messaggi «Permesso negato».'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'find / -name passwd 2>/dev/null'
         cartella documenti
         cartella foto
@@ -749,6 +785,7 @@ esercizio() {
         TITOLO=$'Righe che iniziano così'
         COMPITO=$'Mostra le righe di /etc/passwd che iniziano con anna (e solo quelle che iniziano così).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'grep \'^anna\' /etc/passwd'
         cartella documenti
         cartella foto
@@ -766,6 +803,7 @@ esercizio() {
         TITOLO=$'Il primo script'
         COMPITO=$'Crea lo script saluta.sh con due righe: #!/bin/bash e echo Ciao. Poi rendilo eseguibile per il proprietario.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'echo \'#!/bin/bash\' > saluta.sh\necho \'echo Ciao\' >> saluta.sh\nchmod u+x saluta.sh'
         cartella documenti
         cartella foto
@@ -783,6 +821,7 @@ esercizio() {
         TITOLO=$'Senza il permesso di esecuzione'
         COMPITO=$'Nella tua home c\'è lo script orario.sh, che non ha il permesso di esecuzione. Avvialo lo stesso, senza cambiare i permessi.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'bash orario.sh'
         cartella documenti
         cartella foto
@@ -801,6 +840,7 @@ esercizio() {
         TITOLO=$'Con il punto e la barra'
         COMPITO=$'Lo script conta.sh conta i file della directory documenti. Rendilo eseguibile per il proprietario e avvialo dalla tua home scrivendo il suo percorso.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'chmod u+x conta.sh\n./conta.sh'
         cartella documenti
         cartella foto
@@ -819,6 +859,7 @@ esercizio() {
         TITOLO=$'Il primo argomento'
         COMPITO=$'Crea lo script ciao.sh con una sola riga, che stampa Ciao,  seguito dal primo argomento ricevuto. Poi avvialo con bash passando l\'argomento Luca: deve comparire Ciao, Luca.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'echo \'echo "Ciao, $1"\' > ciao.sh\nbash ciao.sh Luca'
         cartella documenti
         cartella foto
@@ -836,6 +877,7 @@ esercizio() {
         TITOLO=$'Quanti argomenti?'
         COMPITO=$'Lo script quanti.sh dice quanti argomenti ha ricevuto. Avvialo in modo che ne conti esattamente 2: il primo è Mario Rossi (nome e cognome insieme), il secondo è Milano.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'./quanti.sh \'Mario Rossi\' Milano'
         cartella documenti
         cartella foto
@@ -854,6 +896,7 @@ esercizio() {
         TITOLO=$'Il codice di uscita'
         COMPITO=$'Lo script cerca.sh cerca la parola burro nella lista della spesa e non scrive niente. Avvialo, poi mostra il suo codice di uscita.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'./cerca.sh\necho $?'
         cartella documenti
         cartella foto
@@ -872,6 +915,7 @@ esercizio() {
         TITOLO=$'Un comando tutto tuo'
         COMPITO=$'Nella directory /home/anna/bin c\'è lo script saluta, già eseguibile. Fai in modo che la shell lo trovi scrivendo solo il nome, poi avvialo così: saluta.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'PATH=$PATH:~/bin\nsaluta'
         cartella bin
         cartella documenti
@@ -892,6 +936,7 @@ esercizio() {
         TITOLO=$'Un ciclo su una riga'
         COMPITO=$'Con un ciclo for scritto su una sola riga, stampa per ogni file .jpg della directory foto una riga come questa: Foto: foto/mare.jpg'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'for f in foto/*.jpg; do echo "Foto: $f"; done'
         cartella documenti
         cartella foto
@@ -909,6 +954,7 @@ esercizio() {
         TITOLO=$'Un saluto per ciascuno'
         COMPITO=$'Leggi lo script saluti.sh con cat: saluta ogni persona che riceve come argomento. Avvialo in modo che saluti, in quest\'ordine, Anna, Luca e Sara.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'./saluti.sh Anna Luca Sara'
         cartella documenti
         cartella foto
@@ -927,6 +973,7 @@ esercizio() {
         TITOLO=$'Se il file esiste'
         COMPITO=$'Scrivi su una sola riga un if che controlla se nella tua home esiste il file note.txt e, se c\'è, stampa trovato.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'if [ -f note.txt ]; then echo trovato; fi'
         cartella documenti
         cartella foto
@@ -944,6 +991,7 @@ esercizio() {
         TITOLO=$'Leggere uno script'
         COMPITO=$'Leggi lo script controlla.sh con cat e capisci quando esce con il codice 2. Avvialo in modo che succeda, poi mostra il codice di uscita.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'./controlla.sh nonesiste.txt\necho $?'
         cartella documenti
         cartella foto
@@ -962,6 +1010,7 @@ esercizio() {
         TITOLO=$'I processi del terminale'
         COMPITO=$'Mostra i processi che stai usando in questo terminale.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ps'
         cartella documenti
         cartella foto
@@ -979,6 +1028,7 @@ esercizio() {
         TITOLO=$'Tutti i processi'
         COMPITO=$'Mostra tutti i processi del sistema, di tutti gli utenti, con il nome dell\'utente di ognuno.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ps aux'
         cartella documenti
         cartella foto
@@ -996,6 +1046,7 @@ esercizio() {
         TITOLO=$'Trova un processo'
         COMPITO=$'Dall\'elenco di tutti i processi tieni solo le righe che contengono sshd, il server per collegarsi da remoto.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ps aux | grep sshd'
         cartella documenti
         cartella foto
@@ -1013,6 +1064,7 @@ esercizio() {
         TITOLO=$'Quanta memoria?'
         COMPITO=$'Mostra quanta memoria RAM e quanto spazio di swap ha il computer, con le unità leggibili (Mi, Gi).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'free -h'
         cartella documenti
         cartella foto
@@ -1030,6 +1082,7 @@ esercizio() {
         TITOLO=$'La memoria vista dal kernel'
         COMPITO=$'Il kernel mostra lo stato della memoria in un file dentro /proc. Trova in quel file la riga MemTotal e mostrala.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'grep MemTotal /proc/meminfo'
         cartella documenti
         cartella foto
@@ -1047,6 +1100,7 @@ esercizio() {
         TITOLO=$'La cartella di un processo'
         COMPITO=$'Ogni processo ha una directory in /proc con il suo PID. Mostra il file status di quella della tua shell.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'cat /proc/$$/status'
         cartella documenti
         cartella foto
@@ -1064,6 +1118,7 @@ esercizio() {
         TITOLO=$'I messaggi del kernel'
         COMPITO=$'Mostra solo i messaggi del kernel che parlano di dispositivi USB (la parola usb, maiuscola o minuscola).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo dmesg | grep -i usb'
         cartella documenti
         cartella foto
@@ -1081,6 +1136,7 @@ esercizio() {
         TITOLO=$'Il registro di sistema'
         COMPITO=$'Mostra le ultime 5 righe del registro di sistema /var/log/syslog.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo tail -n 5 /var/log/syslog'
         cartella documenti
         cartella foto
@@ -1098,6 +1154,7 @@ esercizio() {
         TITOLO=$'Il kernel sul disco'
         COMPITO=$'Mostra in formato lungo il contenuto della directory dove stanno il kernel di Linux e i file per avviarlo.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ls -l /boot'
         cartella documenti
         cartella foto
@@ -1115,6 +1172,7 @@ esercizio() {
         TITOLO=$'I dischi sono file'
         COMPITO=$'In Linux anche i dischi compaiono come file, in /dev. Mostra in formato lungo tutti quelli che iniziano con sd.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ls -l /dev/sd*'
         cartella documenti
         cartella foto
@@ -1132,6 +1190,7 @@ esercizio() {
         TITOLO=$'Il mio indirizzo IP'
         COMPITO=$'Mostra gli indirizzi di rete del computer con il comando ip, e trova l\'indirizzo IPv4 della scheda enp0s3.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ip addr show'
         cartella documenti
         cartella foto
@@ -1149,6 +1208,7 @@ esercizio() {
         TITOLO=$'Il vecchio ifconfig'
         COMPITO=$'Mostra la configurazione della scheda enp0s3 con il comando storico, quello che c\'era prima di ip.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ifconfig enp0s3'
         cartella documenti
         cartella foto
@@ -1166,6 +1226,7 @@ esercizio() {
         TITOLO=$'La porta verso Internet'
         COMPITO=$'Mostra la tabella di instradamento con il comando ip, e trova l\'indirizzo del router (il gateway predefinito).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ip route show'
         cartella documenti
         cartella foto
@@ -1183,6 +1244,7 @@ esercizio() {
         TITOLO=$'La tabella di route'
         COMPITO=$'Mostra la stessa tabella con il comando storico route, con gli indirizzi in numeri invece che in nomi.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'route -n'
         cartella documenti
         cartella foto
@@ -1200,6 +1262,7 @@ esercizio() {
         TITOLO=$'Quale server DNS?'
         COMPITO=$'Mostra il file di configurazione che dice al computer a quale server DNS chiedere gli indirizzi dei nomi.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'cat /etc/resolv.conf'
         cartella documenti
         cartella foto
@@ -1217,6 +1280,7 @@ esercizio() {
         TITOLO=$'Nomi senza DNS'
         COMPITO=$'Nel file dove si scrivono a mano i nomi dei computer della rete, trova la riga del nas e mostrala.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'grep nas /etc/hosts'
         cartella documenti
         cartella foto
@@ -1234,6 +1298,7 @@ esercizio() {
         TITOLO=$'Il NAS risponde?'
         COMPITO=$'Controlla se il nas è raggiungibile, mandandogli esattamente 3 pacchetti.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ping -c 3 nas'
         cartella documenti
         cartella foto
@@ -1251,6 +1316,7 @@ esercizio() {
         TITOLO=$'Chiedere al DNS'
         COMPITO=$'Chiedi al server DNS gli indirizzi di www.lpi.org.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'host www.lpi.org'
         cartella documenti
         cartella foto
@@ -1268,6 +1334,7 @@ esercizio() {
         TITOLO=$'Chi è in ascolto?'
         COMPITO=$'Mostra le porte TCP in ascolto sul computer, con i numeri delle porte invece dei nomi dei servizi.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ss -tln'
         cartella documenti
         cartella foto
@@ -1285,6 +1352,7 @@ esercizio() {
         TITOLO=$'Gli indirizzi IPv6'
         COMPITO=$'Mostra solo gli indirizzi IPv6 del computer.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ip -6 addr show'
         cartella documenti
         cartella foto
@@ -1302,6 +1370,7 @@ esercizio() {
         TITOLO=$'Chi sono io?'
         COMPITO=$'Mostra il tuo numero di utente (UID), il tuo gruppo principale e tutti i gruppi di cui fai parte, con un solo comando.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'id'
         cartella documenti
         cartella foto
@@ -1319,6 +1388,7 @@ esercizio() {
         TITOLO=$'Chi è collegato?'
         COMPITO=$'Mostra gli utenti collegati adesso al computer, con il terminale e l\'ora di accesso.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'who'
         cartella documenti
         cartella foto
@@ -1336,6 +1406,7 @@ esercizio() {
         TITOLO=$'Che cosa stanno facendo?'
         COMPITO=$'Mostra chi è collegato e che cosa sta facendo, con un comando di una lettera sola.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'w'
         cartella documenti
         cartella foto
@@ -1353,6 +1424,7 @@ esercizio() {
         TITOLO=$'Gli accessi di luca'
         COMPITO=$'Mostra lo storico degli accessi al computer, ma solo quelli dell\'utente luca.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'last luca'
         cartella documenti
         cartella foto
@@ -1370,6 +1442,7 @@ esercizio() {
         TITOLO=$'Un utente di sistema'
         COMPITO=$'Mostra la riga dell\'utente www-data in /etc/passwd e guarda il suo ultimo campo: la shell.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'grep www-data /etc/passwd'
         cartella documenti
         cartella foto
@@ -1387,6 +1460,7 @@ esercizio() {
         TITOLO=$'Dove stanno le password'
         COMPITO=$'Le password cifrate stanno in /etc/shadow. Prova a leggerlo, poi mostra la riga di anna con i permessi dell\'amministratore.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo grep anna /etc/shadow'
         cartella documenti
         cartella foto
@@ -1404,6 +1478,7 @@ esercizio() {
         TITOLO=$'Che cosa posso fare con sudo?'
         COMPITO=$'Chiedi a sudo che cosa ti permette di fare.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo -l'
         cartella documenti
         cartella foto
@@ -1421,6 +1496,7 @@ esercizio() {
         TITOLO=$'Diventare luca'
         COMPITO=$'Apri una shell di login come utente luca, in modo da trovarti nella sua home. Poi controlla chi sei.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo su - luca\nwhoami'
         cartella documenti
         cartella foto
@@ -1438,6 +1514,7 @@ esercizio() {
         TITOLO=$'Un comando come un altro utente'
         COMPITO=$'Leggi il file /home/luca/segreto.txt come se fossi luca, senza diventare root e senza aprire una shell.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo -u luca cat /home/luca/segreto.txt'
         cartella documenti
         cartella foto
@@ -1455,7 +1532,206 @@ esercizio() {
         TITOLO=$'Il prompt di root'
         COMPITO=$'Apri una shell di login come root con sudo, guarda la directory in cui ti trovi e poi torna ad anna.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo -i\npwd\nexit'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-01)
+        TITOLO=$'Un nuovo utente'
+        COMPITO=$'Crea l\'utente luigi in modo che abbia anche la sua directory home in /home.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'sudo useradd -m luigi'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-02)
+        TITOLO=$'Nome completo e shell'
+        COMPITO=$'Crea l\'utente sara, con la home, con il nome completo Sara Neri e con la shell /bin/bash (quella predefinita è /bin/sh).'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'sudo useradd -m -c \'Sara Neri\' -s /bin/bash sara'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-03)
+        TITOLO=$'La riga del nuovo utente'
+        COMPITO=$'L\'utente luigi è già stato creato. Mostra la sua riga in /etc/passwd e guarda il suo UID: il primo numero libero da 1000 in su.'
+        PARTENZA=$''
+        PRIMA=$'sudo useradd -m -c \'Luigi Verdi\' -s /bin/bash luigi'
+        SOLUZIONE=$'grep luigi /etc/passwd'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-04)
+        TITOLO=$'Il modello delle home'
+        COMPITO=$'Mostra tutto il contenuto, compresi i file nascosti, della directory che viene copiata nella home di ogni nuovo utente.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'ls -a /etc/skel'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-05)
+        TITOLO=$'Un gruppo nuovo'
+        COMPITO=$'Crea il gruppo progetto.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'sudo groupadd progetto'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-06)
+        TITOLO=$'Aggiungere a un gruppo'
+        COMPITO=$'luigi fa già parte del gruppo progetto. Aggiungilo anche al gruppo sviluppo, senza toglierlo da progetto.'
+        PARTENZA=$''
+        PRIMA=$'sudo groupadd progetto\nsudo useradd -m -G progetto luigi'
+        SOLUZIONE=$'sudo usermod -aG sviluppo luigi'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-07)
+        TITOLO=$'Una password per luigi'
+        COMPITO=$'luigi non ha ancora una password (account bloccato). Impostagli la password Primavera26 e poi controlla lo stato della password.'
+        PARTENZA=$''
+        PRIMA=$'sudo useradd -m luigi'
+        SOLUZIONE=$'echo \'luigi:Primavera26\' | sudo chpasswd\nsudo passwd -S luigi'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-08)
+        TITOLO=$'Bloccare un account'
+        COMPITO=$'luca è in vacanza: blocca la sua password, senza cancellarla, in modo che nessuno possa entrare come luca.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'sudo passwd -l luca'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-09)
+        TITOLO=$'Un utente di sistema'
+        COMPITO=$'Crea l\'utente di sistema servizio, per un programma: senza home e con la shell /usr/sbin/nologin, così nessuno può entrare con lui.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'sudo useradd -r -s /usr/sbin/nologin servizio'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-10)
+        TITOLO=$'Eliminare un utente'
+        COMPITO=$'L\'utente prova non serve più: eliminalo insieme alla sua directory home.'
+        PARTENZA=$''
+        PRIMA=$'sudo useradd -m prova'
+        SOLUZIONE=$'sudo userdel -r prova'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.2-11)
+        TITOLO=$'Il numero di un utente'
+        COMPITO=$'Mostra solo il numero dell\'utente (UID) di luca, senza il resto.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'id -u luca'
         cartella documenti
         cartella foto
         cartella progetti
@@ -1472,6 +1748,7 @@ esercizio() {
         TITOLO=$'Solo per me'
         COMPITO=$'Imposta i permessi del file diario.txt in modo che solo tu possa leggerlo e modificarlo: rw-------.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'chmod 600 diario.txt'
         cartella documenti
         cartella foto
@@ -1490,6 +1767,7 @@ esercizio() {
         TITOLO=$'Eseguibile per il proprietario'
         COMPITO=$'Lo script backup.sh ha i permessi rw-r--r--. Aggiungi il permesso di esecuzione solo per il proprietario.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'chmod u+x backup.sh'
         cartella documenti
         cartella foto
@@ -1508,6 +1786,7 @@ esercizio() {
         TITOLO=$'Togliere la lettura agli altri'
         COMPITO=$'Togli agli «altri» (né proprietario né gruppo) il permesso di leggere note.txt, senza cambiare gli altri permessi.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'chmod o-r note.txt'
         cartella documenti
         cartella foto
@@ -1525,6 +1804,7 @@ esercizio() {
         TITOLO=$'Cambiare proprietario'
         COMPITO=$'Rendi luca il proprietario del file condiviso.txt. Solo l\'amministratore può farlo: usa sudo.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'sudo chown luca condiviso.txt'
         cartella documenti
         cartella foto
@@ -1543,6 +1823,7 @@ esercizio() {
         TITOLO=$'Il gruppo può scrivere ovunque'
         COMPITO=$'Dai al gruppo il permesso di scrittura sulla directory progetti e su tutto quello che contiene, con un solo comando.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'chmod -R g+w progetti'
         cartella documenti
         cartella foto
@@ -1564,6 +1845,7 @@ esercizio() {
         TITOLO=$'Un link simbolico'
         COMPITO=$'Crea nella tua home il link simbolico hosts che punta al file /etc/hosts.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ln -s /etc/hosts hosts'
         cartella documenti
         cartella foto
@@ -1581,6 +1863,7 @@ esercizio() {
         TITOLO=$'Un hard link'
         COMPITO=$'Crea promemoria.txt, un hard link (non simbolico) al file note.txt.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ln note.txt promemoria.txt'
         cartella documenti
         cartella foto
@@ -1598,6 +1881,7 @@ esercizio() {
         TITOLO=$'Una directory per tutti'
         COMPITO=$'Crea la directory /tmp/scambio dove tutti gli utenti possono creare file, ma ognuno può cancellare solo i propri (come /tmp).'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'mkdir /tmp/scambio\nchmod 1777 /tmp/scambio'
         cartella documenti
         cartella foto
@@ -1615,6 +1899,7 @@ esercizio() {
         TITOLO=$'I permessi di /tmp'
         COMPITO=$'Mostra in formato lungo i permessi della directory /tmp stessa, non dei file che contiene.'
         PARTENZA=$''
+        PRIMA=$''
         SOLUZIONE=$'ls -ld /tmp'
         cartella documenti
         cartella foto
@@ -1662,6 +1947,10 @@ prepara() {
         printf 'Per cominciare scrivi: cd   (la cartella in cui eri è stata ricreata: cd ti riporta nella home)\n'
     else
         printf 'Comincia pure da qui, dalla home di anna.\n'
+    fi
+    if [ -n "$PRIMA" ]; then
+        printf '\nQuesto esercizio parte da utenti o gruppi che non vengono creati da soli.\n'
+        printf 'Se non l%shai già fatto, scrivi prima (la password di anna è anna):\n%s\n' "'" "$PRIMA"
     fi
     printf 'La soluzione: lpi-esercizio soluzione %s\n' "$1"
 }

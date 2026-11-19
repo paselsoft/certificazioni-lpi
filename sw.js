@@ -3,14 +3,14 @@
 // dai dati degli esami, così una lezione nuova entra da sola). Strategia «prima la rete»: online si
 // riceve sempre la versione più recente (e la copia salvata si aggiorna), offline si usa la copia.
 // Per far installare una nuova versione basta cambiare CACHE.
-const CACHE = "certlpi-v14";
+const CACHE = "certlpi-v15";
 
 importScripts("data/exams.js", "data/exam-010-160.js");
 
 const APP_FILES = [
     "./", "index.html", "style.css", "manifest.webmanifest", "icon.svg",
     "version.js", "data/exams.js", "data/exam-010-160.js", "store.js", "lesson-view.js", "app.js", "sync.js", "quiz.js", "review.js", "exam-sim.js", "readiness.js",
-    "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "exercise-check.js", "practice.js", "exercises/010-160.js",
+    "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "shell-accounts.js", "exercise-check.js", "practice.js", "exercises/010-160.js",
     "questions/010-160/1.js", "questions/010-160/2.js", "questions/010-160/3.js", "questions/010-160/4.js", "questions/010-160/5.js"
 ];
 const LESSON_FILES = EXAMS.flatMap(exam => exam.topics.flatMap(topic => topic.objectives.flatMap(objective =>
