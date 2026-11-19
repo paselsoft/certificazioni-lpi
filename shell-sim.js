@@ -19,7 +19,7 @@ const SIM_USERS = {
     "www-data": { uid: 33, gid: 33, home: "/var/www", shell: "/usr/sbin/nologin", groups: ["www-data"], name: "www-data" },
     syslog: { uid: 104, gid: 110, home: "/home/syslog", shell: "/usr/sbin/nologin", groups: ["syslog", "adm"], name: "" }
 };
-const SIM_GROUPS = { root: 0, adm: 4, tty: 5, disk: 6, cdrom: 24, sudo: 27, "www-data": 33, input: 105, syslog: 110, anna: 1000, luca: 1001, sviluppo: 1002 };
+const SIM_GROUPS = { root: 0, adm: 4, tty: 5, disk: 6, cdrom: 24, sudo: 27, shadow: 42, "www-data": 33, input: 105, syslog: 110, anna: 1000, luca: 1001, sviluppo: 1002 };
 const SIM_UMASK = 0o022;
 
 const ERRORS = {
@@ -198,6 +198,12 @@ function groupText() {
     }).join("\n") + "\n";
 }
 
+// /etc/shadow: le password cifrate (solo per gli utenti veri; * e ! vogliono dire «nessuna password»)
+const SIM_SHADOW = { root: "*", anna: "$6$Kq3vT8e1$Yb7n2Q0cW4x9Lr", luca: "$6$pR5sZ2a7$Fd8m1T6vH3k0Wq", "www-data": "*", syslog: "*" };
+function shadowText() {
+    return Object.keys(SIM_USERS).map(name => `${name}:${SIM_SHADOW[name] || "!"}:20390:0:99999:7:::`).join("\n") + "\n";
+}
+
 // Il file system di base, uguale in tutti gli esercizi: la home di anna con qualche file, i file
 // di sistema dell'esame (/etc, /var/log, /tmp...) e i programmi in /usr/bin
 function simBaseTree() {
@@ -218,7 +224,8 @@ function simBaseTree() {
         files: {
             "/etc/passwd": { owner: "root", content: passwdText() },
             "/etc/group": { owner: "root", content: groupText() },
-            "/etc/shadow": { owner: "root", group: "root", mode: "640", content: "root:*:20000:0:99999:7:::\nanna:$6$sale$hash:20000:0:99999:7:::\n" },
+            "/etc/shadow": { owner: "root", group: "shadow", mode: "640", content: shadowText() },
+            "/etc/sudoers": { owner: "root", group: "root", mode: "440", content: "# Chi può usare sudo (si modifica solo con visudo)\nDefaults\tenv_reset\nroot\tALL=(ALL:ALL) ALL\n# I membri del gruppo sudo possono eseguire qualsiasi comando\n%sudo\tALL=(ALL:ALL) ALL\n" },
             "/etc/hostname": { owner: "root", content: "lpi\n" },
             "/etc/hosts": { owner: "root", content: "127.0.0.1\tlocalhost\n127.0.1.1\tlpi\n192.168.1.10\tnas\n::1\tlocalhost ip6-localhost ip6-loopback\n" },
             "/etc/resolv.conf": { owner: "root", content: "nameserver 192.168.1.1\nsearch casa.lan\n" },
@@ -263,7 +270,9 @@ function createShell(setup = {}) {
         lastOutput: "", lastErrors: "", lastCommand: "", tty: true,
         // Gli argomenti dello script in esecuzione ($1, $2..., $#, $@), il suo nome ($0), quanti
         // script sono aperti uno dentro l'altro e lo stdin che lo script ha ricevuto
-        args: [], arg0: "bash", depth: 0, stdin: null, loops: 0
+        args: [], arg0: "bash", depth: 0, stdin: null, loops: 0,
+        // Le shell aperte con su o sudo -i, una dentro l'altra: exit torna a quella di prima
+        sessions: []
     };
     const base = simBaseTree();
     const add = (type, list) => Object.entries(list || {}).forEach(([path, spec]) => {
@@ -1039,17 +1048,10 @@ function simExecute(sh, words, stdin, ctx) {
         return { out: "", err: "", code: 0 };
     }
     const [name, ...args] = rest;
+    // sudo: chi può usarlo, -u, -l, -i, -s e sudo su (shell-users.js)
     if (name === "sudo") {
-        if (!args.length) return { out: "", err: "sudo: scrivi il comando da eseguire come root, per esempio sudo chown luca file\n", code: 1 };
-        if (SIM_BUILTINS.has(args[0])) return { out: "", err: `sudo: ${args[0]}: comando non trovato (è un comando interno della shell)\n`, code: 1 };
-        if (["-i", "-s", "su"].includes(args[0]) || (args[0] === "bash" && args.length === 1)) return { out: "", err: "sudo: nel simulatore usa sudo davanti a un comando alla volta, per esempio sudo chown luca file\n", code: 1 };
-        const user = sh.user;
-        sh.user = "root";
-        try {
-            return simExecute(sh, args, stdin, ctx);
-        } finally {
-            sh.user = user;
-        }
+        const result = simSudo(sh, args, stdin, ctx);
+        return { out: result.out || "", err: result.err || "", code: result.code || 0, clear: result.clear, chunks: result.chunks };
     }
     const command = SIM_COMMANDS[name];
     if (!command) {

@@ -15,7 +15,7 @@
 # modificarlo a mano. https://github.com/paselsoft/certificazioni-lpi
 set -euo pipefail
 
-ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
+ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.1-01  Chi sono io?\nt5.1-02  Chi è collegato?\nt5.1-03  Che cosa stanno facendo?\nt5.1-04  Gli accessi di luca\nt5.1-05  Un utente di sistema\nt5.1-06  Dove stanno le password\nt5.1-07  Che cosa posso fare con sudo?\nt5.1-08  Diventare luca\nt5.1-09  Un comando come un altro utente\nt5.1-10  Il prompt di root\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
 APP_LOG=$'2026-11-12 08:00:01 INFO avvio del servizio\n2026-11-12 08:05:12 WARN disco quasi pieno\n2026-11-12 08:10:30 ERROR connessione al database fallita\n2026-11-12 08:10:31 INFO nuovo tentativo\n2026-11-12 08:10:35 ERROR connessione al database fallita\n2026-11-12 08:11:00 INFO connessione riuscita\n2026-11-12 09:00:00 error utente sconosciuto: mario\n'
 SEGRETO=$'solo per luca\n'
 
@@ -1286,6 +1286,176 @@ esercizio() {
         COMPITO=$'Mostra solo gli indirizzi IPv6 del computer.'
         PARTENZA=$''
         SOLUZIONE=$'ip -6 addr show'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-01)
+        TITOLO=$'Chi sono io?'
+        COMPITO=$'Mostra il tuo numero di utente (UID), il tuo gruppo principale e tutti i gruppi di cui fai parte, con un solo comando.'
+        PARTENZA=$''
+        SOLUZIONE=$'id'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-02)
+        TITOLO=$'Chi è collegato?'
+        COMPITO=$'Mostra gli utenti collegati adesso al computer, con il terminale e l\'ora di accesso.'
+        PARTENZA=$''
+        SOLUZIONE=$'who'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-03)
+        TITOLO=$'Che cosa stanno facendo?'
+        COMPITO=$'Mostra chi è collegato e che cosa sta facendo, con un comando di una lettera sola.'
+        PARTENZA=$''
+        SOLUZIONE=$'w'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-04)
+        TITOLO=$'Gli accessi di luca'
+        COMPITO=$'Mostra lo storico degli accessi al computer, ma solo quelli dell\'utente luca.'
+        PARTENZA=$''
+        SOLUZIONE=$'last luca'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-05)
+        TITOLO=$'Un utente di sistema'
+        COMPITO=$'Mostra la riga dell\'utente www-data in /etc/passwd e guarda il suo ultimo campo: la shell.'
+        PARTENZA=$''
+        SOLUZIONE=$'grep www-data /etc/passwd'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-06)
+        TITOLO=$'Dove stanno le password'
+        COMPITO=$'Le password cifrate stanno in /etc/shadow. Prova a leggerlo, poi mostra la riga di anna con i permessi dell\'amministratore.'
+        PARTENZA=$''
+        SOLUZIONE=$'sudo grep anna /etc/shadow'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-07)
+        TITOLO=$'Che cosa posso fare con sudo?'
+        COMPITO=$'Chiedi a sudo che cosa ti permette di fare.'
+        PARTENZA=$''
+        SOLUZIONE=$'sudo -l'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-08)
+        TITOLO=$'Diventare luca'
+        COMPITO=$'Apri una shell di login come utente luca, in modo da trovarti nella sua home. Poi controlla chi sei.'
+        PARTENZA=$''
+        SOLUZIONE=$'sudo su - luca\nwhoami'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-09)
+        TITOLO=$'Un comando come un altro utente'
+        COMPITO=$'Leggi il file /home/luca/segreto.txt come se fossi luca, senza diventare root e senza aprire una shell.'
+        PARTENZA=$''
+        SOLUZIONE=$'sudo -u luca cat /home/luca/segreto.txt'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.1-10)
+        TITOLO=$'Il prompt di root'
+        COMPITO=$'Apri una shell di login come root con sudo, guarda la directory in cui ti trovi e poi torna ad anna.'
+        PARTENZA=$''
+        SOLUZIONE=$'sudo -i\npwd\nexit'
         cartella documenti
         cartella foto
         cartella progetti

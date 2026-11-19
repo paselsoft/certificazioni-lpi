@@ -69,6 +69,8 @@ function archiveEntries(node, kind) {
 function goalMet(sh, exercise, goal) {
     if (goal.command && !new RegExp(goal.command).test(sh.lastCommand.trim())) return false;
     if (goal.cwd !== undefined && sh.cwd.replace(/\/+$/, "") !== goal.cwd) return false;
+    if (goal.user !== undefined && sh.user !== goal.user) return false;
+    if (goal.history !== undefined && !sh.history.some(line => new RegExp(goal.history).test(line.trim()))) return false;
     if (goal.variable !== undefined) {
         if (sh.vars[goal.variable] !== goal.value) return false;
         if (goal.exported && !sh.exported.has(goal.variable)) return false;

@@ -19,7 +19,7 @@ const { spawnSync } = require("child_process");
 
 const root = path.join(__dirname, "..");
 const context = vm.createContext({ TextEncoder });
-for (const file of ["data/exams.js", "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "exercise-check.js", "exercises/010-160.js"]) {
+for (const file of ["data/exams.js", "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "exercise-check.js", "exercises/010-160.js"]) {
     vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context, { filename: file });
 }
 // L'orologio del simulatore parte da adesso (al minuto), così le date di ls -l coincidono
