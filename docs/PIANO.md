@@ -255,6 +255,18 @@ la palestra davvero ed esegue le soluzioni da anna.
   esempi (203.0.113.x, 198.51.100.x, 2001:db8::). `/etc/hosts` ha anche la riga IPv6 di `::1`.
   Dieci esercizi (il 4.4 ne aveva zero), tutti `bash: false`.
 
+- **Sicurezza di base e tipi di utente, obiettivo 5.1 (19/11/2026).** `shell-users.js`: `who`
+  (`-H`, `-b`, `-q`, `who am i`), `w`, `last` (anche per utente e `-n`), `lastb` (solo root),
+  `getent passwd|group|shadow`, `su` (da root senza password; da un altro utente spiega che la
+  password non si può scrivere e propone `sudo su - UTENTE`; `-`, `-c`), `sudo` riscritto: lo
+  usa solo chi è nel gruppo `sudo` (luca riceve «luca is not in the sudoers file.»), con `-l`,
+  `-u UTENTE`, `-i`, `-s` e `sudo su [-] [UTENTE]`. Le shell aperte con `su` o `sudo -i` stanno
+  una dentro l'altra: il prompt mostra l'utente (e `#` per root), `exit` torna a quella di prima
+  scrivendo `logout`; `www-data` ha `nologin` e non si apre. `/etc/shadow` ha una riga per ogni
+  utente (gruppo `shadow`), c'è `/etc/sudoers` (440). Nuovi obiettivi degli esercizi: `user`
+  (chi è l'utente della shell) e `history` (uno dei comandi scritti). Dieci esercizi (il 5.1 ne
+  aveva zero), tutti `bash: false`.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -262,9 +274,10 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 1. **Script nel simulatore: quello che resta.** I due passi sono fatti (vedi sopra): il 3.3 ha 11
    esercizi. Solo se servono: `$(...)`, `read`, `alias`, i cicli `while` (chiedono anche `$((...))`),
    `-a` e `-o` in `test`.
-2. **Esercizi per gli obiettivi senza pratica** (restano 5.1 e 5.2: peso 4 su 40, zero esercizi;
-   2.2, 4.3 e 4.4 sono fatti, vedi sopra). Mancano al simulatore: `who`, `w`, `last`, `su`,
-   `useradd`, `groupadd`, `passwd`. Un obiettivo alla volta.
+2. **Esercizi per l'ultimo obiettivo senza pratica: il 5.2** (creare utenti e gruppi, peso 2;
+   2.2, 4.3, 4.4 e 5.1 sono fatti, vedi sopra). Mancano al simulatore `useradd`, `userdel`,
+   `groupadd`, `groupdel`, `usermod`, `passwd`: oggi `/etc/passwd` e `/etc/group` sono calcolati
+   dagli utenti fissi, e andrebbero resi modificabili.
 3. **Domande: risposte giuste troppo lunghe.** In 111 domande a scelta singola su 173 la risposta
    giusta è l'opzione più lunga: si può indovinare senza sapere. Vanno riscritte una per una
    (accorciare la giusta o allungare i distrattori), magari con una statistica in

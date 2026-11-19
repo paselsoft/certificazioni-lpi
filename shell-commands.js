@@ -1521,6 +1521,7 @@ function echoRun(sh, args) {
 
 // exit [codice]: in uno script lo ferma (senza codice vale quello dell'ultimo comando)
 function exitRun(sh, args) {
+    if (!sh.depth && sh.sessions && sh.sessions.length) return endSession(sh);
     if (!sh.depth) return { err: "exit: nel simulatore il terminale resta aperto (per ricominciare l'esercizio usa «Ricomincia»)\n" };
     if (!args.length) throw new SimExit(sh.status);
     if (!/^[+-]?[0-9]+$/.test(args[0])) {
@@ -1646,6 +1647,7 @@ const SIM_HELP = [
     "  shell: echo export unset env type which history clear help",
     "  sistema: ps (anche ps aux, ps -ef), top, uptime, free, dmesg, journalctl; /proc, /dev, /sys, /boot, /var/log",
     "  rete: ip addr, ip route, ifconfig, route, ss, netstat, ping, host, hostname -I; /etc/hosts, /etc/resolv.conf",
+    "  utenti: id, who, w, last, sudo (anche -l, -u, -i), su (da root o con sudo su - UTENTE), exit, getent; /etc/passwd, /etc/shadow, /etc/group",
     "  aiuto: man (anche man -k e man 5 passwd), apropos, whatis, info, COMANDO --help, help cd, locate, updatedb",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",

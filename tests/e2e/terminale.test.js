@@ -295,6 +295,60 @@ module.exports = {
         assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
     },
 
+    "utenti: id, who, w, last, /etc/shadow, sudo -l, -u, -i, su ed exit": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").pop();
+        const prompt = () => page.textContent(".terminal-line .terminal-prompt");
+        await type(page, "id");
+        assert.equal(await last(), "uid=1000(anna) gid=1000(anna) groups=1000(anna),27(sudo),1002(sviluppo)");
+        await type(page, "who | wc -l");
+        assert.equal(await last(), "2");
+        await type(page, "w | tail -n 1");
+        assert.match(await last(), /^luca +pts\/1 +192\.168\.1\.20 +08:25 .* top$/);
+        await type(page, "last luca | head -n 1");
+        assert.match(await last(), /^luca +pts\/1 +192\.168\.1\.20 +Thu Nov 12 08:25 +still logged in$/);
+        await type(page, "grep www-data /etc/passwd");
+        assert.equal(await last(), "www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin");
+        await type(page, "cat /etc/shadow");
+        assert.equal(await last(), "cat: /etc/shadow: Permesso negato");
+        await type(page, "sudo grep -c '\\$6\\$' /etc/shadow");
+        assert.equal(await last(), "2");
+        await type(page, "sudo -l");
+        assert.equal(await last(), "    (ALL : ALL) ALL");
+        await type(page, "sudo -u luca cat /home/luca/segreto.txt");
+        assert.equal(await last(), "solo per luca");
+        // su senza sudo chiederebbe una password; con sudo si cambia utente e il prompt cambia
+        await type(page, "su - luca");
+        assert.match(await last(), /la password non si può scrivere\. .*sudo su - luca/);
+        await type(page, "sudo su - luca");
+        assert.equal(await prompt(), "luca@lpi:~$ ");
+        await type(page, "whoami; pwd");
+        assert.match(await outputText(page), /luca\n\/home\/luca$/);
+        await type(page, "sudo ls");
+        assert.equal(await last(), "luca is not in the sudoers file.");
+        await type(page, "exit");
+        assert.equal(await prompt(), "anna@lpi:~$ ");
+        await type(page, "sudo -i");
+        assert.equal(await prompt(), "root@lpi:~# ");
+        await type(page, "pwd");
+        assert.equal(await last(), "/root");
+        await type(page, "exit");
+        assert.equal(await last(), "logout");
+        assert.equal(await prompt(), "anna@lpi:~$ ");
+        await type(page, "exit");
+        assert.match(await last(), /il terminale resta aperto/);
+        // «Ricomincia» riporta ad anna anche da una shell di root
+        await go(page, "#/terminale/t5.1-10");
+        await type(page, "sudo -i");
+        await page.click("#practice-restart");
+        assert.equal(await prompt(), "anna@lpi:~$ ");
+        await type(page, "sudo -i");
+        await type(page, "exit");
+        await page.waitForSelector("#practice-success:not([hidden])");
+        await type(page, "help");
+        assert.match(await outputText(page), /utenti: id, who, w, last, sudo/);
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");

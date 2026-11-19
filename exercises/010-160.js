@@ -3,6 +3,8 @@
 //   setup: { files, dirs, links, cwd, prepare: [comandi eseguiti prima, senza mostrarli] }
 //   goals: ciò che va raggiunto, ognuno con il testo mostrato (text):
 //     { cwd }                                    la directory corrente
+//     { user }                                   l'utente della shell (dopo su o sudo -i)
+//     { history: "regex" }                       uno dei comandi scritti nell'esercizio
 //     { path, is: "dir" | "file" | "link" | "absent", content, mode, owner, target, sameAs }
 //     { path, archive: "tar" | "tar.gz" | "gzip" | "zip", has: [nomi] }
 //     { variable, value, exported }
@@ -631,6 +633,96 @@ addExercises("010-160", [
         hint: "`ip` ha un'opzione per scegliere la famiglia di indirizzi: `-4` o `-6`, prima di `addr`.",
         solution: ["ip -6 addr show"],
         explain: "Gli indirizzi IPv6 sono lunghi 128 bit e si scrivono in esadecimale; `::` sostituisce una serie di zeri. `fe80::` è l'indirizzo locale al collegamento, sempre presente; `::1` è il loopback."
+    },
+
+    // ---- 5.1 Sicurezza di base e tipi di utente ----
+    // (accessi e sessioni sono quelli finti del simulatore: non si confrontano con Bash)
+    {
+        id: "t5.1-01", title: "Chi sono io?", bash: false,
+        task: "Mostra il tuo numero di utente (UID), il tuo gruppo principale e tutti i gruppi di cui fai parte, con un solo comando.",
+        goals: [{ text: "Compaiono uid, gid e gruppi di anna", output: "same", command: "^id\\s*(anna)?\\s*$" }],
+        hint: "Il comando è corto: due lettere, come «identità».",
+        solution: ["id"],
+        explain: "anna ha UID 1000: gli utenti normali partono da 1000, root ha 0, gli utenti di sistema stanno sotto 1000. Il gruppo `sudo` le permette di usare `sudo`."
+    },
+    {
+        id: "t5.1-02", title: "Chi è collegato?", bash: false,
+        task: "Mostra gli utenti collegati adesso al computer, con il terminale e l'ora di accesso.",
+        goals: [{ text: "Compaiono anna e luca", output: "same", command: "^who\\s*$" }],
+        hint: "Il comando è la parola inglese per «chi».",
+        solution: ["who"],
+        explain: "Ogni riga è una sessione: utente, terminale (`pts/0` è un terminale remoto o grafico, `tty1` la console), ora di accesso e, tra parentesi, da dove."
+    },
+    {
+        id: "t5.1-03", title: "Che cosa stanno facendo?", bash: false,
+        task: "Mostra chi è collegato e che cosa sta facendo, con un comando di una lettera sola.",
+        goals: [{ text: "Compare il programma che sta usando luca", output: "words", words: ["USER", "WHAT", "luca", "top"], command: "^w\\s*$" }],
+        hint: "È la prima lettera di `who`.",
+        solution: ["w"],
+        explain: "`w` aggiunge l'intestazione di `uptime` e, per ogni utente, da quanto è inattivo (IDLE) e il comando che sta usando (WHAT): luca ha aperto `top`."
+    },
+    {
+        id: "t5.1-04", title: "Gli accessi di luca", bash: false,
+        task: "Mostra lo storico degli accessi al computer, ma solo quelli dell'utente `luca`.",
+        goals: [{ text: "Compaiono solo gli accessi di luca", output: "same", command: "^last\\s+luca\\s*$" }],
+        hint: "Lo storico degli accessi si legge con `last`; il nome di un utente dopo il comando filtra le righe.",
+        solution: ["last luca"],
+        explain: "`last` legge il file `/var/log/wtmp`: chi è entrato, da dove, quando e per quanto tempo (`still logged in` se è ancora dentro). `last reboot` mostra le accensioni; `sudo lastb` i tentativi falliti."
+    },
+    {
+        id: "t5.1-05", title: "Un utente di sistema", bash: false,
+        task: "Mostra la riga dell'utente `www-data` in `/etc/passwd` e guarda il suo ultimo campo: la shell.",
+        goals: [{ text: "Compare la riga di `www-data`, con la shell `nologin`", output: "words", words: ["www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin"], command: "/etc/passwd|getent\\s+passwd" }],
+        hint: "Cerca la riga con `grep` nel file `/etc/passwd`.",
+        solution: ["grep www-data /etc/passwd"],
+        explain: "Sette campi separati da `:`: nome, password (la `x` vuol dire che sta in `/etc/shadow`), UID, GID, descrizione, home, shell. `www-data` è un utente di sistema: UID sotto 1000 e shell `nologin`, quindi nessuno può entrare con lui."
+    },
+    {
+        id: "t5.1-06", title: "Dove stanno le password", bash: false,
+        task: "Le password cifrate stanno in `/etc/shadow`. Prova a leggerlo, poi mostra la riga di anna con i permessi dell'amministratore.",
+        goals: [{ text: "Compare la riga di anna di `/etc/shadow`", output: "words", words: ["anna:$6$Kq3vT8e1$Yb7n2Q0cW4x9Lr:20390:0:99999:7:::"], command: "^sudo\\s.*/etc/shadow" }],
+        hint: "Da anna `cat /etc/shadow` dà «Permesso negato»: il file è di root. Metti `sudo` davanti a un `grep anna /etc/shadow`.",
+        solution: ["sudo grep anna /etc/shadow"],
+        explain: "`/etc/passwd` lo leggono tutti; `/etc/shadow` solo root (e il gruppo `shadow`), perché contiene le password cifrate: `$6$` indica l'algoritmo SHA-512. Un `*` o un `!` vuol dire che con quell'utente non si entra con una password."
+    },
+    {
+        id: "t5.1-07", title: "Che cosa posso fare con sudo?", bash: false,
+        task: "Chiedi a `sudo` che cosa ti permette di fare.",
+        goals: [{ text: "`sudo` mostra i tuoi permessi", output: "same", command: "^sudo\\s+-l\\s*$" }],
+        hint: "C'è un'opzione di `sudo` che elenca (in inglese «list») i permessi.",
+        solution: ["sudo -l"],
+        explain: "`(ALL : ALL) ALL`: anna può eseguire qualsiasi comando come qualsiasi utente. Il permesso viene da `/etc/sudoers`, che lo dà al gruppo `sudo`: prova `sudo cat /etc/sudoers`."
+    },
+    {
+        id: "t5.1-08", title: "Diventare luca", bash: false,
+        task: "Apri una shell di login come utente `luca`, in modo da trovarti nella sua home. Poi controlla chi sei.",
+        goals: [
+            { text: "Sei l'utente luca", user: "luca" },
+            { text: "Sei nella home di luca", cwd: "/home/luca" },
+            { text: "`whoami` risponde `luca`", output: "same", command: "^whoami\\s*$" }
+        ],
+        hint: "`su - luca` chiederebbe la password di luca, che non conosci. Ma tu puoi usare `sudo`: `sudo su - luca`. Il trattino vuol dire «shell di login».",
+        solution: ["sudo su - luca", "whoami"],
+        explain: "Il prompt ora dice `luca@lpi`. Con `exit` torni ad anna. luca non è nel gruppo `sudo`: da luca prova `sudo ls`, ti risponde che non è nel file sudoers."
+    },
+    {
+        id: "t5.1-09", title: "Un comando come un altro utente", bash: false,
+        task: "Leggi il file `/home/luca/segreto.txt` come se fossi `luca`, senza diventare root e senza aprire una shell.",
+        goals: [{ text: "Compare il contenuto di `segreto.txt`", output: "same", command: "^sudo\\s+-u\\s+luca\\s" }],
+        hint: "`sudo` esegue un comando come root, ma con `-u UTENTE` lo esegue come un altro utente.",
+        solution: ["sudo -u luca cat /home/luca/segreto.txt"],
+        explain: "Il file ha permessi `rw-------`: lo legge solo luca (e root). Con `sudo -u luca` il comando gira come luca, che ne è il proprietario."
+    },
+    {
+        id: "t5.1-10", title: "Il prompt di root", bash: false,
+        task: "Apri una shell di login come `root` con `sudo`, guarda la directory in cui ti trovi e poi torna ad anna.",
+        goals: [
+            { text: "Hai aperto una shell di login di root", history: "^sudo\\s+(-i|su(\\s+(-|-l|--login))?(\\s+root)?)\\s*$" },
+            { text: "Con `exit` sei tornata ad anna", user: "anna", command: "^exit\\s*$" }
+        ],
+        hint: "Per una shell di login di root c'è `sudo -i`. Per tornare indietro: `exit`.",
+        solution: ["sudo -i", "pwd", "exit"],
+        explain: "Il prompt di root finisce con `#`, quello degli utenti normali con `$`. La home di root è `/root`, non `/home/root`. Da root niente è vietato: meglio usarlo il meno possibile, e uscire subito."
     },
 
     // ---- 5.3 Permessi e proprietà ----

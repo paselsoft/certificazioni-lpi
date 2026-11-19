@@ -15,7 +15,8 @@ const exerciseHref = exercise => `#/terminale/${exercise.id}`;
 function promptText(sh) {
     const home = sh.vars.HOME || "/home/anna";
     const where = sh.cwd === home ? "~" : sh.cwd.startsWith(`${home}/`) ? `~${sh.cwd.slice(home.length)}` : sh.cwd;
-    return `${sh.user}@lpi:${where}$ `;
+    // Il prompt di root finisce con #, quello degli altri utenti con $
+    return `${sh.user}@lpi:${where}${sh.user === "root" ? "#" : "$"} `;
 }
 
 // Quanti caratteri entrano in una riga del terminale (ls incolonna i nomi su questa larghezza)
