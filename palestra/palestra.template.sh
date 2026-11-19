@@ -88,7 +88,8 @@ base() {
 @@BASE@@
 }
 
-# esercizio ID: imposta TITOLO, COMPITO, PARTENZA e SOLUZIONE (e, con PREPARA=1, prepara la home)
+# esercizio ID: imposta TITOLO, COMPITO, PARTENZA, PRIMA (i comandi da scrivere prima, con sudo) e
+# SOLUZIONE (e, con PREPARA=1, prepara la home)
 esercizio() {
     case "$1" in
 @@ESERCIZI@@
@@ -126,6 +127,10 @@ prepara() {
         printf 'Per cominciare scrivi: cd   (la cartella in cui eri è stata ricreata: cd ti riporta nella home)\n'
     else
         printf 'Comincia pure da qui, dalla home di anna.\n'
+    fi
+    if [ -n "$PRIMA" ]; then
+        printf '\nQuesto esercizio parte da utenti o gruppi che non vengono creati da soli.\n'
+        printf 'Se non l%shai già fatto, scrivi prima (la password di anna è anna):\n%s\n' "'" "$PRIMA"
     fi
     printf 'La soluzione: lpi-esercizio soluzione %s\n' "$1"
 }

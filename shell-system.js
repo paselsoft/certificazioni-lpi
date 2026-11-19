@@ -321,7 +321,7 @@ function journalctlRun(sh, args) {
         else return { err: `journalctl: opzione non valida: ${arg} (nel simulatore: journalctl, -n NUMERO, -k, -u SERVIZIO)\n`, code: 1 };
     }
     if (count !== null && !(count >= 0)) return { err: "journalctl: dopo -n serve un numero\n", code: 1 };
-    const user = SIM_USERS[sh.user] || { groups: [] };
+    const user = usersOf(sh)[sh.user] || { groups: [] };
     if (sh.user !== "root" && !user.groups.includes("adm")) {
         return { err: "journalctl: nel simulatore i messaggi del sistema li vedono solo root e i gruppi adm e systemd-journal: prova sudo journalctl\n", code: 1 };
     }

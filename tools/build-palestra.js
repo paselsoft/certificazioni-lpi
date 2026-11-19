@@ -13,7 +13,7 @@ const target = path.join(root, "palestra", "palestra.sh");
 
 function loadContext() {
     const context = vm.createContext({ TextEncoder });
-    for (const file of ["data/exams.js", "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "exercise-check.js", "exercises/010-160.js"]) {
+    for (const file of ["data/exams.js", "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "shell-accounts.js", "exercise-check.js", "exercises/010-160.js"]) {
         vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context, { filename: file });
     }
     return context;
@@ -66,13 +66,18 @@ function build() {
     const cases = exercises.map(exercise => {
         const setup = exercise.setup || {};
         const body = [...homeLines(base, setup)];
-        (setup.prepare || []).forEach(line => body.push(`esegui ${bashString(line)}`));
+        // I comandi con sudo (creare utenti e gruppi) cambierebbero il sistema vero: la palestra non
+        // li esegue da sola, li mostra prima del compito
+        const prepare = setup.prepare || [];
+        prepare.filter(line => !/^sudo\b/.test(line)).forEach(line => body.push(`esegui ${bashString(line)}`));
+        const first = prepare.filter(line => /^sudo\b/.test(line));
         const cwd = setup.cwd && setup.cwd !== "/home/anna" ? setup.cwd : "";
         return [
             `    ${exercise.id})`,
             `        TITOLO=${bashString(plain(exercise.title))}`,
             `        COMPITO=${bashString(plain(exercise.task))}`,
             `        PARTENZA=${bashString(cwd)}`,
+            `        PRIMA=${bashString(first.join("\n"))}`,
             `        SOLUZIONE=${bashString(exercise.solution.join("\n"))}`,
             ...body.map(line => `        ${line}`),
             "        ;;"

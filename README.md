@@ -29,7 +29,7 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
   rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
   risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
-- **Pratica al terminale**: 86 esercizi con i comandi dell'esame (directory, file, caratteri
+- **Pratica al terminale**: 97 esercizi con i comandi dell'esame (directory, file, caratteri
   jolly, archivi, grep e filtri, reindirizzamenti, script, permessi, link) su un piccolo Linux
   simulato nel browser, con gli obiettivi che si spuntano, suggerimento e soluzione; più un
   terminale libero. I filtri di testo vengono dal motore di Pipe Dreams; le soluzioni e oltre 200
@@ -87,6 +87,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `shell-system.js` | il computer finto della shell simulata: processi (`ps`, `top`), memoria (`free`), `dmesg`, registri, `/proc`, `/dev`, `/sys`, `/boot` |
 | `shell-network.js` | la rete finta della shell simulata: `ip`, `ifconfig`, `route`, `ss`, `netstat`, `ping`, `host` |
 | `shell-users.js` | utenti e sicurezza nella shell simulata: `who`, `w`, `last`, `sudo` (`-l`, `-u`, `-i`), `su`, le shell una dentro l'altra |
+| `shell-accounts.js` | creare utenti e gruppi nella shell simulata: `useradd`, `groupadd`, `usermod`, `userdel`, `groupdel`, `passwd`, `chpasswd` |
 | `shell-help.js` | l'aiuto nella shell simulata: pagine di manuale scritte per l'app, `man`, `info`, `--help`, `help`, `locate` |
 | `lib/pipedreams-*.js` | il motore dei filtri di Pipe Dreams, copiato senza modifiche |
 | `exercise-check.js`, `practice.js` | gli esercizi al terminale: controllo degli obiettivi e pagina (`#/terminale`) |

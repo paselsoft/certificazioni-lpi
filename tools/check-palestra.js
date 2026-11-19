@@ -21,6 +21,8 @@ const script = path.join(root, "palestra", "palestra.sh");
 const problems = [];
 
 if (fs.readFileSync(script, "utf8") !== build()) problems.push("palestra/palestra.sh non è aggiornato: esegui node tools/build-palestra.js");
+// La palestra non deve mai eseguire da sola un comando con sudo (creerebbe utenti veri)
+if (/^\s*esegui \$'sudo\b/m.test(fs.readFileSync(script, "utf8"))) problems.push("palestra/palestra.sh esegue da solo un comando con sudo");
 
 const context = loadContext();
 const exercises = vm.runInContext("EXERCISES", context);
