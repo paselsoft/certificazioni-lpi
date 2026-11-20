@@ -91,7 +91,7 @@ function realLinuxSection() {
     ].join("\n"));
     commands.id = "palestra-comandi";
     section.appendChild(commands);
-    section.appendChild(el("p", "hint", "La password di anna è anna. lpi-esercizio da solo mostra l'elenco degli esercizi; lpi-esercizio soluzione t2.3-01 mostra la soluzione; exit ti riporta al tuo utente. Lo script lavora solo nella home di anna: i tuoi file non vengono toccati."));
+    section.appendChild(el("p", "hint", "La password di anna è anna. lpi-esercizio da solo mostra l'elenco degli esercizi; lpi-esercizio verifica, quando hai finito, dice quali obiettivi dell'esercizio hai raggiunto; lpi-esercizio soluzione t2.3-01 mostra la soluzione; exit ti riporta al tuo utente. Lo script lavora solo nella home di anna: i tuoi file non vengono toccati."));
     return section;
 }
 
@@ -197,7 +197,7 @@ function renderPractice(exam, exercise) {
     page.appendChild(success);
     if (exercise) {
         const real = el("p", "hint");
-        real.append(document.createTextNode("Su un Linux vero, con la palestra: "), el("code", "", `lpi-esercizio ${exercise.id}`), document.createTextNode(" ("), link("come si installa", "#/terminale"), document.createTextNode(")."));
+        real.append(document.createTextNode("Su un Linux vero, con la palestra: "), el("code", "", `lpi-esercizio ${exercise.id}`), document.createTextNode(", poi "), el("code", "", "lpi-esercizio verifica"), document.createTextNode(" ("), link("come si installa", "#/terminale"), document.createTextNode(")."));
         page.appendChild(real);
     }
     if (!exercise) page.appendChild(el("p", "hint", "Scrivi help per l'elenco dei comandi. Il simulatore si comporta come Bash con LC_ALL=C; i messaggi di errore sono in italiano."));

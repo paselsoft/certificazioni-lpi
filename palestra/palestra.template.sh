@@ -7,6 +7,7 @@
 #   su - anna                           diventi anna
 #   lpi-esercizio                       l'elenco degli esercizi
 #   lpi-esercizio t2.4-04               prepara la home di anna per l'esercizio e ne mostra il compito
+#   lpi-esercizio verifica              quali obiettivi dell'esercizio hai già raggiunto
 #   lpi-esercizio soluzione t2.4-04     la soluzione
 #   lpi-esercizio inizio                la home di anna come all'inizio
 #   sudo lpi-esercizio disinstalla      toglie anna, luca e i file della palestra
@@ -99,6 +100,167 @@ esercizio() {
     esac
 }
 
+# ---- verifica: gli obiettivi dell'esercizio sul sistema vero ----
+
+FATTI=0
+DA_FARE=0
+A_OCCHIO=0
+
+fatto() { FATTI=$((FATTI + 1)); printf '  ✓ %s\n' "$1"; }
+da_fare() { DA_FARE=$((DA_FARE + 1)); printf '  ✗ %s\n' "$1"; }
+occhio() { A_OCCHIO=$((A_OCCHIO + 1)); printf '  ? %s (controlla a occhio)\n' "$1"; }
+esito() { if [ "$2" = 0 ]; then fatto "$1"; else da_fare "$1"; fi; }
+
+# Un percorso dell'esercizio: /home/anna diventa la home su cui lavora lo script
+percorso() {
+    case "$1" in
+        /home/anna) printf '%s' "$CASA" ;;
+        /home/anna/*) printf '%s' "$CASA${1#/home/anna}" ;;
+        *) printf '%s' "$1" ;;
+    esac
+}
+
+controlla_cwd() {
+    [ "$(pwd -P)" = "$(cd "$(percorso "$2")" 2>/dev/null && pwd -P)" ]
+    esito "$1" $?
+}
+
+controlla_utente_shell() {
+    [ "$(id -un)" = "$2" ]
+    esito "$1" $?
+}
+
+# Una variabile esportata: lpi-esercizio la riceve dalla shell (quelle non esportate non le vede)
+controlla_variabile() {
+    [ "$(printenv "$2")" = "$3" ]
+    esito "$1" $?
+}
+
+# Il PATH: deve finire con la directory aggiunta, e contenere ancora /usr/bin
+controlla_path() {
+    case ":$PATH:" in
+        *:/usr/bin:*) case "$PATH" in *:"$2") esito "$1" 0; return ;; esac ;;
+    esac
+    esito "$1" 1
+}
+
+# controlla_file TESTO PERCORSO [tipo=dir|file|link|absent] [contenuto=...] [permessi=644]
+#   [contenutocome=COMANDO] [permessiconti=100] [proprietario=...] [destinazione=...] [stessidati=PERCORSO]
+#   [archivio=tar|tar.gz|gzip|zip] [contiene=nome,nome]
+controlla_file() {
+    local testo="$1" file elenco kind="" voce nome
+    file="$(percorso "$2")"
+    shift 2
+    for voce in "$@"; do
+        case "$voce" in
+            tipo=absent) if [ -e "$file" ] || [ -L "$file" ]; then da_fare "$testo"; return; fi ;;
+            tipo=dir) [ -d "$file" ] || { da_fare "$testo"; return; } ;;
+            tipo=file) [ -f "$file" ] || { da_fare "$testo"; return; } ;;
+            tipo=link) [ -L "$file" ] || { da_fare "$testo"; return; } ;;
+            *) [ -e "$file" ] || [ -L "$file" ] || { da_fare "$testo"; return; } ;;
+        esac
+        case "$voce" in
+            contenuto=*) [ "$(cat "$file" 2>/dev/null; printf x)" = "${voce#contenuto=}x" ] || { da_fare "$testo"; return; } ;;
+            # Il contenuto che quel comando produce su questo sistema (per esempio i suoi utenti)
+            contenutocome=*) [ "$(cat "$file" 2>/dev/null; printf x)" = "$(bash -c "${voce#contenutocome=}" 2>/dev/null; printf x)" ] || { da_fare "$testo"; return; } ;;
+            permessi=*) [ "$((8#$(stat -c %a "$file")))" = "$((8#${voce#permessi=}))" ] || { da_fare "$testo"; return; } ;;
+            permessiconti=*) [ $((8#$(stat -c %a "$file") & 8#${voce#permessiconti=})) = $((8#${voce#permessiconti=})) ] || { da_fare "$testo"; return; } ;;
+            proprietario=*) [ "$(stat -c %U "$file")" = "${voce#proprietario=}" ] || { da_fare "$testo"; return; } ;;
+            destinazione=*) [ "$(readlink "$file")" = "${voce#destinazione=}" ] || { da_fare "$testo"; return; } ;;
+            stessidati=*) [ "$(stat -c %d:%i "$file")" = "$(stat -c %d:%i "$(percorso "${voce#stessidati=}")" 2>/dev/null)" ] || { da_fare "$testo"; return; } ;;
+            archivio=*) kind="${voce#archivio=}" ;;
+        esac
+    done
+    if [ -n "$kind" ]; then
+        case "$kind" in
+            tar) elenco="$(tar -tf "$file" 2>/dev/null)" && ! gzip -t "$file" 2>/dev/null ;;
+            tar.gz) elenco="$(tar -tzf "$file" 2>/dev/null)" ;;
+            gzip) gzip -t "$file" 2>/dev/null; elenco="" ;;
+            zip) elenco="$(unzip -Z1 "$file" 2>/dev/null)" ;;
+        esac || { da_fare "$testo"; return; }
+        for voce in "$@"; do
+            case "$voce" in
+                contiene=*)
+                    for nome in $(printf '%s' "${voce#contiene=}" | tr ',' ' '); do
+                        printf '%s\n' "$elenco" | sed 's:/$::' | grep -qxF "$nome" || { da_fare "$testo"; return; }
+                    done ;;
+            esac
+        done
+    fi
+    fatto "$testo"
+}
+
+# controlla_account TESTO NOME [esiste=no] [shell=...] [commento=...] [uidsotto=N] [gruppi=a,b]
+#   [bloccato=si|no] [password=si]  (lo stato della password si legge solo da root)
+controlla_account() {
+    local testo="$1" nome="$2" riga voce stato="" gruppo
+    shift 2
+    riga="$(getent passwd "$nome")"
+    for voce in "$@"; do
+        if [ "$voce" = esiste=no ]; then esito "$testo" "$([ -z "$riga" ]; echo $?)"; return; fi
+    done
+    [ -n "$riga" ] || { da_fare "$testo"; return; }
+    for voce in "$@"; do
+        case "$voce" in
+            shell=*) [ "$(printf '%s' "$riga" | cut -d: -f7)" = "${voce#shell=}" ] || { da_fare "$testo"; return; } ;;
+            commento=*) [ "$(printf '%s' "$riga" | cut -d: -f5 | cut -d, -f1)" = "${voce#commento=}" ] || { da_fare "$testo"; return; } ;;
+            uidsotto=*) [ "$(printf '%s' "$riga" | cut -d: -f3)" -lt "${voce#uidsotto=}" ] || { da_fare "$testo"; return; } ;;
+            gruppi=*)
+                for gruppo in $(printf '%s' "${voce#gruppi=}" | tr ',' ' '); do
+                    id -nG "$nome" | tr ' ' '\n' | grep -qxF "$gruppo" || { da_fare "$testo"; return; }
+                done ;;
+            bloccato=* | password=*)
+                if [ "$(id -u)" != 0 ]; then occhio "$testo: sudo passwd -S $nome"; return; fi
+                stato="$(passwd -S "$nome" | cut -d' ' -f2)"
+                case "$voce" in
+                    bloccato=si) [ "$stato" = L ] || { da_fare "$testo"; return; } ;;
+                    bloccato=no) [ "$stato" != L ] || { da_fare "$testo"; return; } ;;
+                    password=si) [ "$stato" = P ] || { da_fare "$testo"; return; } ;;
+                esac ;;
+        esac
+    done
+    fatto "$testo"
+}
+
+controlla_gruppo() {
+    local testo="$1" riga
+    riga="$(getent group "$2")"
+    case "${3:-}" in
+        esiste=no) esito "$testo" "$([ -z "$riga" ]; echo $?)" ;;
+        gid=*) esito "$testo" "$([ "$(printf '%s' "$riga" | cut -d: -f3)" = "${3#gid=}" ]; echo $?)" ;;
+        *) esito "$testo" "$([ -n "$riga" ]; echo $?)" ;;
+    esac
+}
+
+verifica_obiettivi() {
+    case "$1" in
+@@VERIFICHE@@
+    esac
+}
+
+verifica() {
+    controlla_utente
+    local id="${1:-}"
+    [ -n "$id" ] || id="$(cat "$CASA/.lpi-esercizio" 2>/dev/null || true)"
+    [ -n "$id" ] || errore "Quale esercizio? Preparane uno (lpi-esercizio t2.3-01) oppure scrivi: lpi-esercizio verifica t2.3-01"
+    esercizio "$id"
+    printf 'Esercizio %s: %s\n\n' "$id" "$TITOLO"
+    verifica_obiettivi "$id"
+    printf '\n'
+    if [ "$DA_FARE" -gt 0 ]; then
+        printf 'Obiettivi raggiunti: %s; ancora da fare: %s.' "$FATTI" "$DA_FARE"
+    elif [ "$A_OCCHIO" -gt 0 ]; then
+        printf 'Tutti gli obiettivi che si possono controllare sono raggiunti (%s).' "$FATTI"
+    else
+        printf 'Esercizio completato! Tutti gli obiettivi sono raggiunti.'
+    fi
+    if [ "$A_OCCHIO" -gt 0 ]; then
+        printf ' Quelli con ? riguardano che cosa hai visto sullo schermo: confrontalo con lpi-esercizio soluzione %s.' "$id"
+    fi
+    printf '\n'
+    [ "$DA_FARE" = 0 ]
+}
+
 a_capo() {
     if command -v fold >/dev/null; then fold -s -w 78; else cat; fi
 }
@@ -132,7 +294,10 @@ prepara() {
         printf '\nQuesto esercizio parte da utenti o gruppi che non vengono creati da soli.\n'
         printf 'Se non l%shai già fatto, scrivi prima (la password di anna è anna):\n%s\n' "'" "$PRIMA"
     fi
+    printf 'Quando hai finito: lpi-esercizio verifica\n'
     printf 'La soluzione: lpi-esercizio soluzione %s\n' "$1"
+    # L'esercizio in corso, per lpi-esercizio verifica (è un file nascosto: svuota non lo tocca)
+    printf '%s\n' "$1" > "$CASA/.lpi-esercizio"
 }
 
 inizio() {
@@ -205,13 +370,14 @@ case "${1:-}" in
     installa) installa ;;
     disinstalla) disinstalla ;;
     inizio) inizio ;;
+    verifica) verifica "${2:-}" ;;
     soluzione)
         [ -n "${2:-}" ] || errore "Scrivi anche il codice dell'esercizio, per esempio: lpi-esercizio soluzione t2.3-01"
         esercizio "$2"
         printf 'Soluzione dell%sesercizio %s (%s):\n\n%s\n' "'" "$2" "$TITOLO" "$SOLUZIONE"
         ;;
     -h | --help | aiuto)
-        sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+        sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
         ;;
     *) prepara "$1" ;;
 esac

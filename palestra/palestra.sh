@@ -7,6 +7,7 @@
 #   su - anna                           diventi anna
 #   lpi-esercizio                       l'elenco degli esercizi
 #   lpi-esercizio t2.4-04               prepara la home di anna per l'esercizio e ne mostra il compito
+#   lpi-esercizio verifica              quali obiettivi dell'esercizio hai già raggiunto
 #   lpi-esercizio soluzione t2.4-04     la soluzione
 #   lpi-esercizio inizio                la home di anna come all'inizio
 #   sudo lpi-esercizio disinstalla      toglie anna, luca e i file della palestra
@@ -1919,6 +1920,486 @@ esercizio() {
     esac
 }
 
+# ---- verifica: gli obiettivi dell'esercizio sul sistema vero ----
+
+FATTI=0
+DA_FARE=0
+A_OCCHIO=0
+
+fatto() { FATTI=$((FATTI + 1)); printf '  ✓ %s\n' "$1"; }
+da_fare() { DA_FARE=$((DA_FARE + 1)); printf '  ✗ %s\n' "$1"; }
+occhio() { A_OCCHIO=$((A_OCCHIO + 1)); printf '  ? %s (controlla a occhio)\n' "$1"; }
+esito() { if [ "$2" = 0 ]; then fatto "$1"; else da_fare "$1"; fi; }
+
+# Un percorso dell'esercizio: /home/anna diventa la home su cui lavora lo script
+percorso() {
+    case "$1" in
+        /home/anna) printf '%s' "$CASA" ;;
+        /home/anna/*) printf '%s' "$CASA${1#/home/anna}" ;;
+        *) printf '%s' "$1" ;;
+    esac
+}
+
+controlla_cwd() {
+    [ "$(pwd -P)" = "$(cd "$(percorso "$2")" 2>/dev/null && pwd -P)" ]
+    esito "$1" $?
+}
+
+controlla_utente_shell() {
+    [ "$(id -un)" = "$2" ]
+    esito "$1" $?
+}
+
+# Una variabile esportata: lpi-esercizio la riceve dalla shell (quelle non esportate non le vede)
+controlla_variabile() {
+    [ "$(printenv "$2")" = "$3" ]
+    esito "$1" $?
+}
+
+# Il PATH: deve finire con la directory aggiunta, e contenere ancora /usr/bin
+controlla_path() {
+    case ":$PATH:" in
+        *:/usr/bin:*) case "$PATH" in *:"$2") esito "$1" 0; return ;; esac ;;
+    esac
+    esito "$1" 1
+}
+
+# controlla_file TESTO PERCORSO [tipo=dir|file|link|absent] [contenuto=...] [permessi=644]
+#   [contenutocome=COMANDO] [permessiconti=100] [proprietario=...] [destinazione=...] [stessidati=PERCORSO]
+#   [archivio=tar|tar.gz|gzip|zip] [contiene=nome,nome]
+controlla_file() {
+    local testo="$1" file elenco kind="" voce nome
+    file="$(percorso "$2")"
+    shift 2
+    for voce in "$@"; do
+        case "$voce" in
+            tipo=absent) if [ -e "$file" ] || [ -L "$file" ]; then da_fare "$testo"; return; fi ;;
+            tipo=dir) [ -d "$file" ] || { da_fare "$testo"; return; } ;;
+            tipo=file) [ -f "$file" ] || { da_fare "$testo"; return; } ;;
+            tipo=link) [ -L "$file" ] || { da_fare "$testo"; return; } ;;
+            *) [ -e "$file" ] || [ -L "$file" ] || { da_fare "$testo"; return; } ;;
+        esac
+        case "$voce" in
+            contenuto=*) [ "$(cat "$file" 2>/dev/null; printf x)" = "${voce#contenuto=}x" ] || { da_fare "$testo"; return; } ;;
+            # Il contenuto che quel comando produce su questo sistema (per esempio i suoi utenti)
+            contenutocome=*) [ "$(cat "$file" 2>/dev/null; printf x)" = "$(bash -c "${voce#contenutocome=}" 2>/dev/null; printf x)" ] || { da_fare "$testo"; return; } ;;
+            permessi=*) [ "$((8#$(stat -c %a "$file")))" = "$((8#${voce#permessi=}))" ] || { da_fare "$testo"; return; } ;;
+            permessiconti=*) [ $((8#$(stat -c %a "$file") & 8#${voce#permessiconti=})) = $((8#${voce#permessiconti=})) ] || { da_fare "$testo"; return; } ;;
+            proprietario=*) [ "$(stat -c %U "$file")" = "${voce#proprietario=}" ] || { da_fare "$testo"; return; } ;;
+            destinazione=*) [ "$(readlink "$file")" = "${voce#destinazione=}" ] || { da_fare "$testo"; return; } ;;
+            stessidati=*) [ "$(stat -c %d:%i "$file")" = "$(stat -c %d:%i "$(percorso "${voce#stessidati=}")" 2>/dev/null)" ] || { da_fare "$testo"; return; } ;;
+            archivio=*) kind="${voce#archivio=}" ;;
+        esac
+    done
+    if [ -n "$kind" ]; then
+        case "$kind" in
+            tar) elenco="$(tar -tf "$file" 2>/dev/null)" && ! gzip -t "$file" 2>/dev/null ;;
+            tar.gz) elenco="$(tar -tzf "$file" 2>/dev/null)" ;;
+            gzip) gzip -t "$file" 2>/dev/null; elenco="" ;;
+            zip) elenco="$(unzip -Z1 "$file" 2>/dev/null)" ;;
+        esac || { da_fare "$testo"; return; }
+        for voce in "$@"; do
+            case "$voce" in
+                contiene=*)
+                    for nome in $(printf '%s' "${voce#contiene=}" | tr ',' ' '); do
+                        printf '%s\n' "$elenco" | sed 's:/$::' | grep -qxF "$nome" || { da_fare "$testo"; return; }
+                    done ;;
+            esac
+        done
+    fi
+    fatto "$testo"
+}
+
+# controlla_account TESTO NOME [esiste=no] [shell=...] [commento=...] [uidsotto=N] [gruppi=a,b]
+#   [bloccato=si|no] [password=si]  (lo stato della password si legge solo da root)
+controlla_account() {
+    local testo="$1" nome="$2" riga voce stato="" gruppo
+    shift 2
+    riga="$(getent passwd "$nome")"
+    for voce in "$@"; do
+        if [ "$voce" = esiste=no ]; then esito "$testo" "$([ -z "$riga" ]; echo $?)"; return; fi
+    done
+    [ -n "$riga" ] || { da_fare "$testo"; return; }
+    for voce in "$@"; do
+        case "$voce" in
+            shell=*) [ "$(printf '%s' "$riga" | cut -d: -f7)" = "${voce#shell=}" ] || { da_fare "$testo"; return; } ;;
+            commento=*) [ "$(printf '%s' "$riga" | cut -d: -f5 | cut -d, -f1)" = "${voce#commento=}" ] || { da_fare "$testo"; return; } ;;
+            uidsotto=*) [ "$(printf '%s' "$riga" | cut -d: -f3)" -lt "${voce#uidsotto=}" ] || { da_fare "$testo"; return; } ;;
+            gruppi=*)
+                for gruppo in $(printf '%s' "${voce#gruppi=}" | tr ',' ' '); do
+                    id -nG "$nome" | tr ' ' '\n' | grep -qxF "$gruppo" || { da_fare "$testo"; return; }
+                done ;;
+            bloccato=* | password=*)
+                if [ "$(id -u)" != 0 ]; then occhio "$testo: sudo passwd -S $nome"; return; fi
+                stato="$(passwd -S "$nome" | cut -d' ' -f2)"
+                case "$voce" in
+                    bloccato=si) [ "$stato" = L ] || { da_fare "$testo"; return; } ;;
+                    bloccato=no) [ "$stato" != L ] || { da_fare "$testo"; return; } ;;
+                    password=si) [ "$stato" = P ] || { da_fare "$testo"; return; } ;;
+                esac ;;
+        esac
+    done
+    fatto "$testo"
+}
+
+controlla_gruppo() {
+    local testo="$1" riga
+    riga="$(getent group "$2")"
+    case "${3:-}" in
+        esiste=no) esito "$testo" "$([ -z "$riga" ]; echo $?)" ;;
+        gid=*) esito "$testo" "$([ "$(printf '%s' "$riga" | cut -d: -f3)" = "${3#gid=}" ]; echo $?)" ;;
+        *) esito "$testo" "$([ -n "$riga" ]; echo $?)" ;;
+    esac
+}
+
+verifica_obiettivi() {
+    case "$1" in
+    t2.1-01)
+        occhio $'La variabile CITTA vale Roma'
+        occhio $'echo mostra il valore della variabile'
+        ;;
+    t2.1-02)
+        occhio $'Sullo schermo compare Il biglietto costa $5'
+        ;;
+    t2.1-03)
+        controlla_path $'PATH finisce con :/home/anna/bin e contiene ancora /usr/bin' /home/anna/bin
+        ;;
+    t2.1-04)
+        occhio $'Compare la risposta per cd e per cp'
+        ;;
+    t2.2-01)
+        occhio $'Sullo schermo c\'è la pagina di manuale di cp'
+        ;;
+    t2.2-02)
+        occhio $'Compare l\'elenco delle pagine che contengono comprime'
+        ;;
+    t2.2-03)
+        occhio $'Sullo schermo c\'è la pagina PASSWD(5)'
+        ;;
+    t2.2-04)
+        occhio $'mkdir mostra il suo aiuto breve'
+        ;;
+    t2.2-05)
+        occhio $'Compare l\'aiuto di cd'
+        ;;
+    t2.2-06)
+        occhio $'Sullo schermo c\'è il README di tar'
+        ;;
+    t2.2-07)
+        occhio $'locate mostra il percorso di stile.css'
+        ;;
+    t2.2-08)
+        controlla_file $'appena-nato.txt esiste' /home/anna/appena-nato.txt $'tipo=file'
+        occhio $'Dopo l\'aggiornamento locate lo trova'
+        ;;
+    t2.3-01)
+        controlla_cwd $'Sei in /home/anna/documenti' /home/anna/documenti
+        occhio $'Hai mostrato il percorso con pwd'
+        ;;
+    t2.3-02)
+        occhio $'Nell\'elenco compare .bashrc'
+        ;;
+    t2.3-03)
+        occhio $'L\'elenco arriva fino a stile.css'
+        ;;
+    t2.3-04)
+        controlla_cwd $'Sei in /home/anna/documenti' /home/anna/documenti
+        occhio $'Il percorso del comando cd è relativo'
+        ;;
+    t2.3-05)
+        occhio $'Elenco lungo di documenti, dal più recente'
+        ;;
+    t2.4-01)
+        controlla_file $'Esiste viaggi/2027/foto' /home/anna/viaggi/2027/foto $'tipo=dir'
+        occhio $'Con un solo comando mkdir'
+        ;;
+    t2.4-02)
+        controlla_file $'bozza.txt non c\'è più' /home/anna/bozza.txt $'tipo=absent'
+        controlla_file $'relazione.txt ha il testo della bozza' /home/anna/relazione.txt $'tipo=file' $'contenuto=Prima stesura della relazione.\n'
+        ;;
+    t2.4-03)
+        controlla_file $'foto-backup/mare.jpg esiste' /home/anna/foto-backup/mare.jpg $'tipo=file' $'contenuto=JPEG mare\n'
+        controlla_file $'foto è ancora al suo posto' /home/anna/foto/mare.jpg $'tipo=file'
+        ;;
+    t2.4-04)
+        controlla_file $'vecchi non esiste più' /home/anna/vecchi $'tipo=absent'
+        ;;
+    t2.4-05)
+        controlla_file $'Le tre foto sono in foto' /home/anna/foto/Duomo.jpg $'tipo=file'
+        controlla_file $'gita.jpg è in foto' /home/anna/foto/gita.jpg $'tipo=file'
+        controlla_file $'Nella home non ci sono più .jpg' /home/anna/cena.jpg $'tipo=absent'
+        controlla_file $'elenco.txt è rimasto nella home' /home/anna/elenco.txt $'tipo=file'
+        ;;
+    t2.4-06)
+        controlla_file $'report1.txt ... report9.txt eliminati' /home/anna/report5.txt $'tipo=absent'
+        controlla_file $'report9.txt eliminato' /home/anna/report9.txt $'tipo=absent'
+        controlla_file $'report10.txt è ancora lì' /home/anna/report10.txt $'tipo=file'
+        ;;
+    t3.1-01)
+        controlla_file $'documenti.tar.gz è un archivio tar compresso con gzip con dentro documenti/lettera.txt' /home/anna/documenti.tar.gz $'archivio=tar.gz' $'contiene=documenti/lettera.txt,documenti/spesa.txt'
+        ;;
+    t3.1-02)
+        controlla_file $'C\'è sito/index.html' /home/anna/sito/index.html $'tipo=file' $'contenuto=<h1>Benvenuti</h1>\n'
+        controlla_file $'C\'è sito/css/stile.css' /home/anna/sito/css/stile.css $'tipo=file'
+        ;;
+    t3.1-03)
+        occhio $'Compare l\'elenco con lavoro/piano.txt'
+        ;;
+    t3.1-04)
+        controlla_file $'C\'è registro.log.gz, compresso con gzip' /home/anna/registro.log.gz $'archivio=gzip'
+        controlla_file $'registro.log non c\'è più' /home/anna/registro.log $'tipo=absent'
+        ;;
+    t3.1-05)
+        controlla_file $'foto.zip contiene foto/mare.jpg e foto/montagna.jpg' /home/anna/foto.zip $'archivio=zip' $'contiene=foto/mare.jpg,foto/montagna.jpg'
+        ;;
+    t3.2-01)
+        occhio $'Compaiono le due righe con ERROR'
+        ;;
+    t3.2-02)
+        occhio $'Compare il numero 3'
+        ;;
+    t3.2-03)
+        controlla_file $'utenti.txt contiene i nomi, uno per riga' /home/anna/utenti.txt $'tipo=file' $'contenutocome=cut -d: -f1 /etc/passwd'
+        ;;
+    t3.2-04)
+        controlla_file $'spesa-ordinata.txt è ordinata e senza doppioni' /home/anna/spesa-ordinata.txt $'tipo=file' $'contenuto=latte\nmele\npane\nuova\n'
+        ;;
+    t3.2-05)
+        controlla_file $'spesa.txt ha le righe di prima più burro' /home/anna/documenti/spesa.txt $'tipo=file' $'contenuto=pane\nlatte\nmele\npane\nuova\nlatte\npane\nburro\n'
+        ;;
+    t3.2-06)
+        occhio $'Compaiono le prime 3 righe'
+        ;;
+    t3.2-07)
+        occhio $'Compare /etc/passwd'
+        occhio $'Nessun messaggio di errore sullo schermo'
+        ;;
+    t3.2-08)
+        occhio $'Compare solo la riga di anna'
+        ;;
+    t3.3-01)
+        controlla_file $'saluta.sh contiene le due righe' /home/anna/saluta.sh $'tipo=file' $'contenuto=#!/bin/bash\necho Ciao\n'
+        controlla_file $'saluta.sh è eseguibile per il proprietario' /home/anna/saluta.sh $'permessiconti=100'
+        ;;
+    t3.3-02)
+        occhio $'Lo script scrive il suo messaggio'
+        controlla_file $'I permessi di orario.sh sono rimasti rw-r--r--' /home/anna/orario.sh $'permessi=644'
+        ;;
+    t3.3-03)
+        controlla_file $'conta.sh è eseguibile per il proprietario' /home/anna/conta.sh $'permessiconti=100'
+        occhio $'Lo hai avviato con ./conta.sh e mostra il numero dei file'
+        ;;
+    t3.3-04)
+        controlla_file $'ciao.sh esiste' /home/anna/ciao.sh $'tipo=file'
+        occhio $'Avviato con l\'argomento Luca, lo script mostra Ciao, Luca'
+        ;;
+    t3.3-05)
+        occhio $'Lo script conta 2 argomenti e il primo è Mario Rossi'
+        ;;
+    t3.3-06)
+        occhio $'Dopo lo script, echo mostra il suo codice di uscita'
+        ;;
+    t3.3-07)
+        occhio $'Scrivendo solo saluta lo script parte'
+        ;;
+    t3.3-08)
+        occhio $'Il ciclo stampa una riga per ogni foto'
+        ;;
+    t3.3-09)
+        occhio $'Lo script saluta Anna, Luca e Sara'
+        ;;
+    t3.3-10)
+        occhio $'L\'if controlla il file e stampa trovato'
+        ;;
+    t3.3-11)
+        occhio $'Dopo lo script, echo mostra il codice di uscita 2'
+        ;;
+    t4.3-01)
+        occhio $'Compare l\'elenco con la tua shell (bash) e il comando stesso'
+        ;;
+    t4.3-02)
+        occhio $'Compaiono anche i processi di root e di luca'
+        ;;
+    t4.3-03)
+        occhio $'Compaiono solo le righe con sshd'
+        ;;
+    t4.3-04)
+        occhio $'free mostra la memoria in Mi e Gi'
+        ;;
+    t4.3-05)
+        occhio $'Compare la riga MemTotal letta da /proc/meminfo'
+        ;;
+    t4.3-06)
+        occhio $'Compare lo stato della shell: Name: bash'
+        ;;
+    t4.3-07)
+        occhio $'Compaiono i messaggi del kernel sull\'USB'
+        ;;
+    t4.3-08)
+        occhio $'Compaiono le ultime 5 righe di syslog'
+        ;;
+    t4.3-09)
+        occhio $'Compare il contenuto di /boot, con vmlinuz'
+        ;;
+    t4.3-10)
+        occhio $'Compaiono sda, le sue partizioni e la chiavetta sdb'
+        ;;
+    t4.4-01)
+        occhio $'Compaiono gli indirizzi, con 192.168.1.50/24'
+        ;;
+    t4.4-02)
+        occhio $'Compaiono indirizzo e maschera di rete di enp0s3'
+        ;;
+    t4.4-03)
+        occhio $'Compare la riga default via 192.168.1.1'
+        ;;
+    t4.4-04)
+        occhio $'route mostra il gateway 192.168.1.1'
+        ;;
+    t4.4-05)
+        occhio $'Compare il contenuto di /etc/resolv.conf'
+        ;;
+    t4.4-06)
+        occhio $'Compare la riga del nas di /etc/hosts'
+        ;;
+    t4.4-07)
+        occhio $'ping manda 3 pacchetti al nas e riceve 3 risposte'
+        ;;
+    t4.4-08)
+        occhio $'Compaiono l\'indirizzo IPv4 e quello IPv6 di www.lpi.org'
+        ;;
+    t4.4-09)
+        occhio $'Compaiono le porte in ascolto, con la 22 di ssh'
+        ;;
+    t4.4-10)
+        occhio $'Compaiono solo righe inet6, con l\'indirizzo fe80::'
+        ;;
+    t5.1-01)
+        occhio $'Compaiono uid, gid e gruppi di anna'
+        ;;
+    t5.1-02)
+        occhio $'Compaiono anna e luca'
+        ;;
+    t5.1-03)
+        occhio $'Compare il programma che sta usando luca'
+        ;;
+    t5.1-04)
+        occhio $'Compaiono solo gli accessi di luca'
+        ;;
+    t5.1-05)
+        occhio $'Compare la riga di www-data, con la shell nologin'
+        ;;
+    t5.1-06)
+        occhio $'Compare la riga di anna di /etc/shadow'
+        ;;
+    t5.1-07)
+        occhio $'sudo mostra i tuoi permessi'
+        ;;
+    t5.1-08)
+        controlla_utente_shell $'Sei l\'utente luca' luca
+        controlla_cwd $'Sei nella home di luca' /home/luca
+        occhio $'whoami risponde luca'
+        ;;
+    t5.1-09)
+        occhio $'Compare il contenuto di segreto.txt'
+        ;;
+    t5.1-10)
+        occhio $'Hai aperto una shell di login di root'
+        occhio $'Con exit sei tornata ad anna'
+        ;;
+    t5.2-01)
+        controlla_account $'L\'utente luigi esiste' luigi
+        controlla_file $'C\'è la sua home, /home/luigi, di sua proprietà' /home/luigi $'tipo=dir' $'proprietario=luigi'
+        ;;
+    t5.2-02)
+        controlla_account $'sara esiste, si chiama Sara Neri e usa /bin/bash' sara $'shell=/bin/bash' $'commento=Sara Neri'
+        controlla_file $'C\'è la sua home' /home/sara $'tipo=dir' $'proprietario=sara'
+        ;;
+    t5.2-03)
+        occhio $'Compare la riga di luigi, con UID 1002'
+        ;;
+    t5.2-04)
+        occhio $'Compaiono .bashrc e .profile di /etc/skel'
+        ;;
+    t5.2-05)
+        controlla_gruppo $'Il gruppo progetto esiste' progetto
+        ;;
+    t5.2-06)
+        controlla_account $'luigi è sia in progetto sia in sviluppo' luigi $'gruppi=progetto,sviluppo'
+        ;;
+    t5.2-07)
+        controlla_account $'luigi ha una password' luigi $'password=si'
+        occhio $'passwd -S mostra lo stato P (password impostata)'
+        ;;
+    t5.2-08)
+        controlla_account $'La password di luca è bloccata' luca $'bloccato=si'
+        ;;
+    t5.2-09)
+        controlla_account $'servizio esiste, con UID sotto 1000 e shell nologin' servizio $'shell=/usr/sbin/nologin' $'uidsotto=1000'
+        controlla_file $'Non ha una home' /home/servizio $'tipo=absent'
+        ;;
+    t5.2-10)
+        controlla_account $'L\'utente prova non c\'è più' prova $'esiste=no'
+        controlla_file $'Anche la sua home è sparita' /home/prova $'tipo=absent'
+        ;;
+    t5.2-11)
+        occhio $'Compare l\'UID di luca: 1001'
+        ;;
+    t5.3-01)
+        controlla_file $'I permessi di diario.txt sono rw-------' /home/anna/diario.txt $'permessi=600'
+        ;;
+    t5.3-02)
+        controlla_file $'I permessi di backup.sh sono rwxr--r--' /home/anna/backup.sh $'permessi=744'
+        ;;
+    t5.3-03)
+        controlla_file $'I permessi di note.txt sono rw-r-----' /home/anna/note.txt $'permessi=640'
+        ;;
+    t5.3-04)
+        controlla_file $'Il proprietario di condiviso.txt è luca' /home/anna/condiviso.txt $'proprietario=luca'
+        ;;
+    t5.3-05)
+        controlla_file $'Il gruppo può scrivere in progetti' /home/anna/progetti $'permessi=775'
+        controlla_file $'Anche in progetti/sito' /home/anna/progetti/sito $'permessi=775'
+        controlla_file $'E su progetti/sito/index.html' /home/anna/progetti/sito/index.html $'permessi=664'
+        ;;
+    t5.4-01)
+        controlla_file $'hosts è un link simbolico a /etc/hosts' /home/anna/hosts $'tipo=link' $'destinazione=/etc/hosts'
+        ;;
+    t5.4-02)
+        controlla_file $'promemoria.txt e note.txt sono lo stesso file' /home/anna/promemoria.txt $'stessidati=/home/anna/note.txt'
+        ;;
+    t5.4-03)
+        controlla_file $'/tmp/scambio ha i permessi rwxrwxrwt' /tmp/scambio $'tipo=dir' $'permessi=1777'
+        ;;
+    t5.4-04)
+        occhio $'Compare la riga di /tmp con drwxrwxrwt'
+        ;;
+    esac
+}
+
+verifica() {
+    controlla_utente
+    local id="${1:-}"
+    [ -n "$id" ] || id="$(cat "$CASA/.lpi-esercizio" 2>/dev/null || true)"
+    [ -n "$id" ] || errore "Quale esercizio? Preparane uno (lpi-esercizio t2.3-01) oppure scrivi: lpi-esercizio verifica t2.3-01"
+    esercizio "$id"
+    printf 'Esercizio %s: %s\n\n' "$id" "$TITOLO"
+    verifica_obiettivi "$id"
+    printf '\n'
+    if [ "$DA_FARE" -gt 0 ]; then
+        printf 'Obiettivi raggiunti: %s; ancora da fare: %s.' "$FATTI" "$DA_FARE"
+    elif [ "$A_OCCHIO" -gt 0 ]; then
+        printf 'Tutti gli obiettivi che si possono controllare sono raggiunti (%s).' "$FATTI"
+    else
+        printf 'Esercizio completato! Tutti gli obiettivi sono raggiunti.'
+    fi
+    if [ "$A_OCCHIO" -gt 0 ]; then
+        printf ' Quelli con ? riguardano che cosa hai visto sullo schermo: confrontalo con lpi-esercizio soluzione %s.' "$id"
+    fi
+    printf '\n'
+    [ "$DA_FARE" = 0 ]
+}
+
 a_capo() {
     if command -v fold >/dev/null; then fold -s -w 78; else cat; fi
 }
@@ -1952,7 +2433,10 @@ prepara() {
         printf '\nQuesto esercizio parte da utenti o gruppi che non vengono creati da soli.\n'
         printf 'Se non l%shai già fatto, scrivi prima (la password di anna è anna):\n%s\n' "'" "$PRIMA"
     fi
+    printf 'Quando hai finito: lpi-esercizio verifica\n'
     printf 'La soluzione: lpi-esercizio soluzione %s\n' "$1"
+    # L'esercizio in corso, per lpi-esercizio verifica (è un file nascosto: svuota non lo tocca)
+    printf '%s\n' "$1" > "$CASA/.lpi-esercizio"
 }
 
 inizio() {
@@ -2025,13 +2509,14 @@ case "${1:-}" in
     installa) installa ;;
     disinstalla) disinstalla ;;
     inizio) inizio ;;
+    verifica) verifica "${2:-}" ;;
     soluzione)
         [ -n "${2:-}" ] || errore "Scrivi anche il codice dell'esercizio, per esempio: lpi-esercizio soluzione t2.3-01"
         esercizio "$2"
         printf 'Soluzione dell%sesercizio %s (%s):\n\n%s\n' "'" "$2" "$TITOLO" "$SOLUZIONE"
         ;;
     -h | --help | aiuto)
-        sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+        sed -n '2,14p' "$0" | sed 's/^# \{0,1\}//'
         ;;
     *) prepara "$1" ;;
 esac

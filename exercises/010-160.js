@@ -7,6 +7,8 @@
 //     { history: "regex" }                       uno dei comandi scritti nell'esercizio
 //     { account, exists, shell, comment, uidBelow, groups, locked, password }   un utente
 //     { group, exists, gid }                     un gruppo
+//   Nella palestra (Linux vero) realContent dice con quale comando si calcola il contenuto giusto,
+//   quando dipende dal sistema (per esempio i suoi utenti).
 //     { path, is: "dir" | "file" | "link" | "absent", content, mode, owner, target, sameAs }
 //     { path, archive: "tar" | "tar.gz" | "gzip" | "zip", has: [nomi] }
 //     { variable, value, exported }
@@ -313,7 +315,7 @@ addExercises("010-160", [
     {
         id: "t3.2-03", title: "I nomi degli utenti",
         task: "Salva nel file `utenti.txt` i nomi degli utenti del sistema: il primo campo di ogni riga di `/etc/passwd`, dove i campi sono separati da `:`.",
-        goals: [{ text: "`utenti.txt` contiene i nomi, uno per riga", path: "/home/anna/utenti.txt", is: "file", content: "root\nanna\nluca\nwww-data\nsyslog\n" }],
+        goals: [{ text: "`utenti.txt` contiene i nomi, uno per riga", path: "/home/anna/utenti.txt", is: "file", content: "root\nanna\nluca\nwww-data\nsyslog\n", realContent: "cut -d: -f1 /etc/passwd" }],
         hint: "`cut` con il separatore (`-d`) e il campo (`-f`); poi `>` per scrivere nel file.",
         solution: ["cut -d: -f1 /etc/passwd > utenti.txt"],
         explain: "`cut -d: -f1` taglia ogni riga ai `:` e tiene il primo pezzo; `>` crea (o sostituisce) il file con l'output."

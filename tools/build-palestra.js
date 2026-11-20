@@ -56,6 +56,58 @@ function homeLines(base, setup) {
     return lines;
 }
 
+// I controlli di «lpi-esercizio verifica» per gli obiettivi di un esercizio. Su un Linux vero un
+// programma separato vede i file, la directory corrente, le variabili esportate, gli utenti e i
+// gruppi; non vede che cosa è comparso sullo schermo né i comandi scritti: quegli obiettivi
+// vanno controllati a occhio
+function verifyLines(exercise) {
+    return exercise.goals.map(goal => {
+        const text = bashString(plain(goal.text));
+        if (goal.output !== undefined || goal.command !== undefined || goal.history !== undefined || goal.noErrors) return `occhio ${text}`;
+        if (goal.cwd !== undefined) return `controlla_cwd ${text} ${quote(goal.cwd)}`;
+        if (goal.user !== undefined) return `controlla_utente_shell ${text} ${quote(goal.user)}`;
+        if (goal.variable !== undefined) {
+            // Il PATH vero è diverso da quello del simulatore: conta la directory aggiunta in fondo
+            if (goal.variable === "PATH") return `controlla_path ${text} ${quote(goal.value.split(":").pop())}`;
+            if (!goal.exported) return `occhio ${text}`;
+            return `controlla_variabile ${text} ${quote(goal.variable)} ${bashString(goal.value)}`;
+        }
+        if (goal.account !== undefined) {
+            const checks = [];
+            if (goal.exists === false) checks.push("esiste=no");
+            if (goal.shell !== undefined) checks.push(`shell=${goal.shell}`);
+            if (goal.comment !== undefined) checks.push(`commento=${goal.comment}`);
+            if (goal.uidBelow !== undefined) checks.push(`uidsotto=${goal.uidBelow}`);
+            if (goal.groups !== undefined) checks.push(`gruppi=${goal.groups.join(",")}`);
+            if (goal.locked !== undefined) checks.push(`bloccato=${goal.locked ? "si" : "no"}`);
+            if (goal.password) checks.push("password=si");
+            return `controlla_account ${text} ${quote(goal.account)} ${checks.map(bashString).join(" ")}`.trimEnd();
+        }
+        if (goal.group !== undefined && goal.path === undefined) {
+            const checks = [];
+            if (goal.exists === false) checks.push("esiste=no");
+            if (goal.gid !== undefined) checks.push(`gid=${goal.gid}`);
+            return `controlla_gruppo ${text} ${quote(goal.group)} ${checks.join(" ")}`.trimEnd();
+        }
+        if (goal.path !== undefined) {
+            const checks = [];
+            if (goal.is !== undefined) checks.push(`tipo=${goal.is}`);
+            // realContent: il comando che produce il contenuto giusto su un sistema vero
+            if (goal.realContent !== undefined) checks.push(`contenutocome=${goal.realContent}`);
+            else if (goal.content !== undefined) checks.push(`contenuto=${goal.content}`);
+            if (goal.mode !== undefined) checks.push(`permessi=${goal.mode}`);
+            if (goal.modeHas !== undefined) checks.push(`permessiconti=${goal.modeHas}`);
+            if (goal.owner !== undefined) checks.push(`proprietario=${goal.owner}`);
+            if (goal.target !== undefined) checks.push(`destinazione=${goal.target}`);
+            if (goal.sameAs !== undefined) checks.push(`stessidati=${goal.sameAs}`);
+            if (goal.archive !== undefined) checks.push(`archivio=${goal.archive}`);
+            if (goal.has !== undefined) checks.push(`contiene=${goal.has.join(",")}`);
+            return `controlla_file ${text} ${quote(goal.path)} ${checks.map(bashString).join(" ")}`.trimEnd();
+        }
+        return `occhio ${text}`;
+    });
+}
+
 function build() {
     const context = loadContext();
     const base = vm.runInContext("simBaseTree()", context);
@@ -83,6 +135,7 @@ function build() {
             "        ;;"
         ].join("\n");
     });
+    const checks = exercises.map(exercise => [`    ${exercise.id})`, ...verifyLines(exercise).map(line => `        ${line}`), "        ;;"].join("\n"));
     const list = exercises.map(exercise => `${exercise.id}  ${plain(exercise.title)}`).join("\n");
     const baseHome = homeLines(base, {});
 
@@ -93,7 +146,8 @@ function build() {
         .replace("@@APP_LOG@@", () => bashString(appLog))
         .replace("@@SEGRETO@@", () => bashString(secret))
         .replace("@@BASE@@", () => baseHome.map(line => `    ${line}`).join("\n"))
-        .replace("@@ESERCIZI@@", () => cases.join("\n"));
+        .replace("@@ESERCIZI@@", () => cases.join("\n"))
+        .replace("@@VERIFICHE@@", () => checks.join("\n"));
 }
 
 if (require.main === module) {

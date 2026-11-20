@@ -151,7 +151,20 @@ if (process.argv.includes("--installa")) {
             const lines = `lpi-esercizio ${exercise.id} >/dev/null && cd ${setup.cwd || "/home/anna"} || exit 99\n${exercise.solution.join("\n")}`;
             const result = asAnna(lines);
             if (result.status !== expected) problems.push(`installa: ${exercise.id}, da anna la soluzione esce con ${result.status} invece di ${expected}: ${result.error || result.stderr}`);
+            // lpi-esercizio verifica sul sistema vero dice quello che dice il simulatore: prima della
+            // soluzione «da fare» se un obiettivo controllabile non è raggiunto, dopo tutto fatto
+            const before = vm.runInContext(`(exercise => { const sh = exerciseShell(exercise); return exercise.goals.filter(goal => !(goal.output !== undefined || goal.command !== undefined || goal.history !== undefined || goal.noErrors || (goal.variable !== undefined && !goal.exported && goal.variable !== "PATH"))).some(goal => !goalMet(sh, exercise, goal)); })`, context)(exercise);
+            const verify = asAnna(`lpi-esercizio ${exercise.id} >/dev/null && cd ${setup.cwd || "/home/anna"} || exit 99\nlpi-esercizio verifica > /tmp/prima.txt; echo $? > /tmp/prima.codice\n${exercise.solution.join("\n")}\nlpi-esercizio verifica`);
+            const firstCode = Number(fs.readFileSync("/tmp/prima.codice", "utf8"));
+            if (before && firstCode !== 1) problems.push(`installa: ${exercise.id}, prima della soluzione verifica dovrebbe dire «ancora da fare»: ${fs.readFileSync("/tmp/prima.txt", "utf8")}`);
+            if (!before && firstCode !== 0) problems.push(`installa: ${exercise.id}, prima della soluzione verifica non dovrebbe trovare obiettivi da fare: ${fs.readFileSync("/tmp/prima.txt", "utf8")}`);
+            if (verify.status !== 0 || /✗/.test(verify.stdout)) problems.push(`installa: ${exercise.id}, dopo la soluzione verifica dice: ${verify.stdout}${verify.stderr}`);
         }
+        fs.rmSync("/tmp/prima.txt", { force: true });
+        fs.rmSync("/tmp/prima.codice", { force: true });
+        // Senza un esercizio preparato, verifica lo chiede; con un codice sconosciuto dà errore
+        const noExercise = asAnna("rm -f ~/.lpi-esercizio; lpi-esercizio verifica");
+        check(`verifica senza esercizio: ${noExercise.stderr.trim()}`, noExercise.status !== 0 && /Quale esercizio\?/.test(noExercise.stderr));
         // Dopo la soluzione (chmod 600) l'esercizio ripreparato torna come all'inizio
         const again = asAnna("lpi-esercizio t5.3-01 >/dev/null && stat -c '%a %U' diario.txt");
         check(`lpi-esercizio riprepara l'esercizio: ${again.stdout.trim()} ${again.stderr.trim()}`, again.status === 0 && again.stdout.trim() === "644 anna");

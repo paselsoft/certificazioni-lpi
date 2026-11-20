@@ -307,6 +307,21 @@ la palestra davvero ed esegue le soluzioni da anna.
   riscrivere due frasi uguali a una lezione. I test nel browser leggono il numero delle domande
   invece di averlo scritto.
 
+- **`lpi-esercizio verifica` nella palestra (21/11/2026).** Su un Linux vero, dopo un esercizio,
+  `lpi-esercizio verifica` (o `verifica ID`) dice quali obiettivi sono raggiunti: ✓ fatto, ✗ da
+  fare, ? da controllare a occhio, e alla fine «Esercizio completato!» o quanti ne mancano (codice
+  di uscita 1). Controlla quello che un programma separato può vedere: file e directory (tipo,
+  contenuto, permessi, proprietario, link, stesso inode, archivi tar, gzip e zip con i loro file),
+  la directory corrente, le variabili esportate (il `PATH` deve finire con la directory aggiunta e
+  contenere ancora `/usr/bin`), l'utente della shell, gli account e i gruppi (lo stato delle
+  password solo da root). Quello che è comparso sullo schermo e i comandi scritti non si vedono:
+  sono i «?», da confrontare con la soluzione. L'esercizio in corso è nel file nascosto
+  `~/.lpi-esercizio`. I controlli sono generati dagli obiettivi degli esercizi
+  (`tools/build-palestra.js`); con `realContent` un obiettivo dice come calcolare il contenuto
+  giusto sul sistema vero (i nomi degli utenti di `/etc/passwd`). `tools/check-palestra.js
+  --installa` verifica, per ogni esercizio che gira in Bash vero, che `verifica` dica «da fare»
+  prima della soluzione quando il simulatore dice lo stesso, e «tutto fatto» dopo.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -320,9 +335,7 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 3. **Domande: risposte giuste troppo lunghe: fatto** (vedi sopra).
 4. **Domande nuove: fatto** (vedi sopra).
 
-5. **`lpi-esercizio verifica` nella palestra**: su un Linux vero dice quali obiettivi
-   dell'esercizio sono raggiunti. Funziona bene per file, permessi e archivi; gli obiettivi del
-   tipo «l'ultimo comando mostra...» sul sistema vero non si controllano allo stesso modo.
+5. **`lpi-esercizio verifica` nella palestra: fatto** (vedi sopra).
 6. **Telefono e High Sierra**: una fila di tasti rapidi sopra la tastiera (`|`, `>`, `~`, `/`,
    `-`, freccia su) e il completamento dei nomi con Tab. L'app usa una sola funzione recente,
    `:has()` (Chrome 105 o successivo): se manca, l'opzione scelta resta solo meno evidenziata.

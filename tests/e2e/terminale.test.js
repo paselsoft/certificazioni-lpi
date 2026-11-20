@@ -418,13 +418,14 @@ module.exports = {
         const commands = (await page.textContent("#palestra-comandi")).split("\n");
         assert.match(commands[0], /^wget https?:\/\/.+\/palestra\/palestra\.sh$/);
         assert.deepEqual(commands.slice(1), ["sudo bash palestra.sh installa", "su - anna", "lpi-esercizio t2.3-01"]);
+        assert.match(await page.textContent("#linux-vero ~ .hint"), /lpi-esercizio verifica, quando hai finito, dice quali obiettivi/);
         // Lo script c'è davvero, ed è quello degli esercizi
         const script = await page.evaluate(async () => (await fetch("palestra/palestra.sh")).text());
         assert.match(script, /^#!\/usr\/bin\/env bash/);
         assert.ok(await page.evaluate(text => EXERCISES.every(exercise => text.includes(`    ${exercise.id})`)), script));
         // In ogni esercizio, il comando per ritrovarlo nella palestra
         await go(page, "#/terminale/t2.4-04");
-        assert.match(await page.textContent(".practice-page p.hint"), /Su un Linux vero, con la palestra: lpi-esercizio t2\.4-04 \(come si installa\)/);
+        assert.match(await page.textContent(".practice-page p.hint"), /Su un Linux vero, con la palestra: lpi-esercizio t2\.4-04, poi lpi-esercizio verifica \(come si installa\)/);
     },
 
     "terminale: 320 px e nessuna violazione axe": async ({ page }) => {
