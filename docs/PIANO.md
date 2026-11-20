@@ -281,6 +281,20 @@ la palestra davvero ed esegue le soluzioni da anna.
   da sola i comandi con `sudo` della preparazione (creerebbero utenti veri): li mostra prima del
   compito; `tools/check-palestra.js` lo controlla.
 
+- **La risposta giusta non si riconosce più dalla lunghezza (20/11/2026).** Prima, in 110 domande
+  a scelta singola su 173 (64%) la risposta giusta era l'opzione più lunga, spesso del doppio:
+  si poteva indovinare senza sapere. Riscritte le opzioni di 109 domande (accorciando la giusta,
+  che ha già la sua spiegazione nel «perché», e allungando le sbagliate con dettagli credibili),
+  poi bilanciate: ora la giusta è più lunga di tutte le altre nel 17% delle domande, e per
+  lunghezza è la prima (o pari) nel 35%, la seconda nel 29%, la terza nel 16%, la più corta nel
+  20%. Nuove opzioni sbagliate in quattro domande (`apt-get download`, PostScript, `compress`,
+  256 bit) e qualche risposta giusta più essenziale («Bash», «`man -k compress`», «In
+  `/usr/bin`»), con la spiegazione aggiornata. `tools/check-questions.js` ora lo controlla: la
+  giusta non può superare del 25% l'opzione sbagliata più lunga, è la più lunga al massimo nel 35%
+  delle domande e nessuna posizione per lunghezza supera il 40%; `--stats` mostra le percentuali.
+  Restano più lunghe di poco (al massimo del 20%) tre domande in cui le opzioni sono nomi brevi,
+  come Impress e Writer.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -291,10 +305,7 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 2. **Esercizi per tutti gli obiettivi: fatto.** Dal 15 al 19/11/2026 gli obiettivi senza pratica
    (2.2, 4.3, 4.4, 5.1, 5.2) hanno avuto 10 esercizi ciascuno o quasi (vedi sopra). Ora ogni
    obiettivo d'esame che si può provare al terminale ha i suoi esercizi.
-3. **Domande: risposte giuste troppo lunghe.** In 111 domande a scelta singola su 173 la risposta
-   giusta è l'opzione più lunga: si può indovinare senza sapere. Vanno riscritte una per una
-   (accorciare la giusta o allungare i distrattori), magari con una statistica in
-   `tools/check-questions.js --stats`.
+3. **Domande: risposte giuste troppo lunghe: fatto** (vedi sopra).
 4. **Domande nuove (25-30)** sugli argomenti con una sola domanda o nessuna: ciclo `for`, `$?`,
    `sort`, `wc`, `head`; `&&` e `||`, `uniq`, `ifconfig` e `route`, `tail -f`.
 5. **`lpi-esercizio verifica` nella palestra**: su un Linux vero dice quali obiettivi

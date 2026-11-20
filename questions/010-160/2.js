@@ -51,7 +51,7 @@ addQuestions("010-160", [
         id: "2.1-05", type: "single", ref: "2.1_01#Tipi di Comportamento dei Comandi",
         text: "Che cosa ti dice il comando `type cd`?",
         options: [
-            { t: "Che `cd` è un comando interno (builtin) della shell", ok: true, why: "`cd` deve cambiare la directory della shell stessa, per questo è dentro Bash e non è un programma separato." },
+            { t: "Che `cd` è un comando interno (builtin)", ok: true, why: "`cd` deve cambiare la directory della shell stessa, per questo è dentro Bash e non è un programma separato." },
             { t: "Che `cd` è il programma `/usr/bin/cd`", ok: false, why: "`type ls` risponde con un percorso, perché `ls` è un programma esterno; `cd` invece è interno." },
             { t: "Che tipo di file c'è nella directory corrente", ok: false, why: "Per il tipo di un file si usa il comando `file`; `type` parla dei comandi." },
             { t: "Il manuale del comando `cd`", ok: false, why: "Il manuale si apre con `man` (per i comandi interni, `help cd`)." }
@@ -61,10 +61,10 @@ addQuestions("010-160", [
         id: "2.1-06", type: "single", ref: "2.1_02#Lavorare con le Variabili Globali",
         text: "Che cosa fa `export` in `export EDITOR=nano`?",
         options: [
-            { t: "Rende la variabile una variabile d'ambiente, visibile anche ai programmi avviati da quella shell", ok: true, why: "Senza `export` la variabile resta locale alla shell; con `export` passa ai processi figli, che possono leggerla." },
-            { t: "Salva la variabile per sempre, anche dopo il riavvio", ok: false, why: "Vale solo per quella shell e i suoi figli: per renderla permanente si scrive in un file come `~/.bashrc`." },
-            { t: "Esporta la variabile in un file chiamato EDITOR", ok: false, why: "`export` non scrive file." },
-            { t: "Installa il programma nano", ok: false, why: "Imposta solo il nome dell'editor preferito; i programmi si installano con il gestore dei pacchetti." }
+            { t: "La rende visibile ai programmi avviati da quella shell", ok: true, why: "Senza `export` la variabile resta locale alla shell; con `export` passa ai processi figli, che possono leggerla." },
+            { t: "Salva la variabile per sempre, così resta anche dopo il riavvio", ok: false, why: "Vale solo per quella shell e i suoi figli: per renderla permanente si scrive in un file come `~/.bashrc`." },
+            { t: "Esporta il valore della variabile in un file chiamato EDITOR", ok: false, why: "`export` non scrive file." },
+            { t: "Installa il programma nano e lo imposta come editor predefinito", ok: false, why: "Imposta solo il nome dell'editor preferito; i programmi si installano con il gestore dei pacchetti." }
         ]
     },
     {
@@ -77,10 +77,10 @@ addQuestions("010-160", [
         id: "2.1-08", type: "single", ref: "2.1_02#La Variabile PATH",
         text: "Che cosa contiene la variabile `PATH`?",
         options: [
-            { t: "L'elenco delle directory, separate da `:`, in cui la shell cerca i programmi quando scrivi un comando", ok: true, why: "Scrivendo `ls`, la shell cerca un file eseguibile `ls` in ognuna di quelle directory, nell'ordine." },
-            { t: "Il percorso della directory corrente", ok: false, why: "La directory corrente la mostra `pwd` (ed è nella variabile `PWD`)." },
-            { t: "Il percorso della directory home", ok: false, why: "La directory home è nella variabile `HOME`." },
-            { t: "L'elenco dei comandi già eseguiti", ok: false, why: "I comandi già eseguiti si vedono con `history`." }
+            { t: "Le directory, separate da `:`, dove la shell cerca i comandi", ok: true, why: "Scrivendo `ls`, la shell cerca un file eseguibile `ls` in ognuna di quelle directory, nell'ordine." },
+            { t: "Il percorso della directory in cui ti trovi adesso", ok: false, why: "La directory corrente la mostra `pwd` (ed è nella variabile `PWD`)." },
+            { t: "Il percorso della directory home dell'utente collegato", ok: false, why: "La directory home è nella variabile `HOME`." },
+            { t: "L'elenco dei comandi già eseguiti in questa sessione", ok: false, why: "I comandi già eseguiti si vedono con `history`." }
         ]
     },
     {
@@ -104,10 +104,10 @@ addQuestions("010-160", [
         id: "2.1-11", type: "single", ref: "2.1_01#Struttura della Command Line",
         text: "Nel comando `ls -l /etc`, che cosa sono `-l` e `/etc`?",
         options: [
-            { t: "`-l` è un'opzione (cambia il comportamento di `ls`), `/etc` è un argomento (ciò su cui lavora)", ok: true, why: "Prima il comando, poi le opzioni che di solito iniziano con `-`, poi gli argomenti." },
-            { t: "Sono due comandi diversi eseguiti uno dopo l'altro", ok: false, why: "Per eseguire due comandi uno dopo l'altro si separano con `;`." },
-            { t: "`-l` è il nome dell'utente, `/etc` la sua password", ok: false, why: "Il comando non ha niente a che fare con utenti e password." },
-            { t: "`-l` è un argomento, `/etc` un'opzione", ok: false, why: "È il contrario: le opzioni sono quelle con il trattino." }
+            { t: "`-l` è un'opzione, `/etc` è un argomento (ciò su cui lavora `ls`)", ok: true, why: "Prima il comando, poi le opzioni che di solito iniziano con `-`, poi gli argomenti." },
+            { t: "Sono due comandi diversi, eseguiti uno dopo l'altro", ok: false, why: "Per eseguire due comandi uno dopo l'altro si separano con `;`." },
+            { t: "`-l` è il nome dell'utente e `/etc` è la sua password", ok: false, why: "Il comando non ha niente a che fare con utenti e password." },
+            { t: "`-l` è un argomento (ciò su cui lavora), `/etc` è un'opzione", ok: false, why: "È il contrario: le opzioni sono quelle con il trattino." }
         ]
     },
     {
@@ -124,7 +124,7 @@ addQuestions("010-160", [
         id: "2.1-13", type: "single", ref: "2.1_01#Struttura della Command Line",
         text: "Qual è la shell predefinita nella maggior parte delle distribuzioni Linux?",
         options: [
-            { t: "Bash (Bourne Again SHell)", ok: true, why: "Bash è la shell del progetto GNU e quella che si trova quasi ovunque; l'esame si basa su Bash." },
+            { t: "Bash", ok: true, why: "Bash (Bourne Again SHell) è la shell del progetto GNU e quella che si trova quasi ovunque; l'esame si basa su Bash." },
             { t: "PowerShell", ok: false, why: "PowerShell è la shell di Microsoft; esiste anche per Linux, ma non è quella predefinita." },
             { t: "GNOME", ok: false, why: "GNOME è un ambiente desktop grafico, non una shell a riga di comando." },
             { t: "Python", ok: false, why: "Python è un linguaggio di programmazione, non la shell del sistema." }
@@ -155,10 +155,10 @@ addQuestions("010-160", [
         id: "2.2-02", type: "single", ref: "2.2_01#Pagine Man",
         text: "Il manuale è diviso in sezioni numerate. Che cosa c'è nella sezione 5?",
         options: [
-            { t: "I formati dei file, come i file di configurazione", ok: true, why: "Per esempio `man 5 passwd` descrive il file `/etc/passwd`. La sezione 1 ha i comandi per tutti, la 8 quelli di amministrazione." },
-            { t: "I comandi per tutti gli utenti", ok: false, why: "Sono nella sezione 1." },
-            { t: "I comandi per l'amministratore", ok: false, why: "Sono nella sezione 8." },
-            { t: "I giochi", ok: false, why: "I giochi sono nella sezione 6." }
+            { t: "I formati dei file di configurazione", ok: true, why: "Per esempio `man 5 passwd` descrive il file `/etc/passwd`. La sezione 1 ha i comandi per tutti, la 8 quelli di amministrazione." },
+            { t: "I comandi che possono usare tutti gli utenti", ok: false, why: "Sono nella sezione 1." },
+            { t: "I comandi riservati all'amministratore del sistema", ok: false, why: "Sono nella sezione 8." },
+            { t: "I giochi e i programmi di divertimento", ok: false, why: "I giochi sono nella sezione 6." }
         ]
     },
     {
@@ -171,7 +171,7 @@ addQuestions("010-160", [
         id: "2.2-04", type: "single", ref: "2.2_01#Pagine Man",
         text: "Non ricordi il nome di un comando, ma sai che riguarda la compressione. Che cosa ti aiuta?",
         options: [
-            { t: "`man -k compress` (oppure `apropos compress`)", ok: true, why: "Cerca la parola nelle descrizioni brevi di tutte le pagine di manuale ed elenca i comandi che la contengono." },
+            { t: "`man -k compress`", ok: true, why: "`man -k` (lo stesso di `apropos`) cerca la parola nelle descrizioni brevi di tutte le pagine di manuale ed elenca i comandi che la contengono." },
             { t: "`man compress`", ok: false, why: "Apre la pagina di un comando chiamato esattamente `compress`, se esiste." },
             { t: "`locate compress`", ok: false, why: "`locate` cerca nomi di file, non descrizioni di comandi." },
             { t: "`history compress`", ok: false, why: "`history` mostra i comandi che hai già scritto." }
@@ -191,30 +191,30 @@ addQuestions("010-160", [
         id: "2.2-06", type: "single", ref: "2.2_01#Pagine Info",
         text: "Che cosa distingue le pagine `info` dalle pagine `man`?",
         options: [
-            { t: "Sono organizzate in nodi collegati tra loro, come un piccolo ipertesto, e spesso sono più lunghe e dettagliate", ok: true, why: "Molti programmi GNU hanno la documentazione completa in `info`; ci si sposta tra i nodi con i collegamenti." },
-            { t: "Sono solo in inglese, mentre `man` è sempre tradotto", ok: false, why: "La lingua dipende dalle traduzioni disponibili per ogni pagina, sia per `man` sia per `info`." },
-            { t: "Spiegano solo i comandi interni di Bash", ok: false, why: "Per i comandi interni c'è `help`." },
-            { t: "Si leggono solo con un browser", ok: false, why: "Si leggono nel terminale con il comando `info`." }
+            { t: "Sono divise in nodi collegati, come un ipertesto", ok: true, why: "Molti programmi GNU hanno la documentazione completa in `info`; ci si sposta tra i nodi con i collegamenti." },
+            { t: "Sono scritte solo in inglese, mentre `man` è sempre tradotto", ok: false, why: "La lingua dipende dalle traduzioni disponibili per ogni pagina, sia per `man` sia per `info`." },
+            { t: "Spiegano soltanto i comandi interni della shell Bash", ok: false, why: "Per i comandi interni c'è `help`." },
+            { t: "Si possono leggere solo con un browser web, non nel terminale", ok: false, why: "Si leggono nel terminale con il comando `info`." }
         ]
     },
     {
         id: "2.2-07", type: "single", ref: "2.2_01#La Directory /usr/share/doc/",
         text: "Che cosa trovi nella directory `/usr/share/doc/`?",
         options: [
-            { t: "La documentazione dei pacchetti installati: file README, novità delle versioni, licenze, esempi", ok: true, why: "Ogni pacchetto ha di solito una sua sottodirectory, per esempio `/usr/share/doc/bash/`." },
-            { t: "I documenti personali di tutti gli utenti", ok: false, why: "I documenti personali stanno nelle directory home, sotto `/home`." },
-            { t: "Le pagine di manuale già impaginate", ok: false, why: "Le pagine di manuale stanno in `/usr/share/man/`." },
-            { t: "I file di configurazione del sistema", ok: false, why: "La configurazione sta in `/etc`." }
+            { t: "La documentazione dei pacchetti: README, licenze, esempi", ok: true, why: "Ogni pacchetto ha di solito una sua sottodirectory, per esempio `/usr/share/doc/bash/`." },
+            { t: "I documenti personali di tutti gli utenti del sistema", ok: false, why: "I documenti personali stanno nelle directory home, sotto `/home`." },
+            { t: "Le pagine di manuale già impaginate, pronte da stampare", ok: false, why: "Le pagine di manuale stanno in `/usr/share/man/`." },
+            { t: "I file di configurazione del sistema e dei servizi", ok: false, why: "La configurazione sta in `/etc`." }
         ]
     },
     {
         id: "2.2-08", type: "single", ref: "2.2_01#Il Comando locate",
         text: "Hai appena creato il file `appunti.txt`, ma `locate appunti.txt` non lo trova. Perché?",
         options: [
-            { t: "`locate` cerca in un database aggiornato di tanto in tanto: il file nuovo non c'è ancora finché non si aggiorna con `updatedb`", ok: true, why: "Per questo `locate` è velocissimo ma non sempre aggiornato; `find` invece guarda il disco in quel momento." },
+            { t: "`locate` usa un database aggiornato da `updatedb`", ok: true, why: "Per questo `locate` è velocissimo ma non sempre aggiornato; `find` invece guarda il disco in quel momento." },
             { t: "`locate` trova solo i file di sistema, non quelli degli utenti", ok: false, why: "Il database comprende anche i file degli utenti (rispettando i permessi)." },
-            { t: "`locate` cerca solo nella directory corrente", ok: false, why: "`locate` cerca in tutto il database, quindi in tutto il sistema." },
-            { t: "Il nome contiene un punto e `locate` non lo accetta", ok: false, why: "I punti nei nomi non sono un problema." }
+            { t: "`locate` cerca soltanto nella directory corrente, non nelle altre", ok: false, why: "`locate` cerca in tutto il database, quindi in tutto il sistema." },
+            { t: "Il nome contiene un punto e `locate` non accetta i punti", ok: false, why: "I punti nei nomi non sono un problema." }
         ]
     },
     {
@@ -238,10 +238,10 @@ addQuestions("010-160", [
         id: "2.2-11", type: "single", ref: "2.2_01#Il Comando find",
         text: "Che cosa fa il comando `find /home/anna -name \"*.pdf\"`?",
         options: [
-            { t: "Cerca in `/home/anna` e in tutte le sue sottodirectory i file il cui nome finisce con `.pdf`", ok: true, why: "`find` scende in tutte le sottodirectory e controlla i file uno per uno, in quel momento." },
-            { t: "Cerca la parola «pdf» dentro i file", ok: false, why: "Per cercare dentro i file si usa `grep`; `find` guarda i nomi e le proprietà dei file." },
+            { t: "Trova in `/home/anna` e sottodirectory i file `*.pdf`", ok: true, why: "`find` scende in tutte le sottodirectory e controlla i file uno per uno, in quel momento." },
+            { t: "Cerca la parola «pdf» scritta dentro i file di `/home/anna`", ok: false, why: "Per cercare dentro i file si usa `grep`; `find` guarda i nomi e le proprietà dei file." },
             { t: "Cerca solo in `/home/anna`, senza entrare nelle sottodirectory", ok: false, why: "`find` entra nelle sottodirectory, a meno di limitarlo con `-maxdepth`." },
-            { t: "Converte i file in PDF", ok: false, why: "`find` cerca e basta." }
+            { t: "Converte in PDF tutti i file della directory `/home/anna`", ok: false, why: "`find` cerca e basta." }
         ]
     },
 
@@ -290,20 +290,20 @@ addQuestions("010-160", [
         id: "2.3-05", type: "single", ref: "2.3_02#File e Directory Nascosti",
         text: "Che cosa rende «nascosto» un file come `.bashrc`?",
         options: [
-            { t: "Il nome che inizia con un punto: `ls` non lo mostra se non si usa `-a`", ok: true, why: "È solo una convenzione: il file è normale e si apre come gli altri. Si usa soprattutto per i file di configurazione nella home." },
-            { t: "Un permesso speciale che solo root può togliere", ok: false, why: "I permessi non c'entrano: basta il punto all'inizio del nome." },
-            { t: "Il fatto che sta in una directory di sistema", ok: false, why: "Un file nascosto può stare in qualsiasi directory." },
-            { t: "Il contenuto cifrato", ok: false, why: "I file nascosti non sono cifrati." }
+            { t: "Il nome che inizia con un punto (`ls` lo mostra con `-a`)", ok: true, why: "È solo una convenzione: il file è normale e si apre come gli altri. Si usa soprattutto per i file di configurazione nella home." },
+            { t: "Un permesso speciale che soltanto root può togliere", ok: false, why: "I permessi non c'entrano: basta il punto all'inizio del nome." },
+            { t: "Il fatto che si trova in una directory di sistema", ok: false, why: "Un file nascosto può stare in qualsiasi directory." },
+            { t: "Il contenuto cifrato, leggibile solo dal proprietario", ok: false, why: "I file nascosti non sono cifrati." }
         ]
     },
     {
         id: "2.3-06", type: "single", ref: "2.3_02#L’Opzione Formato di Elenco Lungo (Long List)",
         text: "Che cosa aggiunge l'opzione `-l` di `ls`?",
         options: [
-            { t: "Una riga per file con tipo e permessi, proprietario, gruppo, dimensione e data di modifica", ok: true, why: "È il formato lungo; con `-h` le dimensioni diventano più leggibili (K, M, G)." },
-            { t: "Solo i file più grandi", ok: false, why: "`-l` non filtra: mostra più informazioni su tutti i file." },
-            { t: "I file elencati in ordine di lunghezza del nome", ok: false, why: "L'ordine resta alfabetico; cambia solo il formato." },
-            { t: "I link simbolici e basta", ok: false, why: "Mostra tutti i file; i link si riconoscono dalla `l` all'inizio della riga." }
+            { t: "Una riga per file: permessi, proprietario, dimensione e data", ok: true, why: "È il formato lungo; con `-h` le dimensioni diventano più leggibili (K, M, G)." },
+            { t: "Solo i file più grandi, con la dimensione scritta accanto", ok: false, why: "`-l` non filtra: mostra più informazioni su tutti i file." },
+            { t: "I file in ordine di lunghezza del nome, dal più corto", ok: false, why: "L'ordine resta alfabetico; cambia solo il formato." },
+            { t: "Soltanto i link simbolici, con il file a cui puntano", ok: false, why: "Mostra tutti i file; i link si riconoscono dalla `l` all'inizio della riga." }
         ]
     },
     {
@@ -339,10 +339,10 @@ addQuestions("010-160", [
         id: "2.3-10", type: "single", ref: "2.3_02#Altre Opzioni di ls",
         text: "Che cosa fa `ls -lh`?",
         options: [
-            { t: "Elenco lungo con le dimensioni in forma leggibile, per esempio `4.0K` o `12M`", ok: true, why: "`-h` (human-readable) si combina con `-l`: invece dei byte mostra K, M, G." },
-            { t: "Mostra l'aiuto di `ls`", ok: false, why: "L'aiuto si ottiene con `ls --help`; qui `-h` cambia il formato delle dimensioni." },
-            { t: "Elenca solo i file nascosti", ok: false, why: "Per i nascosti serve `-a`." },
-            { t: "Ordina i file dal più vecchio al più nuovo", ok: false, why: "Per ordinare per data si usa `-t` (e `-r` per invertire)." }
+            { t: "Elenco lungo con le dimensioni leggibili, come `4.0K` o `12M`", ok: true, why: "`-h` (human-readable) si combina con `-l`: invece dei byte mostra K, M, G." },
+            { t: "Mostra l'aiuto di `ls` con l'elenco delle sue opzioni", ok: false, why: "L'aiuto si ottiene con `ls --help`; qui `-h` cambia il formato delle dimensioni." },
+            { t: "Elenca solo i file nascosti, quelli che iniziano con un punto", ok: false, why: "Per i nascosti serve `-a`." },
+            { t: "Ordina i file dal più vecchio al più nuovo, in formato lungo", ok: false, why: "Per ordinare per data si usa `-t` (e `-r` per invertire)." }
         ]
     },
     {
@@ -367,10 +367,10 @@ addQuestions("010-160", [
         id: "2.4-01", type: "single", ref: "2.4_01#Distinzione tra Maiuscole e Minuscole",
         text: "Nella stessa directory ci sono `Report.txt` e `report.txt`. Che cosa succede?",
         options: [
-            { t: "Sono due file diversi: in Linux i nomi distinguono maiuscole e minuscole", ok: true, why: "Per Linux `R` e `r` sono caratteri diversi, quindi i due nomi sono diversi." },
-            { t: "È impossibile: il secondo sovrascrive il primo", ok: false, why: "Succede su Windows e (di solito) su macOS, non sui file system di Linux." },
-            { t: "Linux li mostra come un solo file", ok: false, why: "`ls` li mostra tutti e due." },
-            { t: "Il secondo viene rinominato da solo", ok: false, why: "Nessun rinomina automatica: sono semplicemente due file." }
+            { t: "Due file diversi: Linux distingue maiuscole e minuscole", ok: true, why: "Per Linux `R` e `r` sono caratteri diversi, quindi i due nomi sono diversi." },
+            { t: "È impossibile: il secondo file sovrascrive subito il primo", ok: false, why: "Succede su Windows e (di solito) su macOS, non sui file system di Linux." },
+            { t: "Linux li mostra come un solo file, perché il nome è lo stesso", ok: false, why: "`ls` li mostra tutti e due." },
+            { t: "Il secondo viene rinominato da solo, per esempio `report(1).txt`", ok: false, why: "Nessun rinomina automatica: sono semplicemente due file." }
         ]
     },
     {
@@ -386,10 +386,10 @@ addQuestions("010-160", [
         id: "2.4-03", type: "single", ref: "2.4_01#Creare i File",
         text: "Che cosa fa `touch nota.txt` se `nota.txt` esiste già?",
         options: [
-            { t: "Aggiorna la data di ultima modifica del file, senza cambiarne il contenuto", ok: true, why: "Se il file non esiste lo crea vuoto; se esiste ne aggiorna solo le date." },
-            { t: "Svuota il file", ok: false, why: "Per svuotarlo si potrebbe usare `> nota.txt`; `touch` non tocca il contenuto." },
-            { t: "Crea `nota.txt.1`", ok: false, why: "`touch` non crea copie." },
-            { t: "Dà errore", ok: false, why: "Nessun errore: è un uso normale di `touch`." }
+            { t: "Aggiorna la data di modifica, senza cambiare il contenuto", ok: true, why: "Se il file non esiste lo crea vuoto; se esiste ne aggiorna solo le date." },
+            { t: "Svuota il file, lasciandolo con zero byte di contenuto", ok: false, why: "Per svuotarlo si potrebbe usare `> nota.txt`; `touch` non tocca il contenuto." },
+            { t: "Crea un secondo file chiamato `nota.txt.1` accanto al primo", ok: false, why: "`touch` non crea copie." },
+            { t: "Dà un errore, perché il file esiste già e non va toccato", ok: false, why: "Nessun errore: è un uso normale di `touch`." }
         ]
     },
     {
@@ -425,10 +425,10 @@ addQuestions("010-160", [
         id: "2.4-07", type: "single", ref: "2.4_01#Copiare File e Directory",
         text: "Che cosa succede con `cp foto backup` se `foto` è una directory?",
         options: [
-            { t: "`cp` la salta e avvisa: per copiare una directory serve `cp -r`", ok: true, why: "Senza `-r` (ricorsivo) `cp` copia solo file e scrive che manca `-r`." },
-            { t: "Copia la directory con tutto il contenuto", ok: false, why: "Succederebbe con `cp -r foto backup`." },
-            { t: "Sposta la directory", ok: false, why: "Per spostare si usa `mv`." },
-            { t: "Crea un link alla directory", ok: false, why: "I link si creano con `ln`." }
+            { t: "`cp` la salta: per le directory serve `cp -r`", ok: true, why: "Senza `-r` (ricorsivo) `cp` copia solo file e scrive che manca `-r`." },
+            { t: "Copia la directory in `backup` con tutto il suo contenuto", ok: false, why: "Succederebbe con `cp -r foto backup`." },
+            { t: "Sposta la directory invece di copiarla, come farebbe `mv`", ok: false, why: "Per spostare si usa `mv`." },
+            { t: "Crea in `backup` un link simbolico alla directory", ok: false, why: "I link si creano con `ln`." }
         ]
     },
     {
@@ -446,10 +446,10 @@ addQuestions("010-160", [
         id: "2.4-09", type: "single", ref: "2.4_01#Globbing",
         text: "Quali file elimina `rm *.jpg`?",
         options: [
-            { t: "Tutti i file della directory corrente il cui nome finisce con `.jpg`, tranne quelli nascosti", ok: true, why: "`*` vale qualsiasi sequenza di caratteri, anche vuota; i nomi che iniziano con il punto però non vengono presi." },
-            { t: "Tutti i file `.jpg` del computer", ok: false, why: "Il modello vale solo nella directory corrente, senza scendere nelle sottodirectory." },
-            { t: "Solo il file che si chiama proprio `*.jpg`", ok: false, why: "La shell sostituisce `*.jpg` con i nomi che corrispondono prima di eseguire `rm`." },
-            { t: "Anche i file `.JPG` con l'estensione maiuscola", ok: false, why: "Il modello distingue maiuscole e minuscole." }
+            { t: "I file `.jpg` della directory corrente, tranne quelli nascosti", ok: true, why: "`*` vale qualsiasi sequenza di caratteri, anche vuota; i nomi che iniziano con il punto però non vengono presi." },
+            { t: "Tutti i file `.jpg` del computer, in ogni directory", ok: false, why: "Il modello vale solo nella directory corrente, senza scendere nelle sottodirectory." },
+            { t: "Solo il file che si chiama proprio `*.jpg`, con l'asterisco", ok: false, why: "La shell sostituisce `*.jpg` con i nomi che corrispondono prima di eseguire `rm`." },
+            { t: "Anche i file con l'estensione in maiuscolo, come `.JPG`", ok: false, why: "Il modello distingue maiuscole e minuscole." }
         ]
     },
     {
@@ -466,17 +466,17 @@ addQuestions("010-160", [
         id: "2.4-11", type: "single", ref: "2.4_01#Eliminare File e Directory",
         text: "A che cosa serve l'opzione `-i` in `rm -i *.txt`?",
         options: [
-            { t: "Chiede conferma prima di eliminare ogni file", ok: true, why: "Per ogni file risponde `y` per eliminarlo o `n` per tenerlo: utile con i modelli come `*`." },
-            { t: "Ignora i file che non esistono", ok: false, why: "Lo fa `-f`, che inoltre non chiede conferme." },
-            { t: "Elimina anche i file nascosti", ok: false, why: "`-i` non cambia quali file vengono scelti." },
-            { t: "Elimina le directory", ok: false, why: "Per le directory servono `-r` o `-d`." }
+            { t: "Chiede conferma per ogni file da eliminare", ok: true, why: "Per ogni file risponde `y` per eliminarlo o `n` per tenerlo: utile con i modelli come `*`." },
+            { t: "Ignora in silenzio i file che non esistono", ok: false, why: "Lo fa `-f`, che inoltre non chiede conferme." },
+            { t: "Elimina anche i file nascosti della directory", ok: false, why: "`-i` non cambia quali file vengono scelti." },
+            { t: "Elimina anche le directory e il loro contenuto", ok: false, why: "Per le directory servono `-r` o `-d`." }
         ]
     },
     {
         id: "2.4-12", type: "single", ref: "2.4_01#Spostare i File",
         text: "La directory `documenti` esiste. Che cosa fa `mv nota.txt documenti`?",
         options: [
-            { t: "Sposta `nota.txt` dentro `documenti`", ok: true, why: "Se l'ultimo argomento è una directory esistente, `mv` ci sposta dentro il file, con lo stesso nome." },
+            { t: "Sposta `nota.txt` in `documenti`", ok: true, why: "Se l'ultimo argomento è una directory esistente, `mv` ci sposta dentro il file, con lo stesso nome." },
             { t: "Rinomina `nota.txt` in un file chiamato `documenti`", ok: false, why: "Succederebbe solo se `documenti` non esistesse." },
             { t: "Sostituisce la directory `documenti` con il file", ok: false, why: "`mv` non sovrascrive una directory con un file." },
             { t: "Copia `nota.txt` dentro `documenti`", ok: false, why: "`mv` sposta: dopo, il file non è più nella directory di partenza." }

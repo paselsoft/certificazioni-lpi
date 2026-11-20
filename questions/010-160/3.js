@@ -36,10 +36,10 @@ addQuestions("010-160", [
         id: "3.1-04", type: "single", ref: "3.1_01#Strumenti di Compressione",
         text: "Nella directory c'è `relazione.txt`. Che cosa trovi dopo `gzip relazione.txt`?",
         options: [
-            { t: "Solo `relazione.txt.gz`: l'originale viene sostituito dalla versione compressa", ok: true, why: "`gzip` comprime e toglie l'originale; con `gzip -k` lo tiene. `gunzip` fa il contrario." },
-            { t: "`relazione.txt` e `relazione.txt.gz`", ok: false, why: "Succede solo con l'opzione `-k` (keep)." },
-            { t: "`relazione.zip`", ok: false, why: "Il formato zip è un altro, con i comandi `zip` e `unzip`." },
-            { t: "`relazione.tar`", ok: false, why: "`gzip` comprime un singolo file, non crea archivi tar." }
+            { t: "Solo `relazione.txt.gz`: l'originale viene sostituito", ok: true, why: "`gzip` comprime e toglie l'originale; con `gzip -k` lo tiene. `gunzip` fa il contrario." },
+            { t: "`relazione.txt` e `relazione.txt.gz`, uno accanto all'altro", ok: false, why: "Succede solo con l'opzione `-k` (keep)." },
+            { t: "`relazione.zip`, un archivio compresso con zip", ok: false, why: "Il formato zip è un altro, con i comandi `zip` e `unzip`." },
+            { t: "`relazione.tar`, un archivio non compresso", ok: false, why: "`gzip` comprime un singolo file, non crea archivi tar." }
         ]
     },
     {
@@ -57,20 +57,20 @@ addQuestions("010-160", [
         id: "3.1-06", type: "single", ref: "3.1_01#Strumenti di Compressione",
         text: "In generale, come si confrontano gzip, bzip2 e xz?",
         options: [
-            { t: "gzip è il più veloce, xz di solito comprime di più ma è più lento, bzip2 sta nel mezzo", ok: true, why: "Più si comprime, più tempo serve: si sceglie secondo cosa conta di più." },
-            { t: "Comprimono tutti allo stesso modo, cambia solo l'estensione", ok: false, why: "Usano metodi diversi, con risultati e velocità diversi." },
-            { t: "gzip comprime di più, xz è il più veloce", ok: false, why: "Di solito è il contrario." },
-            { t: "Solo xz funziona con tar", ok: false, why: "tar li usa tutti: `z` per gzip, `j` per bzip2, `J` per xz." }
+            { t: "gzip: veloce; xz: comprime di più; bzip2: nel mezzo", ok: true, why: "Più si comprime, più tempo serve: si sceglie secondo cosa conta di più." },
+            { t: "Comprimono tutti allo stesso modo: cambia solo l'estensione del file", ok: false, why: "Usano metodi diversi, con risultati e velocità diversi." },
+            { t: "gzip comprime di più di tutti, mentre xz è il più veloce dei tre", ok: false, why: "Di solito è il contrario." },
+            { t: "Solo xz funziona insieme a tar; gli altri si usano da soli", ok: false, why: "tar li usa tutti: `z` per gzip, `j` per bzip2, `J` per xz." }
         ]
     },
     {
         id: "3.1-07", type: "single", ref: "3.1_01#Strumenti di Archiviazione",
         text: "Che cosa fa `tar -cf archivio.tar foto/`, senza altre opzioni?",
         options: [
-            { t: "Mette la directory e i suoi file in un unico archivio, senza comprimerlo", ok: true, why: "tar raccoglie i file in uno solo; per comprimere servono `z`, `j` o `J` (oppure un compressore dopo)." },
-            { t: "Crea un archivio compresso con gzip", ok: false, why: "Senza `z` non c'è compressione." },
-            { t: "Copia la directory `foto` in `archivio.tar/`", ok: false, why: "`archivio.tar` è un file, non una directory." },
-            { t: "Estrae `foto/` da `archivio.tar`", ok: false, why: "Per estrarre si usa `x`." }
+            { t: "Archivia la directory senza comprimerla", ok: true, why: "tar raccoglie i file in uno solo; per comprimere servono `z`, `j` o `J` (oppure un compressore dopo)." },
+            { t: "Crea un archivio compresso con gzip, come `archivio.tar.gz`", ok: false, why: "Senza `z` non c'è compressione." },
+            { t: "Copia la directory `foto` dentro la directory `archivio.tar/`", ok: false, why: "`archivio.tar` è un file, non una directory." },
+            { t: "Estrae la directory `foto/` dall'archivio `archivio.tar`", ok: false, why: "Per estrarre si usa `x`." }
         ]
     },
     {
@@ -109,7 +109,7 @@ addQuestions("010-160", [
             { t: "bzip2", ok: true, why: "`.bz2` è l'estensione di bzip2; si decomprime con `bunzip2` oppure, essendo un tar, con `tar -xjf`." },
             { t: "gzip", ok: false, why: "gzip usa l'estensione `.gz`." },
             { t: "xz", ok: false, why: "xz usa l'estensione `.xz`." },
-            { t: "zip", ok: false, why: "zip usa l'estensione `.zip`." }
+            { t: "compress", ok: false, why: "`compress` è il vecchio programma di Unix: i suoi file finiscono con `.Z`, non con `.bz2`." }
         ]
     },
 
@@ -134,7 +134,7 @@ addQuestions("010-160", [
         id: "3.2-03", type: "single", ref: "3.2_01#Pipe",
         text: "Che cosa fa la barra verticale `|` in `ls -l | less`?",
         options: [
-            { t: "Manda l'output di `ls -l` come input a `less`", ok: true, why: "È una pipe: il secondo comando lavora sul risultato del primo, senza file intermedi." },
+            { t: "Passa l'output di `ls -l` a `less`", ok: true, why: "È una pipe: il secondo comando lavora sul risultato del primo, senza file intermedi." },
             { t: "Esegue `less` solo se `ls -l` va a buon fine", ok: false, why: "Per questo si usa `&&`." },
             { t: "Salva l'output di `ls -l` in un file chiamato `less`", ok: false, why: "Per salvare in un file si usa `>`." },
             { t: "Esegue i due comandi in contemporanea, indipendenti", ok: false, why: "I due comandi sono collegati: il secondo legge quello che scrive il primo." }
@@ -154,10 +154,10 @@ addQuestions("010-160", [
         id: "3.2-05", type: "single", ref: "3.2_02#Cercare all’interno dei File con grep",
         text: "Che cosa mostra `grep -v '^#' configurazione.conf`?",
         options: [
-            { t: "Le righe che non iniziano con `#`: il file senza le righe di commento", ok: true, why: "`^#` trova le righe che iniziano con `#`; `-v` le esclude e mostra tutte le altre." },
-            { t: "Solo le righe di commento", ok: false, why: "Senza `-v` sarebbe così." },
-            { t: "Il numero delle righe di commento", ok: false, why: "Per contare si usa `-c`." },
-            { t: "La versione di grep", ok: false, why: "La versione si chiede con `grep --version` (`-V`); `-v` è un'altra cosa." }
+            { t: "Le righe che non iniziano con `#`: il file senza commenti", ok: true, why: "`^#` trova le righe che iniziano con `#`; `-v` le esclude e mostra tutte le altre." },
+            { t: "Solo le righe di commento, quelle che iniziano con `#`", ok: false, why: "Senza `-v` sarebbe così." },
+            { t: "Il numero delle righe di commento presenti nel file", ok: false, why: "Per contare si usa `-c`." },
+            { t: "La versione di grep e le sue opzioni", ok: false, why: "La versione si chiede con `grep --version` (`-V`); `-v` è un'altra cosa." }
         ]
     },
     {
@@ -185,9 +185,9 @@ addQuestions("010-160", [
         text: "Le righe di `/etc/passwd` hanno campi separati da `:`, e il primo è il nome dell'utente. Che cosa stampa `cut -d: -f1 /etc/passwd`?",
         options: [
             { t: "I nomi di tutti gli utenti, uno per riga", ok: true, why: "`-d:` dice che il separatore è `:`, `-f1` sceglie il primo campo." },
-            { t: "La prima riga del file", ok: false, why: "La prima riga si ottiene con `head -n 1`." },
-            { t: "Il primo carattere di ogni riga", ok: false, why: "Per i caratteri si userebbe `cut -c1`." },
-            { t: "Il file senza la prima colonna", ok: false, why: "`-f1` tiene il primo campo, non lo toglie." }
+            { t: "La prima riga del file, quella di root", ok: false, why: "La prima riga si ottiene con `head -n 1`." },
+            { t: "Il primo carattere di ogni riga del file", ok: false, why: "Per i caratteri si userebbe `cut -c1`." },
+            { t: "Il file intero senza la prima colonna", ok: false, why: "`-f1` tiene il primo campo, non lo toglie." }
         ]
     },
     {
@@ -235,10 +235,10 @@ addQuestions("010-160", [
         id: "3.2-13", type: "single", ref: "3.2_01#Combinazioni",
         text: "Che cosa vuol dire `2>&1` in `comando > tutto.log 2>&1`?",
         options: [
-            { t: "Manda anche gli errori (canale 2) dove va l'output normale (canale 1), cioè nel file", ok: true, why: "Così in `tutto.log` finiscono sia i risultati sia i messaggi di errore." },
-            { t: "Esegue il comando due volte", ok: false, why: "I numeri indicano i canali di output, non le ripetizioni." },
-            { t: "Manda l'output normale nel canale degli errori", ok: false, why: "Sarebbe `1>&2` (o `>&2`)." },
-            { t: "Scrive gli errori in un file chiamato `1`", ok: false, why: "La `&` dice che 1 è un canale, non un file." }
+            { t: "Manda anche gli errori (2) dove va l'output (1), nel file", ok: true, why: "Così in `tutto.log` finiscono sia i risultati sia i messaggi di errore." },
+            { t: "Esegue il comando due volte e unisce i due risultati nel file", ok: false, why: "I numeri indicano i canali di output, non le ripetizioni." },
+            { t: "Manda l'output normale nel canale degli errori, sullo schermo", ok: false, why: "Sarebbe `1>&2` (o `>&2`)." },
+            { t: "Scrive gli errori in un altro file, che si chiama proprio `1`", ok: false, why: "La `&` dice che 1 è un canale, non un file." }
         ]
     },
     {
@@ -255,20 +255,20 @@ addQuestions("010-160", [
         id: "3.2-15", type: "single", ref: "3.2_01#Redirigere lo Standard Output",
         text: "A che cosa serve `less`?",
         options: [
-            { t: "A leggere un testo lungo una pagina alla volta, andando avanti e indietro; si esce con `q`", ok: true, why: "Si usa con un file (`less /var/log/syslog`) o alla fine di una pipe." },
-            { t: "A ridurre la dimensione di un file", ok: false, why: "Per ridurre la dimensione si comprime con `gzip`, `bzip2` o `xz`." },
-            { t: "A modificare un file", ok: false, why: "`less` mostra soltanto; per modificare servono editor come `nano` o `vi`." },
-            { t: "A contare le righe", ok: false, why: "Per contare si usa `wc -l`." }
+            { t: "A leggere un testo lungo una pagina per volta", ok: true, why: "Si usa con un file (`less /var/log/syslog`) o alla fine di una pipe." },
+            { t: "A ridurre la dimensione di un file, comprimendolo come gzip", ok: false, why: "Per ridurre la dimensione si comprime con `gzip`, `bzip2` o `xz`." },
+            { t: "A modificare un file di testo direttamente nel terminale", ok: false, why: "`less` mostra soltanto; per modificare servono editor come `nano` o `vi`." },
+            { t: "A contare le righe e le parole di un file, come `wc`", ok: false, why: "Per contare si usa `wc -l`." }
         ]
     },
     {
         id: "3.2-16", type: "single", ref: "3.2_02#Espressioni Regolari",
         text: "Perché `grep 'a*' parole.txt` mostra tutte le righe del file, anche quelle senza la lettera a?",
         options: [
-            { t: "Perché `a*` vuol dire «zero o più a»: anche zero a va bene, e ogni riga ne contiene zero", ok: true, why: "Per trovare le righe con almeno una a basta `grep 'a'` (oppure `aa*`)." },
+            { t: "Perché `a*` vuol dire «zero o più a», e ogni riga ne ha almeno zero", ok: true, why: "Per trovare le righe con almeno una a basta `grep 'a'` (oppure `aa*`)." },
             { t: "Perché la shell sostituisce `a*` con i nomi dei file", ok: false, why: "Il modello è tra virgolette singole: la shell non lo tocca e arriva intero a `grep`." },
-            { t: "Perché `*` in grep significa «qualsiasi riga»", ok: false, why: "`*` ripete il carattere che lo precede; da solo non vuol dire «qualsiasi riga»." },
-            { t: "È un errore di grep", ok: false, why: "È il comportamento corretto delle espressioni regolari." }
+            { t: "Perché in grep `*` da solo significa «qualsiasi riga del file»", ok: false, why: "`*` ripete il carattere che lo precede; da solo non vuol dire «qualsiasi riga»." },
+            { t: "È un errore di grep, che ignora i modelli troppo corti", ok: false, why: "È il comportamento corretto delle espressioni regolari." }
         ]
     },
 
@@ -334,10 +334,10 @@ addQuestions("010-160", [
         id: "3.3-07", type: "single", ref: "3.3_02#Codici di Uscita",
         text: "Che cosa contiene la variabile `$?` subito dopo un comando?",
         options: [
-            { t: "Il codice di uscita del comando: 0 se è andato bene, un altro numero se c'è stato un errore", ok: true, why: "Per esempio dopo `ls /nonesiste` vale 2; dopo `true` vale 0." },
-            { t: "Il numero di argomenti del comando", ok: false, why: "Il numero di argomenti di uno script è in `$#`." },
-            { t: "Il testo dell'ultimo messaggio di errore", ok: false, why: "`$?` contiene solo un numero." },
-            { t: "Il numero del processo del comando", ok: false, why: "Il numero del processo della shell è in `$$`." }
+            { t: "Il codice di uscita: 0 se è andato bene, un altro numero se no", ok: true, why: "Per esempio dopo `ls /nonesiste` vale 2; dopo `true` vale 0." },
+            { t: "Il numero di argomenti ricevuti dall'ultimo comando eseguito", ok: false, why: "Il numero di argomenti di uno script è in `$#`." },
+            { t: "Il testo dell'ultimo messaggio di errore scritto sullo schermo", ok: false, why: "`$?` contiene solo un numero." },
+            { t: "Il numero del processo (PID) dell'ultimo comando avviato", ok: false, why: "Il numero del processo della shell è in `$$`." }
         ]
     },
     {
@@ -345,7 +345,7 @@ addQuestions("010-160", [
         text: "Per convenzione, che cosa significa il codice di uscita 0?",
         options: [
             { t: "Che il comando è terminato con successo", ok: true, why: "Qualsiasi valore diverso da 0 (da 1 a 255) indica un errore o una condizione particolare." },
-            { t: "Che il comando ha dato errore", ok: false, why: "È il contrario: 0 vuol dire tutto bene." },
+            { t: "Che il comando è finito con un errore grave", ok: false, why: "È il contrario: 0 vuol dire tutto bene." },
             { t: "Che il comando non ha prodotto output", ok: false, why: "Il codice di uscita non dice niente su quanto output c'è stato." },
             { t: "Che il comando è ancora in esecuzione", ok: false, why: "Il codice di uscita esiste solo quando il comando è finito." }
         ]
@@ -356,9 +356,9 @@ addQuestions("010-160", [
         code: 'for n in 1 2 3; do\n    echo "numero $n"\ndone',
         options: [
             { t: "Tre righe: «numero 1», «numero 2», «numero 3»", ok: true, why: "Il ciclo ripete `echo` una volta per ogni valore dell'elenco; a ogni giro `n` prende il valore successivo." },
-            { t: "Una riga: «numero 1 2 3»", ok: false, why: "`echo` viene eseguito una volta per ogni valore, non una volta sola." },
-            { t: "Tre righe: «numero $n»", ok: false, why: "Tra virgolette doppie `$n` viene sostituito dal suo valore." },
-            { t: "«numero 3»: solo l'ultimo valore", ok: false, why: "Il corpo del ciclo viene eseguito a ogni giro." }
+            { t: "Una riga sola: «numero 1 2 3»", ok: false, why: "`echo` viene eseguito una volta per ogni valore, non una volta sola." },
+            { t: "Tre righe uguali: «numero $n», «numero $n», «numero $n»", ok: false, why: "Tra virgolette doppie `$n` viene sostituito dal suo valore." },
+            { t: "Una riga: «numero 3», cioè solo l'ultimo valore", ok: false, why: "Il corpo del ciclo viene eseguito a ogni giro." }
         ]
     },
     {
@@ -397,10 +397,10 @@ addQuestions("010-160", [
         text: "Che cosa fa questo pezzo di script?",
         code: 'if [ $# -ne 1 ]; then\n    echo "Serve un argomento"\n    exit 1\nfi',
         options: [
-            { t: "Se lo script non ha ricevuto esattamente un argomento, avvisa e termina con codice 1", ok: true, why: "`$#` è il numero di argomenti, `-ne` vuol dire «diverso da». Il codice 1 segnala l'errore a chi ha avviato lo script." },
-            { t: "Se lo script ha ricevuto un argomento, termina", ok: false, why: "Termina quando il numero è diverso da 1." },
-            { t: "Ripete il messaggio finché non arriva un argomento", ok: false, why: "`if` decide una volta sola; per ripetere servono i cicli." },
-            { t: "Controlla se esiste un file chiamato 1", ok: false, why: "Il test confronta numeri (`$#` con 1), non controlla file." }
+            { t: "Se non c'è esattamente un argomento, avvisa ed esce con codice 1", ok: true, why: "`$#` è il numero di argomenti, `-ne` vuol dire «diverso da». Il codice 1 segnala l'errore a chi ha avviato lo script." },
+            { t: "Se lo script ha un argomento, scrive il messaggio ed esce", ok: false, why: "Termina quando il numero è diverso da 1." },
+            { t: "Ripete il messaggio finché l'utente non scrive un argomento", ok: false, why: "`if` decide una volta sola; per ripetere servono i cicli." },
+            { t: "Controlla se nella directory esiste un file chiamato `1`", ok: false, why: "Il test confronta numeri (`$#` con 1), non controlla file." }
         ]
     },
     {
@@ -430,10 +430,10 @@ addQuestions("010-160", [
         id: "3.3-17", type: "single", ref: "3.3_01#Uso delle Virgolette con le Variabili",
         text: "La variabile `FILE` vale `le mie foto.txt`. Perché è meglio scrivere `rm \"$FILE\"` invece di `rm $FILE`?",
         options: [
-            { t: "Senza virgolette la shell divide il valore negli spazi e `rm` riceve tre nomi: `le`, `mie` e `foto.txt`", ok: true, why: "Le virgolette doppie tengono insieme il valore come un solo argomento, spazi compresi." },
-            { t: "Perché senza virgolette la variabile non viene sostituita", ok: false, why: "Viene sostituita in tutti e due i casi; cambia come il valore viene diviso in parole." },
-            { t: "Perché `rm` accetta solo nomi tra virgolette", ok: false, why: "`rm` non vede mai le virgolette: le usa la shell." },
-            { t: "Non c'è differenza", ok: false, why: "C'è: con i nomi che contengono spazi il comando senza virgolette lavora sui file sbagliati." }
+            { t: "Senza virgolette `rm` riceve tre nomi: `le`, `mie` e `foto.txt`", ok: true, why: "Le virgolette doppie tengono insieme il valore come un solo argomento, spazi compresi." },
+            { t: "Perché senza virgolette la variabile non viene sostituita dal valore", ok: false, why: "Viene sostituita in tutti e due i casi; cambia come il valore viene diviso in parole." },
+            { t: "Perché `rm` accetta solo nomi di file scritti tra virgolette", ok: false, why: "`rm` non vede mai le virgolette: le usa la shell." },
+            { t: "Non c'è differenza: le virgolette servono solo a leggere meglio", ok: false, why: "C'è: con i nomi che contengono spazi il comando senza virgolette lavora sui file sbagliati." }
         ]
     }
 ]);

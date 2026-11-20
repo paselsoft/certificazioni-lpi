@@ -38,7 +38,7 @@ addQuestions("010-160", [
         id: "1.1-04", type: "single", ref: "1.1_01#Distribuzioni",
         text: "Che cosa vuol dire la sigla LTS in «Ubuntu 24.04 LTS»?",
         options: [
-            { t: "Long Term Support: la versione riceve aggiornamenti per molti anni", ok: true, why: "Le versioni LTS di Ubuntu escono ogni due anni e hanno anni di aggiornamenti di sicurezza: sono adatte ai server e a chi non vuole aggiornare spesso." },
+            { t: "Long Term Support: aggiornamenti garantiti per molti anni", ok: true, why: "Le versioni LTS di Ubuntu escono ogni due anni e hanno anni di aggiornamenti di sicurezza: sono adatte ai server e a chi non vuole aggiornare spesso." },
             { t: "Linux Terminal Server: la versione senza interfaccia grafica", ok: false, why: "LTS non indica l'assenza della grafica: esistono versioni LTS sia desktop sia server." },
             { t: "Latest Test Snapshot: una versione di prova", ok: false, why: "È il contrario: le LTS sono le versioni più stabili, pensate per durare." },
             { t: "Light Template System: una versione leggera per computer vecchi", ok: false, why: "Non è una variante leggera: indica solo la durata del supporto." }
@@ -48,20 +48,20 @@ addQuestions("010-160", [
         id: "1.1-05", type: "single", ref: "1.1_01#Raspbian e il Raspberry Pi",
         text: "Che cos'è Raspbian?",
         options: [
-            { t: "Il sistema operativo basato su Debian pensato per il Raspberry Pi", ok: true, why: "Il Raspberry Pi è un computer piccolo ed economico; Raspbian (oggi chiamato Raspberry Pi OS) è la sua distribuzione ufficiale, derivata da Debian." },
-            { t: "La versione di Android per i tablet", ok: false, why: "Android è un sistema diverso, di Google; Raspbian è una distribuzione GNU/Linux." },
-            { t: "Una distribuzione per i grandi server nel cloud", ok: false, why: "È pensata per una scheda piccola, usata per imparare e per progetti come la domotica." },
-            { t: "Un emulatore che fa girare Windows su Linux", ok: false, why: "Raspbian è un sistema operativo completo, non un emulatore." }
+            { t: "La distribuzione, derivata da Debian, per il Raspberry Pi", ok: true, why: "Il Raspberry Pi è un computer piccolo ed economico; Raspbian (oggi chiamato Raspberry Pi OS) è la sua distribuzione ufficiale, derivata da Debian." },
+            { t: "La versione di Android pensata per i tablet economici", ok: false, why: "Android è un sistema diverso, di Google; Raspbian è una distribuzione GNU/Linux." },
+            { t: "Una distribuzione per i grandi server dei centri dati nel cloud", ok: false, why: "È pensata per una scheda piccola, usata per imparare e per progetti come la domotica." },
+            { t: "Un emulatore che fa girare i programmi di Windows su Linux", ok: false, why: "Raspbian è un sistema operativo completo, non un emulatore." }
         ]
     },
     {
         id: "1.1-06", type: "single", ref: "1.1_01#Android",
         text: "Che rapporto c'è tra Android e Linux?",
         options: [
-            { t: "Android usa il kernel Linux, ma ha programmi e librerie diversi da quelli di una distribuzione GNU/Linux", ok: true, why: "Il cuore di Android è un kernel Linux modificato; sopra però non ci sono gli strumenti GNU né i pacchetti delle distribuzioni." },
-            { t: "Android è una distribuzione GNU/Linux uguale a Ubuntu, solo per telefoni", ok: false, why: "Su Android non ci sono `apt`, Bash o le librerie GNU come in Ubuntu: le app sono costruite in un altro modo." },
-            { t: "Android non ha niente a che fare con Linux", ok: false, why: "Il kernel di Android è proprio Linux: per questo è il sistema con kernel Linux più diffuso al mondo." },
-            { t: "Android è il nome del kernel Linux per i processori ARM", ok: false, why: "Il kernel resta Linux anche su ARM; Android è un sistema operativo completo, sviluppato da Google." }
+            { t: "Android usa il kernel Linux, ma con programmi e librerie diversi da GNU/Linux", ok: true, why: "Il cuore di Android è un kernel Linux modificato; sopra però non ci sono gli strumenti GNU né i pacchetti delle distribuzioni." },
+            { t: "Android è una distribuzione GNU/Linux uguale a Ubuntu, per telefoni", ok: false, why: "Su Android non ci sono `apt`, Bash o le librerie GNU come in Ubuntu: le app sono costruite in un altro modo." },
+            { t: "Android non ha niente a che fare con Linux: Google l'ha scritto da zero", ok: false, why: "Il kernel di Android è proprio Linux: per questo è il sistema con kernel Linux più diffuso al mondo." },
+            { t: "Android è il nome del kernel Linux quando gira sui processori ARM", ok: false, why: "Il kernel resta Linux anche su ARM; Android è un sistema operativo completo, sviluppato da Google." }
         ]
     },
     {
@@ -79,10 +79,10 @@ addQuestions("010-160", [
         id: "1.1-08", type: "single", ref: "1.1_01#Distribuzioni",
         text: "Qual è la differenza tra openSUSE e SUSE Linux Enterprise?",
         options: [
-            { t: "openSUSE è gratuita e sviluppata dalla comunità; SUSE Linux Enterprise è commerciale, con supporto a pagamento", ok: true, why: "È lo stesso schema di Fedora e Red Hat Enterprise Linux: una versione comunitaria e una per le aziende." },
-            { t: "openSUSE usa i pacchetti `.deb`, SUSE Linux Enterprise gli RPM", ok: false, why: "Entrambe usano i pacchetti RPM." },
+            { t: "openSUSE è della comunità e gratuita; SUSE Linux Enterprise è commerciale", ok: true, why: "È lo stesso schema di Fedora e Red Hat Enterprise Linux: una versione comunitaria e una per le aziende." },
+            { t: "openSUSE usa i pacchetti `.deb`, mentre SUSE Linux Enterprise usa gli RPM", ok: false, why: "Entrambe usano i pacchetti RPM." },
             { t: "openSUSE è per i server, SUSE Linux Enterprise solo per i telefoni", ok: false, why: "Nessuna delle due è per telefoni: tutte e due funzionano su desktop e server." },
-            { t: "Non c'è differenza: sono due nomi della stessa distribuzione", ok: false, why: "Sono prodotti distinti, con cicli di rilascio e supporto diversi." }
+            { t: "Nessuna: sono due nomi diversi della stessa identica distribuzione", ok: false, why: "Sono prodotti distinti, con cicli di rilascio e supporto diversi." }
         ]
     },
     {
@@ -95,10 +95,10 @@ addQuestions("010-160", [
         id: "1.1-10", type: "single", ref: "1.1_01#Linux e Cloud",
         text: "Perché Linux è il sistema più usato nel cloud?",
         options: [
-            { t: "Perché è gratuito anche su migliaia di macchine, si adatta bene alla virtualizzazione e si può modificare", ok: true, why: "Chi gestisce un cloud avvia moltissime macchine virtuali: con Linux non paga una licenza per ognuna e può adattare il sistema." },
-            { t: "Perché è l'unico sistema che può girare in una macchina virtuale", ok: false, why: "Anche Windows e altri sistemi girano in macchine virtuali; Linux è scelto per costi e flessibilità." },
-            { t: "Perché nel cloud i sistemi con licenza commerciale sono vietati", ok: false, why: "Non c'è nessun divieto: nel cloud si possono usare anche sistemi commerciali, pagandone la licenza." },
-            { t: "Perché nel cloud serve sempre l'interfaccia grafica", ok: false, why: "È il contrario: i server nel cloud di solito non hanno interfaccia grafica e si gestiscono dalla riga di comando." }
+            { t: "Perché è gratuito su migliaia di macchine, si virtualizza bene e si modifica", ok: true, why: "Chi gestisce un cloud avvia moltissime macchine virtuali: con Linux non paga una licenza per ognuna e può adattare il sistema." },
+            { t: "Perché è l'unico sistema operativo che può girare in una macchina virtuale", ok: false, why: "Anche Windows e altri sistemi girano in macchine virtuali; Linux è scelto per costi e flessibilità." },
+            { t: "Perché nel cloud i sistemi con una licenza commerciale sono vietati per legge", ok: false, why: "Non c'è nessun divieto: nel cloud si possono usare anche sistemi commerciali, pagandone la licenza." },
+            { t: "Perché nel cloud serve sempre un'interfaccia grafica, e Linux ha la migliore", ok: false, why: "È il contrario: i server nel cloud di solito non hanno interfaccia grafica e si gestiscono dalla riga di comando." }
         ]
     },
 
@@ -109,7 +109,7 @@ addQuestions("010-160", [
         options: [
             { t: "`apt-get install`", ok: true, why: "`apt-get` (o `apt`) scarica il pacchetto dai repository e risolve le dipendenze da solo." },
             { t: "`dpkg -i`", ok: false, why: "`dpkg -i` installa un file `.deb` già scaricato, ma non va a cercare le dipendenze nei repository." },
-            { t: "`rpm -i`", ok: false, why: "`rpm` è lo strumento dei pacchetti RPM (Red Hat, SUSE), non di Debian." },
+            { t: "`apt-get download`", ok: false, why: "`apt-get download` scarica il file `.deb` nella directory corrente, ma non lo installa e non pensa alle dipendenze." },
             { t: "`yum install`", ok: false, why: "`yum` è il gestore delle distribuzioni Red Hat e CentOS." }
         ]
     },
@@ -154,9 +154,9 @@ addQuestions("010-160", [
         id: "1.2-06", type: "single", ref: "1.2_01#Applicazioni per Ufficio",
         text: "Che rapporto c'è tra OpenOffice.org e LibreOffice?",
         options: [
-            { t: "LibreOffice è nato nel 2010 da una copia (fork) del codice di OpenOffice.org, ed è oggi il più sviluppato", ok: true, why: "Una parte della comunità lasciò OpenOffice.org e continuò lo sviluppo con il nome LibreOffice. È l'esempio classico di fork." },
+            { t: "LibreOffice è nato nel 2010 da un fork di OpenOffice", ok: true, why: "Una parte della comunità lasciò OpenOffice.org e continuò lo sviluppo con il nome LibreOffice. È l'esempio classico di fork." },
             { t: "OpenOffice.org è la versione a pagamento di LibreOffice", ok: false, why: "Sono entrambi gratuiti e open source." },
-            { t: "Sono programmi completamente diversi: uno per la posta, l'altro per l'ufficio", ok: false, why: "Sono tutti e due suite per ufficio, con un'origine comune." },
+            { t: "Sono programmi diversi: uno per la posta, l'altro per l'ufficio", ok: false, why: "Sono tutti e due suite per ufficio, con un'origine comune." },
             { t: "LibreOffice funziona solo su Linux, OpenOffice.org solo su Windows", ok: false, why: "Tutti e due funzionano su Linux, Windows e macOS." }
         ]
     },
@@ -164,10 +164,10 @@ addQuestions("010-160", [
         id: "1.2-07", type: "single", ref: "1.2_01#Multimedia",
         text: "A che cosa serve GIMP?",
         options: [
-            { t: "A ritoccare fotografie e creare immagini", ok: true, why: "GIMP (GNU Image Manipulation Program) è un programma di grafica, spesso paragonato a Photoshop." },
-            { t: "A montare video", ok: false, why: "Per i video esistono altri programmi open source, come Kdenlive o Shotcut." },
-            { t: "A leggere la posta elettronica", ok: false, why: "Per la posta c'è Thunderbird." },
-            { t: "A gestire un database", ok: false, why: "Per i database ci sono MariaDB e MySQL." }
+            { t: "A ritoccare foto e disegnare immagini", ok: true, why: "GIMP (GNU Image Manipulation Program) è un programma di grafica, spesso paragonato a Photoshop." },
+            { t: "A montare video e aggiungere effetti e titoli", ok: false, why: "Per i video esistono altri programmi open source, come Kdenlive o Shotcut." },
+            { t: "A leggere e scrivere la posta elettronica", ok: false, why: "Per la posta c'è Thunderbird." },
+            { t: "A gestire un database di clienti e fatture", ok: false, why: "Per i database ci sono MariaDB e MySQL." }
         ]
     },
     {
@@ -195,20 +195,20 @@ addQuestions("010-160", [
         id: "1.2-10", type: "single", ref: "1.2_01#Programmi Server",
         text: "Che cos'è MariaDB?",
         options: [
-            { t: "Un database relazionale nato come continuazione (fork) di MySQL", ok: true, why: "Gli sviluppatori originali di MySQL hanno creato MariaDB, compatibile con MySQL; molte distribuzioni lo installano al suo posto." },
-            { t: "Un server di posta elettronica", ok: false, why: "MariaDB conserva dati in tabelle; non gestisce la posta." },
-            { t: "Un ambiente desktop", ok: false, why: "Gli ambienti desktop sono per esempio GNOME e KDE." },
-            { t: "Un linguaggio di programmazione", ok: false, why: "Per interrogare MariaDB si usa il linguaggio SQL, ma MariaDB è il programma che conserva i dati." }
+            { t: "Un database relazionale nato da un fork di MySQL", ok: true, why: "Gli sviluppatori originali di MySQL hanno creato MariaDB, compatibile con MySQL; molte distribuzioni lo installano al suo posto." },
+            { t: "Un server di posta elettronica per le aziende", ok: false, why: "MariaDB conserva dati in tabelle; non gestisce la posta." },
+            { t: "Un ambiente desktop leggero, alternativo a GNOME", ok: false, why: "Gli ambienti desktop sono per esempio GNOME e KDE." },
+            { t: "Un linguaggio di programmazione per il web", ok: false, why: "Per interrogare MariaDB si usa il linguaggio SQL, ma MariaDB è il programma che conserva i dati." }
         ]
     },
     {
         id: "1.2-11", type: "single", ref: "1.2_01#Condivisione dei Dati",
         text: "A cosa servono Nextcloud e ownCloud?",
         options: [
-            { t: "A creare un proprio servizio per salvare, sincronizzare e condividere file, come Dropbox ma su un server proprio", ok: true, why: "Si installano su un server che controlli tu: i file restano tuoi e si sincronizzano tra computer e telefono." },
-            { t: "A modificare documenti di testo offline", ok: false, why: "Per i documenti offline c'è LibreOffice; Nextcloud e ownCloud sono servizi da server." },
-            { t: "A navigare sul web in modo anonimo", ok: false, why: "Non sono browser né strumenti di anonimato." },
-            { t: "A installare pacchetti su Debian", ok: false, why: "I pacchetti si installano con `apt-get` o `dpkg`." }
+            { t: "A sincronizzare file come Dropbox, su un server proprio", ok: true, why: "Si installano su un server che controlli tu: i file restano tuoi e si sincronizzano tra computer e telefono." },
+            { t: "A modificare documenti di testo anche senza connessione a Internet", ok: false, why: "Per i documenti offline c'è LibreOffice; Nextcloud e ownCloud sono servizi da server." },
+            { t: "A navigare sul web in modo anonimo, nascondendo il proprio indirizzo", ok: false, why: "Non sono browser né strumenti di anonimato." },
+            { t: "A installare e aggiornare i pacchetti su Debian e Ubuntu", ok: false, why: "I pacchetti si installano con `apt-get` o `dpkg`." }
         ]
     },
     {
@@ -217,7 +217,7 @@ addQuestions("010-160", [
         options: [
             { t: "JavaScript", ok: true, why: "Tutti i browser hanno un interprete JavaScript; oggi JavaScript si usa anche sui server." },
             { t: "Java", ok: false, why: "Nonostante il nome, Java è un altro linguaggio: si compila in bytecode e gira nella macchina virtuale Java." },
-            { t: "C", ok: false, why: "Il C si compila in programmi per il sistema operativo; i browser non lo eseguono nelle pagine." },
+            { t: "PostScript", ok: false, why: "PostScript è il linguaggio che descrive le pagine da stampare, usato da stampanti e documenti: i browser non lo eseguono nelle pagine web." },
             { t: "Perl", ok: false, why: "Perl si usa soprattutto per script e per elaborare testi, sul computer o sul server." }
         ]
     },
@@ -237,7 +237,7 @@ addQuestions("010-160", [
         id: "1.3-01", type: "single", ref: "1.3_01#Copyleft",
         text: "Che cosa chiede una licenza copyleft a chi distribuisce una versione modificata del programma?",
         options: [
-            { t: "Di distribuirla con la stessa licenza, così anche la versione modificata resta libera", ok: true, why: "È l'idea del copyleft: le libertà passano a tutte le opere derivate e non si possono togliere." },
+            { t: "Di distribuirla con la stessa licenza, così resta libera anche lei", ok: true, why: "È l'idea del copyleft: le libertà passano a tutte le opere derivate e non si possono togliere." },
             { t: "Di non modificare mai il programma", ok: false, why: "Il software libero si può modificare: il copyleft regola come si distribuiscono le modifiche." },
             { t: "Di pagare una quota all'autore originale", ok: false, why: "Il copyleft non chiede pagamenti." },
             { t: "Niente: con il copyleft si può chiudere il codice e venderlo come proprietario", ok: false, why: "Questo lo permettono le licenze permissive; il copyleft lo impedisce." }
@@ -248,8 +248,8 @@ addQuestions("010-160", [
         text: "Quale di queste è la licenza copyleft più conosciuta, usata anche dal kernel Linux?",
         options: [
             { t: "GPL (GNU General Public License)", ok: true, why: "Il kernel Linux è distribuito con la GPL versione 2, scritta dalla Free Software Foundation." },
-            { t: "BSD", ok: false, why: "La licenza BSD è permissiva: non obbliga a mantenere libere le opere derivate." },
-            { t: "MIT", ok: false, why: "Anche la MIT è una licenza permissiva." },
+            { t: "BSD (Berkeley Software Distribution)", ok: false, why: "La licenza BSD è permissiva: non obbliga a mantenere libere le opere derivate." },
+            { t: "Licenza MIT (Massachusetts Institute of Technology)", ok: false, why: "Anche la MIT è una licenza permissiva." },
             { t: "Creative Commons BY", ok: false, why: "Le Creative Commons sono pensate per opere come testi e immagini, non per il codice." }
         ]
     },
@@ -304,20 +304,20 @@ addQuestions("010-160", [
         id: "1.3-08", type: "single", ref: "1.3_01#Creative Commons",
         text: "Le lezioni ufficiali LPI hanno la licenza Creative Commons BY-NC-ND. Che cosa permette?",
         options: [
-            { t: "Condividerle gratis citando l'autore, ma senza scopo commerciale e senza modificarle", ok: true, why: "BY = cita l'autore, NC = non commerciale, ND = nessuna opera derivata. Per questo l'app le include intere e scrive le domande da zero." },
-            { t: "Modificarle e venderle, purché si citi l'autore", ok: false, why: "NC vieta l'uso commerciale e ND vieta le modifiche." },
-            { t: "Solo leggerle sul sito LPI, senza copiarle", ok: false, why: "Le licenze Creative Commons permettono sempre di condividere l'opera; qui con alcune condizioni." },
-            { t: "Qualsiasi uso, perché le Creative Commons sono di pubblico dominio", ok: false, why: "Le Creative Commons sono licenze con condizioni; il pubblico dominio è un'altra cosa (CC0 ci si avvicina)." }
+            { t: "Condividerle citando l'autore, senza scopi commerciali e senza modificarle", ok: true, why: "BY = cita l'autore, NC = non commerciale, ND = nessuna opera derivata. Per questo l'app le include intere e scrive le domande da zero." },
+            { t: "Modificarle e anche venderle, purché si citi sempre l'autore originale", ok: false, why: "NC vieta l'uso commerciale e ND vieta le modifiche." },
+            { t: "Solo leggerle sul sito del Linux Professional Institute, senza copiarle", ok: false, why: "Le licenze Creative Commons permettono sempre di condividere l'opera; qui con alcune condizioni." },
+            { t: "Qualsiasi uso, perché le licenze Creative Commons sono di pubblico dominio", ok: false, why: "Le Creative Commons sono licenze con condizioni; il pubblico dominio è un'altra cosa (CC0 ci si avvicina)." }
         ]
     },
     {
         id: "1.3-09", type: "single", ref: "1.3_01#Definizione di Software Libero e di Software Open Source",
         text: "Nell'espressione «free software», che cosa vuol dire «free»?",
         options: [
-            { t: "Libero: chi lo usa può studiarlo, modificarlo e condividerlo", ok: true, why: "Il punto sono le libertà di chi usa il programma; il prezzo non conta." },
-            { t: "Gratis: chi lo distribuisce non può farsi pagare", ok: false, why: "Il software libero si può anche vendere; l'importante è che chi lo riceve abbia le quattro libertà." },
-            { t: "Senza autore: nessuno ne ha i diritti", ok: false, why: "Il software libero ha un autore e una licenza: è proprio la licenza a concedere le libertà." },
-            { t: "Senza garanzia di funzionamento", ok: false, why: "Molte licenze escludono la garanzia, ma non è questo il significato di «free»." }
+            { t: "Libero: si può studiare, cambiare e condividere", ok: true, why: "Il punto sono le libertà di chi usa il programma; il prezzo non conta." },
+            { t: "Gratis: chi lo distribuisce non può mai farsi pagare", ok: false, why: "Il software libero si può anche vendere; l'importante è che chi lo riceve abbia le quattro libertà." },
+            { t: "Senza autore: nessuno ne possiede i diritti d'autore", ok: false, why: "Il software libero ha un autore e una licenza: è proprio la licenza a concedere le libertà." },
+            { t: "Senza garanzia: nessuno risponde se non funziona", ok: false, why: "Molte licenze escludono la garanzia, ma non è questo il significato di «free»." }
         ]
     },
     {
@@ -357,10 +357,10 @@ addQuestions("010-160", [
         id: "1.4-02", type: "single", ref: "1.4_01#Accedere alla Command Line",
         text: "Che cos'è un emulatore di terminale, come GNOME Terminal o Konsole?",
         options: [
-            { t: "Un programma con una finestra grafica che dà accesso a una shell, dove si scrivono i comandi", ok: true, why: "Imita i vecchi terminali fisici, ma dentro il desktop: nella finestra gira la shell, di solito Bash." },
-            { t: "Un emulatore che fa girare programmi Windows", ok: false, why: "Per i programmi Windows esiste Wine; il terminale serve per la riga di comando." },
-            { t: "La schermata nera che compare solo se il desktop si blocca", ok: false, why: "Il terminale si apre quando vuoi, come qualsiasi programma." },
-            { t: "Un programma per collegarsi a Internet", ok: false, why: "Dal terminale si possono usare anche comandi di rete, ma non è questo il suo scopo." }
+            { t: "Una finestra grafica che dà accesso a una shell per scrivere comandi", ok: true, why: "Imita i vecchi terminali fisici, ma dentro il desktop: nella finestra gira la shell, di solito Bash." },
+            { t: "Un emulatore che permette di far girare i programmi di Windows su Linux", ok: false, why: "Per i programmi Windows esiste Wine; il terminale serve per la riga di comando." },
+            { t: "La schermata nera che compare solo quando il desktop grafico si blocca", ok: false, why: "Il terminale si apre quando vuoi, come qualsiasi programma." },
+            { t: "Un programma che serve a collegare il computer a Internet", ok: false, why: "Dal terminale si possono usare anche comandi di rete, ma non è questo il suo scopo." }
         ]
     },
     {
@@ -377,30 +377,30 @@ addQuestions("010-160", [
         id: "1.4-04", type: "single", ref: "1.4_01#Finestre “Private”",
         text: "Che cosa fa la navigazione privata (in incognito) di un browser?",
         options: [
-            { t: "Alla chiusura cancella cronologia, cookie e dati dei moduli di quella finestra; i siti e il fornitore di rete però vedono comunque le visite", ok: true, why: "Protegge dagli altri che usano lo stesso computer, non rende anonimi su Internet." },
-            { t: "Nasconde il tuo indirizzo IP a tutti i siti", ok: false, why: "L'indirizzo IP resta visibile: per nasconderlo servono strumenti come una VPN o Tor." },
-            { t: "Blocca tutti i virus", ok: false, why: "La modalità privata non è un antivirus." },
-            { t: "Impedisce al datore di lavoro di vedere i siti visitati dalla rete dell'ufficio", ok: false, why: "Chi gestisce la rete può ancora vedere a quali siti ti colleghi." }
+            { t: "Cancella cronologia e cookie alla chiusura; i siti vedono comunque le visite", ok: true, why: "Protegge dagli altri che usano lo stesso computer, non rende anonimi su Internet." },
+            { t: "Nasconde il tuo indirizzo IP a tutti i siti che visiti in quella finestra", ok: false, why: "L'indirizzo IP resta visibile: per nasconderlo servono strumenti come una VPN o Tor." },
+            { t: "Blocca tutti i virus e i programmi dannosi scaricati in quella finestra", ok: false, why: "La modalità privata non è un antivirus." },
+            { t: "Impedisce al datore di lavoro di vedere i siti visitati in ufficio", ok: false, why: "Chi gestisce la rete può ancora vedere a quali siti ti colleghi." }
         ]
     },
     {
         id: "1.4-05", type: "single", ref: "1.4_01#Do Not Track (DNT)",
         text: "Che cos'è l'impostazione «Do Not Track» (DNT) del browser?",
         options: [
-            { t: "Una richiesta inviata ai siti di non tracciarti: i siti possono rispettarla o ignorarla", ok: true, why: "È solo un'indicazione nelle richieste del browser; nessuno obbliga i siti a seguirla." },
-            { t: "Un blocco che impedisce tecnicamente qualsiasi tracciamento", ok: false, why: "Non blocca niente: per bloccare servono estensioni o impostazioni contro i tracker e i cookie di terze parti." },
-            { t: "Una funzione che cancella la cronologia ogni giorno", ok: false, why: "La cronologia si cancella da un'altra impostazione." },
-            { t: "Un tipo di cookie", ok: false, why: "DNT è un'intestazione delle richieste, non un cookie." }
+            { t: "Una richiesta ai siti di non tracciarti, che possono anche ignorarla", ok: true, why: "È solo un'indicazione nelle richieste del browser; nessuno obbliga i siti a seguirla." },
+            { t: "Un blocco che impedisce tecnicamente qualsiasi forma di tracciamento", ok: false, why: "Non blocca niente: per bloccare servono estensioni o impostazioni contro i tracker e i cookie di terze parti." },
+            { t: "Una funzione che cancella in automatico la cronologia ogni giorno", ok: false, why: "La cronologia si cancella da un'altra impostazione." },
+            { t: "Un tipo speciale di cookie che il sito salva sul computer", ok: false, why: "DNT è un'intestazione delle richieste, non un cookie." }
         ]
     },
     {
         id: "1.4-06", type: "single", ref: "1.4_01#Tracciamento dei Cookie",
         text: "Che cosa sono i cookie di terze parti?",
         options: [
-            { t: "Cookie di un dominio diverso dal sito che stai visitando (per esempio una rete pubblicitaria), usati per seguirti da un sito all'altro", ok: true, why: "Lo stesso servizio è incluso in molti siti: con il suo cookie riconosce il tuo browser ovunque e costruisce un profilo." },
-            { t: "Cookie che servono a ricordare il carrello o l'accesso al sito che stai usando", ok: false, why: "Quelli sono cookie del sito stesso (di prima parte) e servono al suo funzionamento." },
-            { t: "Programmi che rubano le password", ok: false, why: "I cookie sono piccoli file di dati, non programmi." },
-            { t: "Cookie salvati sul server invece che sul computer", ok: false, why: "I cookie si salvano sempre nel browser di chi visita." }
+            { t: "Cookie di un altro dominio (per esempio pubblicità) che ti seguono tra i siti", ok: true, why: "Lo stesso servizio è incluso in molti siti: con il suo cookie riconosce il tuo browser ovunque e costruisce un profilo." },
+            { t: "Cookie che ricordano il carrello o l'accesso al sito che stai usando", ok: false, why: "Quelli sono cookie del sito stesso (di prima parte) e servono al suo funzionamento." },
+            { t: "Programmi nascosti nei cookie che rubano le password salvate nel browser", ok: false, why: "I cookie sono piccoli file di dati, non programmi." },
+            { t: "Cookie salvati sul server del sito invece che sul computer di chi naviga", ok: false, why: "I cookie si salvano sempre nel browser di chi visita." }
         ]
     },
     {
@@ -418,10 +418,10 @@ addQuestions("010-160", [
         id: "1.4-08", type: "single", ref: "1.4_01#TLS",
         text: "Che cosa garantisce il lucchetto di HTTPS (protocollo TLS) quando apri un sito?",
         options: [
-            { t: "Che la comunicazione tra il browser e il sito è cifrata e che il sito ha un certificato valido per quel nome", ok: true, why: "Chi sta in mezzo alla rete non può leggere né modificare i dati, e il certificato conferma il nome del sito." },
-            { t: "Che il sito è onesto e non può essere una truffa", ok: false, why: "Anche un sito truffaldino può avere HTTPS: il lucchetto dice solo che la connessione è protetta." },
-            { t: "Che il sito non usa cookie", ok: false, why: "HTTPS non dice nulla sui cookie." },
-            { t: "Che il computer non ha virus", ok: false, why: "TLS protegge la connessione, non il computer." }
+            { t: "Che il traffico è cifrato e il certificato vale per quel nome", ok: true, why: "Chi sta in mezzo alla rete non può leggere né modificare i dati, e il certificato conferma il nome del sito." },
+            { t: "Che il sito è onesto e non può essere in nessun caso una truffa", ok: false, why: "Anche un sito truffaldino può avere HTTPS: il lucchetto dice solo che la connessione è protetta." },
+            { t: "Che il sito non usa cookie né altri sistemi di tracciamento", ok: false, why: "HTTPS non dice nulla sui cookie." },
+            { t: "Che il computer da cui navighi non ha virus né programmi spia", ok: false, why: "TLS protegge la connessione, non il computer." }
         ]
     },
     {
@@ -434,10 +434,10 @@ addQuestions("010-160", [
         id: "1.4-10", type: "single", ref: "1.4_01#Crittografia del Disco",
         text: "Da che cosa protegge la cifratura completa del disco?",
         options: [
-            { t: "Da chi ruba il computer o toglie il disco: senza la password i dati sono illeggibili", ok: true, why: "I dati sul disco sono cifrati; si decifrano solo all'avvio, con la password. Su Linux si usa spesso LUKS." },
-            { t: "Dai virus che arrivano con la posta", ok: false, why: "Mentre il computer è acceso e sbloccato i dati sono leggibili dai programmi, compresi quelli dannosi." },
-            { t: "Dal tracciamento dei siti web", ok: false, why: "Il tracciamento avviene in rete e nel browser, non sul disco." },
-            { t: "Dai guasti del disco", ok: false, why: "Contro i guasti servono i backup: un disco cifrato si può rompere come un altro." }
+            { t: "Da chi ruba il computer: senza password i dati sono illeggibili", ok: true, why: "I dati sul disco sono cifrati; si decifrano solo all'avvio, con la password. Su Linux si usa spesso LUKS." },
+            { t: "Dai virus che arrivano come allegati nella posta elettronica", ok: false, why: "Mentre il computer è acceso e sbloccato i dati sono leggibili dai programmi, compresi quelli dannosi." },
+            { t: "Dal tracciamento dei siti web e dei cookie di terze parti", ok: false, why: "Il tracciamento avviene in rete e nel browser, non sul disco." },
+            { t: "Dai guasti del disco, perché tiene una seconda copia cifrata dei dati", ok: false, why: "Contro i guasti servono i backup: un disco cifrato si può rompere come un altro." }
         ]
     },
     {
@@ -454,10 +454,10 @@ addQuestions("010-160", [
         id: "1.4-12", type: "single", ref: "1.4_01#Usi Industriali di Linux",
         text: "Che cos'è una macchina virtuale?",
         options: [
-            { t: "Un computer simulato via software, con un suo sistema operativo, che gira dentro un computer vero", ok: true, why: "Su un solo server fisico possono girare molte macchine virtuali, anche con sistemi diversi: è la base del cloud." },
-            { t: "Un computer che si usa solo da Internet, senza schermo", ok: false, why: "Quello è un server remoto: può essere fisico o virtuale." },
-            { t: "Un programma Java", ok: false, why: "Java ha una sua «macchina virtuale», ma qui si parla di computer interi simulati." },
-            { t: "Un computer di prova che non può collegarsi alla rete", ok: false, why: "Le macchine virtuali di solito sono in rete come i computer veri." }
+            { t: "Un computer simulato via software, che gira dentro un computer vero", ok: true, why: "Su un solo server fisico possono girare molte macchine virtuali, anche con sistemi diversi: è la base del cloud." },
+            { t: "Un computer che si usa solo attraverso Internet, senza schermo né tastiera", ok: false, why: "Quello è un server remoto: può essere fisico o virtuale." },
+            { t: "Un programma Java che si installa nel browser", ok: false, why: "Java ha una sua «macchina virtuale», ma qui si parla di computer interi simulati." },
+            { t: "Un computer di prova che non può mai collegarsi alla rete", ok: false, why: "Le macchine virtuali di solito sono in rete come i computer veri." }
         ]
     }
 ]);

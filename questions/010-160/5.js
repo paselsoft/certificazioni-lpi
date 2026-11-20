@@ -17,10 +17,10 @@ addQuestions("010-160", [
         id: "5.1-02", type: "single", ref: "5.1_01#Ottenere Informazioni Sugli Utenti",
         text: "Che cosa mostra il comando `id`?",
         options: [
-            { t: "Lo UID, il gruppo principale (GID) e tutti i gruppi dell'utente", ok: true, why: "Per esempio `uid=1000(anna) gid=1000(anna) groups=1000(anna),27(sudo)`. Con un nome (`id luca`) mostra quelli di un altro utente." },
-            { t: "Il numero del processo corrente", ok: false, why: "Il numero di un processo (PID) si vede con `ps`." },
+            { t: "UID, gruppo principale e tutti i gruppi dell'utente", ok: true, why: "Per esempio `uid=1000(anna) gid=1000(anna) groups=1000(anna),27(sudo)`. Con un nome (`id luca`) mostra quelli di un altro utente." },
+            { t: "Il numero del processo corrente, cioè della shell", ok: false, why: "Il numero di un processo (PID) si vede con `ps`." },
             { t: "La carta d'identità dell'utente salvata nel sistema", ok: false, why: "Il sistema conosce solo numeri e gruppi, non documenti." },
-            { t: "Gli utenti collegati", ok: false, why: "Gli utenti collegati si vedono con `who` o `w`." }
+            { t: "Gli utenti collegati in questo momento al computer", ok: false, why: "Gli utenti collegati si vedono con `who` o `w`." }
         ]
     },
     {
@@ -37,20 +37,20 @@ addQuestions("010-160", [
         id: "5.1-04", type: "single", ref: "5.1_01#Ottenere Informazioni Sugli Utenti",
         text: "Che cosa mostra `last`?",
         options: [
-            { t: "Lo storico degli accessi: chi si è collegato, quando e per quanto tempo, e i riavvii", ok: true, why: "Legge il file `/var/log/wtmp`; i più recenti sono in cima." },
-            { t: "L'ultimo comando eseguito", ok: false, why: "I comandi eseguiti si vedono con `history`." },
-            { t: "L'ultimo file modificato", ok: false, why: "Per i file modificati si usano `ls -t` o `find`." },
-            { t: "L'ultima riga di un file", ok: false, why: "Lo fa `tail -n 1`." }
+            { t: "Lo storico degli accessi: chi è entrato, quando e per quanto", ok: true, why: "Legge il file `/var/log/wtmp`; i più recenti sono in cima." },
+            { t: "L'ultimo comando eseguito nella shell, con data e ora", ok: false, why: "I comandi eseguiti si vedono con `history`." },
+            { t: "L'ultimo file modificato nella directory corrente", ok: false, why: "Per i file modificati si usano `ls -t` o `find`." },
+            { t: "L'ultima riga di un file di testo, come fa `tail -n 1`", ok: false, why: "Lo fa `tail -n 1`." }
         ]
     },
     {
         id: "5.1-05", type: "single", ref: "5.1_01#Cambiare Utente e Aumentare i Privilegi",
         text: "Che differenza c'è tra `sudo comando` e `su`?",
         options: [
-            { t: "`sudo` esegue un comando come root chiedendo la tua password (se sei autorizzato); `su` apre una shell come un altro utente chiedendo la sua password", ok: true, why: "Con `sudo` non serve conoscere la password di root, e ogni uso viene registrato." },
-            { t: "Sono identici", ok: false, why: "Chiedono password diverse e funzionano in modo diverso." },
-            { t: "`su` funziona solo per un comando, `sudo` apre una shell", ok: false, why: "Di solito è il contrario." },
-            { t: "`sudo` serve solo a cambiare la propria password", ok: false, why: "La password si cambia con `passwd`." }
+            { t: "`sudo` chiede la tua password per un comando; `su` chiede quella dell'altro utente", ok: true, why: "Con `sudo` non serve conoscere la password di root, e ogni uso viene registrato." },
+            { t: "Sono identici: `su` è solo il nome abbreviato di `sudo`", ok: false, why: "Chiedono password diverse e funzionano in modo diverso." },
+            { t: "`su` funziona solo per un comando, mentre `sudo` apre sempre una shell", ok: false, why: "Di solito è il contrario." },
+            { t: "`sudo` serve soltanto a cambiare la propria password, mentre `su` serve a diventare root", ok: false, why: "La password si cambia con `passwd`." }
         ]
     },
     {
@@ -68,10 +68,10 @@ addQuestions("010-160", [
         id: "5.1-07", type: "single", ref: "5.1_01#Account di Sistema",
         text: "Che cosa sono gli account di sistema, come `daemon` o `www-data`?",
         options: [
-            { t: "Account usati dai servizi, non da persone: hanno UID bassi e di solito non possono fare login", ok: true, why: "Ogni servizio con il suo account ha solo i permessi che gli servono: se viene attaccato, i danni sono limitati." },
-            { t: "Gli account degli amministratori", ok: false, why: "L'amministratore è root; gli account di sistema hanno pochi privilegi." },
+            { t: "Account dei servizi, non di persone: UID bassi e niente login", ok: true, why: "Ogni servizio con il suo account ha solo i permessi che gli servono: se viene attaccato, i danni sono limitati." },
+            { t: "Gli account degli amministratori, che possono usare `sudo`", ok: false, why: "L'amministratore è root; gli account di sistema hanno pochi privilegi." },
             { t: "Account creati per errore, da cancellare", ok: false, why: "Servono al funzionamento dei servizi: non vanno cancellati." },
-            { t: "Gli account degli utenti ospiti", ok: false, why: "Sono per i servizi, non per persone." }
+            { t: "Gli account degli utenti ospiti, senza una directory home", ok: false, why: "Sono per i servizi, non per persone." }
         ]
     },
     {
@@ -95,20 +95,20 @@ addQuestions("010-160", [
         id: "5.1-10", type: "single", ref: "5.1_01#Shell di Login e Directory Home",
         text: "Un account ha come shell `/usr/sbin/nologin`. Che cosa vuol dire?",
         options: [
-            { t: "Che non si può usare per entrare nel sistema con una shell: è tipico degli account di sistema", ok: true, why: "Se qualcuno prova ad accedere, `nologin` mostra un messaggio e chiude." },
-            { t: "Che l'utente non ha password", ok: false, why: "La password è un'altra cosa, in `/etc/shadow`." },
-            { t: "Che l'utente può accedere senza password", ok: false, why: "È il contrario: non può proprio aprire una shell." },
-            { t: "Che l'utente è root", ok: false, why: "root si riconosce dallo UID 0." }
+            { t: "Che con quell'account non si entra nel sistema", ok: true, why: "Se qualcuno prova ad accedere, `nologin` mostra un messaggio e chiude." },
+            { t: "Che l'utente non ha ancora una password e deve sceglierla", ok: false, why: "La password è un'altra cosa, in `/etc/shadow`." },
+            { t: "Che l'utente può accedere senza password, dal solo nome", ok: false, why: "È il contrario: non può proprio aprire una shell." },
+            { t: "Che l'utente è root, anche se ha un nome diverso", ok: false, why: "root si riconosce dallo UID 0." }
         ]
     },
     {
         id: "5.1-11", type: "single", ref: "5.1_01#Ottenere Informazioni Sugli Utenti",
         text: "Che cosa aggiunge `w` rispetto a `who`?",
         options: [
-            { t: "Per ogni utente collegato mostra anche che cosa sta eseguendo, più l'ora, da quanto il sistema è acceso e il carico", ok: true, why: "La prima riga di `w` è simile al risultato di `uptime`." },
-            { t: "Mostra anche gli utenti scollegati da un mese", ok: false, why: "Lo storico degli accessi lo mostra `last`." },
-            { t: "Mostra le password", ok: false, why: "Nessun comando mostra le password." },
-            { t: "Niente: è solo un nome più breve di `who`", ok: false, why: "Mostra più informazioni." }
+            { t: "Anche che cosa sta eseguendo ogni utente, più carico e uptime", ok: true, why: "La prima riga di `w` è simile al risultato di `uptime`." },
+            { t: "Mostra anche chi si è scollegato nell'ultimo mese", ok: false, why: "Lo storico degli accessi lo mostra `last`." },
+            { t: "Mostra le password cifrate degli utenti collegati", ok: false, why: "Nessun comando mostra le password." },
+            { t: "Niente: `w` è solo un nome più breve dello stesso `who`", ok: false, why: "Mostra più informazioni." }
         ]
     },
 
@@ -126,10 +126,10 @@ addQuestions("010-160", [
         id: "5.2-02", type: "single", ref: "5.2_01#La Directory Scheletro",
         text: "A che cosa serve la directory `/etc/skel`?",
         options: [
-            { t: "Contiene i file che vengono copiati nella home di ogni nuovo utente, per esempio `.bashrc`", ok: true, why: "Mettendo un file in `/etc/skel` lo avranno tutti gli utenti creati da quel momento in poi." },
-            { t: "Contiene le password degli utenti", ok: false, why: "Le password sono in `/etc/shadow`." },
-            { t: "È il cestino degli utenti eliminati", ok: false, why: "Linux non ha un cestino per gli utenti." },
-            { t: "Contiene i programmi di base del sistema", ok: false, why: "I programmi stanno in `/bin` e `/usr/bin`." }
+            { t: "Contiene i file da copiare nella home dei nuovi utenti", ok: true, why: "Mettendo un file in `/etc/skel` lo avranno tutti gli utenti creati da quel momento in poi." },
+            { t: "Contiene le password cifrate di tutti gli utenti", ok: false, why: "Le password sono in `/etc/shadow`." },
+            { t: "È il cestino dove finiscono gli utenti eliminati con `userdel`", ok: false, why: "Linux non ha un cestino per gli utenti." },
+            { t: "Contiene i programmi di base del sistema, come `ls`", ok: false, why: "I programmi stanno in `/bin` e `/usr/bin`." }
         ]
     },
     {
@@ -142,10 +142,10 @@ addQuestions("010-160", [
         id: "5.2-04", type: "single", ref: "5.2_01#Il Comando passwd",
         text: "Che cosa fa `passwd` scritto da solo da un utente normale?",
         options: [
-            { t: "Cambia la password di quell'utente, chiedendo prima quella attuale", ok: true, why: "Solo root può cambiare la password di un altro utente, con `passwd nome`." },
-            { t: "Mostra la password dell'utente", ok: false, why: "Le password non si possono leggere: sono conservate solo come hash." },
-            { t: "Mostra il file `/etc/passwd`", ok: false, why: "Per leggere il file si usa per esempio `cat /etc/passwd`." },
-            { t: "Crea un nuovo utente", ok: false, why: "Gli utenti si creano con `useradd`." }
+            { t: "Cambia la tua password, chiedendo quella attuale", ok: true, why: "Solo root può cambiare la password di un altro utente, con `passwd nome`." },
+            { t: "Mostra in chiaro la password dell'utente che lo scrive", ok: false, why: "Le password non si possono leggere: sono conservate solo come hash." },
+            { t: "Mostra il contenuto del file `/etc/passwd` con gli utenti", ok: false, why: "Per leggere il file si usa per esempio `cat /etc/passwd`." },
+            { t: "Crea un nuovo utente, chiedendo nome e password da usare", ok: false, why: "Gli utenti si creano con `useradd`." }
         ]
     },
     {
@@ -153,7 +153,7 @@ addQuestions("010-160", [
         text: "Che cosa fa `userdel -r luca`?",
         options: [
             { t: "Elimina l'utente `luca` insieme alla sua directory home", ok: true, why: "Senza `-r` l'utente viene tolto ma la sua home resta sul disco." },
-            { t: "Elimina solo la home di `luca`, lasciando l'utente", ok: false, why: "L'utente viene eliminato in ogni caso; `-r` toglie anche la home." },
+            { t: "Elimina solo la directory home di `luca`, ma lascia l'utente", ok: false, why: "L'utente viene eliminato in ogni caso; `-r` toglie anche la home." },
             { t: "Rinomina l'utente `luca`", ok: false, why: "Per rinominare si usa `usermod -l`." },
             { t: "Blocca l'utente per un giorno", ok: false, why: "Per bloccare un account si usano per esempio `passwd -l` o `usermod -L`." }
         ]
@@ -183,9 +183,9 @@ addQuestions("010-160", [
         id: "5.2-08", type: "single", ref: "5.2_01#Il File /etc/shadow",
         text: "Che cosa c'è nel secondo campo di una riga di `/etc/shadow`?",
         options: [
-            { t: "L'hash della password dell'utente (oppure `!` o `*` se non si può accedere con una password)", ok: true, why: "Gli altri campi riguardano le scadenze: data dell'ultimo cambio, giorni minimi e massimi, avviso." },
-            { t: "La password scritta in chiaro", ok: false, why: "Le password non si salvano mai in chiaro." },
-            { t: "Lo UID dell'utente", ok: false, why: "Lo UID è in `/etc/passwd`." },
+            { t: "La password cifrata (hash), oppure `!` o `*`", ok: true, why: "Gli altri campi riguardano le scadenze: data dell'ultimo cambio, giorni minimi e massimi, avviso." },
+            { t: "La password scritta in chiaro, leggibile da root", ok: false, why: "Le password non si salvano mai in chiaro." },
+            { t: "Lo UID dell'utente, come in `/etc/passwd`", ok: false, why: "Lo UID è in `/etc/passwd`." },
             { t: "La directory home", ok: false, why: "La home è in `/etc/passwd`." }
         ]
     },
@@ -215,7 +215,7 @@ addQuestions("010-160", [
         options: [
             { t: "1000", ok: true, why: "Gli UID sotto 1000 sono di solito riservati agli account di sistema (il valore è in `/etc/login.defs`)." },
             { t: "0", ok: false, why: "0 è root." },
-            { t: "1", ok: false, why: "Gli UID bassi sono per gli account di sistema." },
+            { t: "1001", ok: false, why: "1001 tocca di solito al secondo utente: il primo prende 1000." },
             { t: "100", ok: false, why: "È ancora nell'intervallo degli account di sistema." }
         ]
     },
@@ -241,10 +241,10 @@ addQuestions("010-160", [
         id: "5.3-03", type: "single", ref: "5.3_01#Modalità Simbolica",
         text: "Che cosa fa `chmod u+x script.sh`?",
         options: [
-            { t: "Aggiunge il permesso di esecuzione per il proprietario del file", ok: true, why: "`u` è il proprietario (user), `+` aggiunge, `x` è l'esecuzione. Gli altri permessi restano come sono." },
-            { t: "Aggiunge il permesso di esecuzione per tutti", ok: false, why: "Per tutti si scrive `a+x` (o solo `+x`)." },
-            { t: "Rende `x` il proprietario del file", ok: false, why: "Il proprietario si cambia con `chown`." },
-            { t: "Toglie tutti i permessi tranne l'esecuzione", ok: false, why: "`+` aggiunge e non toglie niente; `=` invece imposta esattamente." }
+            { t: "Aggiunge l'esecuzione per il proprietario del file", ok: true, why: "`u` è il proprietario (user), `+` aggiunge, `x` è l'esecuzione. Gli altri permessi restano come sono." },
+            { t: "Aggiunge il permesso di esecuzione per tutti gli utenti", ok: false, why: "Per tutti si scrive `a+x` (o solo `+x`)." },
+            { t: "Rende `x` il nuovo proprietario del file", ok: false, why: "Il proprietario si cambia con `chown`." },
+            { t: "Toglie tutti i permessi tranne quello di esecuzione", ok: false, why: "`+` aggiunge e non toglie niente; `=` invece imposta esattamente." }
         ]
     },
     {
@@ -271,10 +271,10 @@ addQuestions("010-160", [
         id: "5.3-06", type: "single", ref: "5.3_01#Permessi sulle Directory",
         text: "Che cosa permette il permesso `x` su una directory?",
         options: [
-            { t: "Di entrarci (con `cd`) e di raggiungere i file che contiene", ok: true, why: "Per elencare il contenuto serve invece `r`, per creare o cancellare file dentro serve `w` (insieme a `x`)." },
-            { t: "Di eseguire tutti i programmi che contiene", ok: false, why: "Per eseguire un programma serve la `x` sul file stesso." },
-            { t: "Di cancellare la directory", ok: false, why: "Per cancellarla servono i permessi sulla directory che la contiene." },
-            { t: "Niente: le directory non usano la `x`", ok: false, why: "Per le directory la `x` è importante: senza non ci si entra." }
+            { t: "Di entrarci con `cd` e raggiungerne i file", ok: true, why: "Per elencare il contenuto serve invece `r`, per creare o cancellare file dentro serve `w` (insieme a `x`)." },
+            { t: "Di eseguire come programmi tutti i file che contiene", ok: false, why: "Per eseguire un programma serve la `x` sul file stesso." },
+            { t: "Di cancellare la directory e tutto il suo contenuto", ok: false, why: "Per cancellarla servono i permessi sulla directory che la contiene." },
+            { t: "Niente: le directory non usano il permesso `x`", ok: false, why: "Per le directory la `x` è importante: senza non ci si entra." }
         ]
     },
     {
@@ -290,10 +290,10 @@ addQuestions("010-160", [
         id: "5.3-08", type: "single", ref: "5.3_01#Modificare la Proprietà dei File",
         text: "Che cosa fa `chown anna:sviluppo progetto.txt`?",
         options: [
-            { t: "Rende anna la proprietaria del file e `sviluppo` il suo gruppo", ok: true, why: "Prima dei due punti il proprietario, dopo il gruppo." },
-            { t: "Aggiunge anna al gruppo `sviluppo`", ok: false, why: "I gruppi di un utente si cambiano con `usermod`; `chown` lavora sui file." },
-            { t: "Copia il file nella home di anna", ok: false, why: "`chown` non copia file." },
-            { t: "Dà errore: si può cambiare solo il proprietario", ok: false, why: "`chown` cambia anche il gruppo; esiste anche `chgrp` solo per il gruppo." }
+            { t: "Rende anna proprietaria e `sviluppo` gruppo del file", ok: true, why: "Prima dei due punti il proprietario, dopo il gruppo." },
+            { t: "Aggiunge anna al gruppo `sviluppo`, come `usermod -aG`", ok: false, why: "I gruppi di un utente si cambiano con `usermod`; `chown` lavora sui file." },
+            { t: "Copia il file `progetto.txt` nella home di anna", ok: false, why: "`chown` non copia file." },
+            { t: "Dà errore: con `chown` si cambia solo il proprietario", ok: false, why: "`chown` cambia anche il gruppo; esiste anche `chgrp` solo per il gruppo." }
         ]
     },
     {
@@ -321,10 +321,10 @@ addQuestions("010-160", [
         id: "5.3-11", type: "single", ref: "5.3_01#Modificare i Permessi dei File",
         text: "Che cosa fa `chmod -R g+w progetto`?",
         options: [
-            { t: "Dà al gruppo il permesso di scrittura sulla directory `progetto` e su tutto quello che contiene", ok: true, why: "`-R` applica la modifica in modo ricorsivo, a file e sottodirectory." },
-            { t: "Toglie la scrittura al gruppo", ok: false, why: "`+` aggiunge; per togliere si usa `-`." },
-            { t: "Cambia il gruppo della directory in `w`", ok: false, why: "Il gruppo si cambia con `chown` o `chgrp`." },
-            { t: "Cambia i permessi solo della directory, non dei file dentro", ok: false, why: "Senza `-R` sarebbe così." }
+            { t: "Dà al gruppo la scrittura su `progetto` e su tutto il contenuto", ok: true, why: "`-R` applica la modifica in modo ricorsivo, a file e sottodirectory." },
+            { t: "Toglie al gruppo il permesso di scrittura su tutti i file", ok: false, why: "`+` aggiunge; per togliere si usa `-`." },
+            { t: "Cambia il gruppo della directory, che diventa il gruppo `w`", ok: false, why: "Il gruppo si cambia con `chown` o `chgrp`." },
+            { t: "Cambia solo la directory, non i file che contiene", ok: false, why: "Senza `-R` sarebbe così." }
         ]
     },
 
@@ -333,10 +333,10 @@ addQuestions("010-160", [
         id: "5.4-01", type: "single", ref: "5.4_01#Permessi sui File Temporanei",
         text: "Che effetto ha lo sticky bit sulla directory `/tmp`?",
         options: [
-            { t: "Tutti possono creare file, ma ognuno può cancellare o rinominare solo i propri", ok: true, why: "Senza sticky bit, in una directory scrivibile da tutti chiunque potrebbe cancellare i file degli altri." },
+            { t: "Tutti creano file, ma ognuno cancella o rinomina solo i propri", ok: true, why: "Senza sticky bit, in una directory scrivibile da tutti chiunque potrebbe cancellare i file degli altri." },
             { t: "I file restano nella directory per sempre", ok: false, why: "Il nome inganna: lo sticky bit non impedisce la cancellazione da parte del proprietario." },
-            { t: "Solo root può scrivere nella directory", ok: false, why: "In `/tmp` scrivono tutti gli utenti." },
-            { t: "I file si cancellano da soli dopo un giorno", ok: false, why: "La pulizia di `/tmp` dipende da altre impostazioni del sistema." }
+            { t: "Solo root può scrivere nella directory, gli altri la leggono", ok: false, why: "In `/tmp` scrivono tutti gli utenti." },
+            { t: "I file si cancellano da soli dopo un giorno dalla creazione", ok: false, why: "La pulizia di `/tmp` dipende da altre impostazioni del sistema." }
         ]
     },
     {
@@ -362,30 +362,30 @@ addQuestions("010-160", [
         id: "5.4-04", type: "single", ref: "5.4_01#Posizione dei File Temporanei",
         text: "Che cosa fa l'opzione `-d` in `ls -ld /tmp`?",
         options: [
-            { t: "Mostra le informazioni della directory stessa, invece di elencarne il contenuto", ok: true, why: "Senza `-d`, `ls -l /tmp` mostrerebbe i file dentro `/tmp`." },
-            { t: "Elenca solo le directory dentro `/tmp`", ok: false, why: "`-d` riguarda la directory indicata, non filtra il contenuto." },
-            { t: "Cancella la directory", ok: false, why: "`ls` non cancella mai niente." },
-            { t: "Mostra la data di creazione", ok: false, why: "Le date si vedono con `-l`; `-d` non le cambia." }
+            { t: "Mostra la directory stessa invece del suo contenuto", ok: true, why: "Senza `-d`, `ls -l /tmp` mostrerebbe i file dentro `/tmp`." },
+            { t: "Elenca solo le directory che si trovano dentro `/tmp`", ok: false, why: "`-d` riguarda la directory indicata, non filtra il contenuto." },
+            { t: "Cancella la directory dopo averla mostrata", ok: false, why: "`ls` non cancella mai niente." },
+            { t: "Mostra la data di creazione invece di quella di modifica", ok: false, why: "Le date si vedono con `-l`; `-d` non le cambia." }
         ]
     },
     {
         id: "5.4-05", type: "single", ref: "5.4_01#Link Simbolici",
         text: "Che cosa succede a un link simbolico se cancelli il file a cui punta?",
         options: [
-            { t: "Il link resta, ma è «rotto»: punta a un percorso che non esiste più", ok: true, why: "Il link simbolico contiene solo il percorso del file; aprendolo si riceve «No such file or directory»." },
-            { t: "Il link viene cancellato insieme al file", ok: false, why: "Il sistema non cancella i link da solo." },
-            { t: "Il link diventa una copia del file", ok: false, why: "Il link non ha mai contenuto i dati del file." },
-            { t: "Il file torna indietro", ok: false, why: "Il file cancellato non si recupera tramite il link." }
+            { t: "Il link resta, ma è «rotto»: punta a un file che non c'è", ok: true, why: "Il link simbolico contiene solo il percorso del file; aprendolo si riceve «No such file or directory»." },
+            { t: "Il link viene cancellato insieme al file, in automatico", ok: false, why: "Il sistema non cancella i link da solo." },
+            { t: "Il link diventa una copia completa del file cancellato", ok: false, why: "Il link non ha mai contenuto i dati del file." },
+            { t: "Il file torna indietro, recuperato dal link simbolico", ok: false, why: "Il file cancellato non si recupera tramite il link." }
         ]
     },
     {
         id: "5.4-06", type: "single", ref: "5.4_01#Lavorare con gli Hard Link",
         text: "Che cos'è un hard link?",
         options: [
-            { t: "Un altro nome per gli stessi dati sul disco (lo stesso inode): i dati restano finché esiste almeno un nome", ok: true, why: "Cancellando il nome originale, i dati si leggono ancora dall'hard link." },
-            { t: "Una copia completa del file", ok: false, why: "Non occupa spazio in più: è lo stesso file con due nomi." },
+            { t: "Un altro nome per gli stessi dati (lo stesso inode)", ok: true, why: "Cancellando il nome originale, i dati si leggono ancora dall'hard link." },
+            { t: "Una copia completa del file, con dati indipendenti", ok: false, why: "Non occupa spazio in più: è lo stesso file con due nomi." },
             { t: "Un collegamento che contiene il percorso del file", ok: false, why: "Questo è un link simbolico." },
-            { t: "Un link verso un sito web", ok: false, why: "Riguarda solo i file sul disco." }
+            { t: "Un link a un sito web salvato sul desktop", ok: false, why: "Riguarda solo i file sul disco." }
         ]
     },
     {
@@ -402,10 +402,10 @@ addQuestions("010-160", [
         id: "5.4-08", type: "single", ref: "5.4_01#Comprendere i Link",
         text: "Che cosa può fare un link simbolico che un hard link non può fare?",
         options: [
-            { t: "Puntare a una directory o a un file su un altro file system (un'altra partizione o un altro disco)", ok: true, why: "Gli hard link funzionano solo tra file dello stesso file system e non per le directory." },
-            { t: "Continuare a funzionare se cancelli il file originale", ok: false, why: "È il contrario: lo fa l'hard link, mentre il simbolico si rompe." },
-            { t: "Occupare meno spazio di zero", ok: false, why: "Nessun file occupa meno di zero." },
-            { t: "Cambiare i permessi del file originale", ok: false, why: "Nessun link cambia i permessi del file." }
+            { t: "Puntare a una directory o a un file su un altro file system", ok: true, why: "Gli hard link funzionano solo tra file dello stesso file system e non per le directory." },
+            { t: "Continuare a funzionare anche se cancelli il file originale", ok: false, why: "È il contrario: lo fa l'hard link, mentre il simbolico si rompe." },
+            { t: "Occupare meno spazio di zero byte sul disco", ok: false, why: "Nessun file occupa meno di zero." },
+            { t: "Cambiare i permessi del file originale a cui punta", ok: false, why: "Nessun link cambia i permessi del file." }
         ]
     },
     {
@@ -422,10 +422,10 @@ addQuestions("010-160", [
         id: "5.4-10", type: "single", ref: "5.4_01#Link Simbolici",
         text: "Come si riconosce un link simbolico nell'elenco di `ls -l`?",
         options: [
-            { t: "La riga inizia con `l` e alla fine mostra `nome -> destinazione`", ok: true, why: "Per esempio `lrwxrwxrwx ... collegamento -> /etc/hosts`." },
-            { t: "Il nome è scritto in corsivo", ok: false, why: "Il terminale può usare colori, ma l'indicazione sicura è la `l` iniziale." },
-            { t: "La dimensione è sempre 0", ok: false, why: "La dimensione è la lunghezza del percorso a cui punta." },
-            { t: "Non si può riconoscere", ok: false, why: "Si riconosce dalla `l` e dalla freccia." }
+            { t: "Inizia con `l` e mostra `nome -> destinazione`", ok: true, why: "Per esempio `lrwxrwxrwx ... collegamento -> /etc/hosts`." },
+            { t: "Il nome del link è scritto in corsivo nel terminale", ok: false, why: "Il terminale può usare colori, ma l'indicazione sicura è la `l` iniziale." },
+            { t: "La dimensione del link è sempre 0 byte", ok: false, why: "La dimensione è la lunghezza del percorso a cui punta." },
+            { t: "Non si può riconoscere: sembra un file normale", ok: false, why: "Si riconosce dalla `l` e dalla freccia." }
         ]
     }
 ]);

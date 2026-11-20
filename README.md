@@ -105,7 +105,7 @@ Strumenti e controlli:
 python3 tools/import-objectives.py     # rigenera data/exam-010-160.js dalla wiki LPI
 python3 tools/import-lpi-lessons.py    # riscarica le lezioni e controlla che il testo sia identico all'originale
 node tools/check-data.js [--online]    # controlla dati, lezioni, licenza, file (e i link, con --online)
-node tools/check-questions.js [--stats] # domande: formato, copertura per peso, forme accettate nei completamenti, nessuna frase copiata dalle lezioni
+node tools/check-questions.js [--stats] # domande: formato, copertura per peso, forme accettate nei completamenti, risposta giusta non riconoscibile dalla lunghezza, nessuna frase copiata dalle lezioni
 node tools/check-shell.js [filtro]     # la shell simulata confrontata con Bash vero (serve Linux)
 node tools/build-palestra.js           # rigenera palestra/palestra.sh dagli esercizi (dopo ogni modifica)
 node tools/check-palestra.js [--installa] # la palestra prepara le stesse home del simulatore (--installa: da root)
