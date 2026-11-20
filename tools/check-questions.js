@@ -6,7 +6,11 @@
 //   - copertura: per ogni obiettivo almeno 6 + 2 × peso domande (peso 1 → 8, peso 4 → 14), con
 //     almeno una a scelta multipla e una di completamento;
 //   - nessuna frase copiata dalle lezioni LPI (licenza CC BY-NC-ND: le domande si scrivono da
-//     zero): nessuna sequenza di 8 parole uguale a una delle lezioni.
+//     zero): nessuna sequenza di 8 parole uguale a una delle lezioni;
+//   - la risposta giusta non si riconosce dalla lunghezza: nelle domande a scelta singola non è
+//     più lunga di oltre il 25% dell'opzione sbagliata più lunga, e in tutte le domande insieme
+//     ogni posizione per lunghezza (la più lunga, la seconda, la terza, la più corta) capita al
+//     massimo nel 40% dei casi (la più lunga al massimo nel 35%).
 // Uso: node tools/check-questions.js [--stats]
 const fs = require("fs");
 const path = require("path");
@@ -142,6 +146,28 @@ for (const exam of EXAMS) {
         if (list.length < need) problems.push(`${exam.id} ${objective.id}: ${list.length} domande, ne servono almeno ${need} (peso ${objective.weight})`);
         if (list.length && (!count("multiple") || !count("fill"))) problems.push(`${exam.id} ${objective.id}: serve almeno una domanda a scelta multipla e una di completamento`);
     }
+}
+
+// La lunghezza non deve tradire la risposta giusta (si conta il testo senza i caratteri ` del codice)
+const visible = text => text.replace(/`/g, "").length;
+const singles = QUESTIONS.filter(q => q.type === "single");
+const positions = [0, 0, 0, 0];
+let longest = 0;
+for (const q of singles) {
+    const right = visible(q.options.find(option => option.ok).t);
+    const wrong = q.options.filter(option => !option.ok).map(option => visible(option.t));
+    const longer = wrong.filter(length => length > right).length;
+    positions[Math.min(longer, 3)]++;
+    if (!longer && wrong.every(length => length < right)) longest++;
+    if (right > 1.25 * Math.max(...wrong)) problems.push(`${q.exam}/${q.id}: la risposta giusta è lunga ${right} caratteri, l'opzione sbagliata più lunga ${Math.max(...wrong)}: si riconosce dalla lunghezza`);
+}
+const percent = count => Math.round(100 * count / singles.length);
+stats.push(`Lunghezza della risposta giusta nelle ${singles.length} domande a scelta singola: la più lunga (o pari) ${percent(positions[0])}%, la seconda ${percent(positions[1])}%, la terza ${percent(positions[2])}%, la più corta ${percent(positions[3])}%; più lunga di tutte le altre ${percent(longest)}%`);
+if (singles.length >= 20) {
+    if (percent(longest) > 35) problems.push(`la risposta giusta è la più lunga nel ${percent(longest)}% delle domande a scelta singola (al massimo 35%)`);
+    positions.forEach((count, index) => {
+        if (percent(count) > 40) problems.push(`la risposta giusta è ${["la più lunga", "la seconda per lunghezza", "la terza per lunghezza", "la più corta"][index]} nel ${percent(count)}% delle domande a scelta singola (al massimo 40%)`);
+    });
 }
 
 // I file delle domande sono nella pagina e nel service worker
