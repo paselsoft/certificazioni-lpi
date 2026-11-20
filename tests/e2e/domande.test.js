@@ -72,6 +72,17 @@ module.exports = {
         assert.ok(await page.evaluate(() => scrollY > 200), "la pagina è scesa alla sezione");
     },
 
+    "l'opzione scelta è evidenziata anche senza :has() (classe is-checked)": async ({ page }) => {
+        await open(page);
+        await only(page, "2.1", ["2.1-01"]);
+        const marked = () => page.evaluate(() => [...document.querySelectorAll("label.option")].map(label => label.classList.contains("is-checked")));
+        assert.deepEqual(await marked(), [false, false, false, false]);
+        await page.check("#option-1");
+        assert.deepEqual(await marked(), [false, true, false, false]);
+        await page.check("#option-3");
+        assert.deepEqual(await marked(), [false, false, false, true], "con la scelta singola resta evidenziata solo l'ultima");
+    },
+
     "scelta multipla: servono esattamente N risposte, giusta solo se tutte esatte": async ({ page }) => {
         await open(page);
         await only(page, "2.1", ["2.1-09", "2.1-09"]);

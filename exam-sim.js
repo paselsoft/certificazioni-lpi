@@ -234,6 +234,8 @@ function renderSimQuestion(exam, data, body, focus) {
                 save();
             };
             label.append(input, richText(option.t, "span", "option-text"));
+            // Come :has(input:checked) in style.css, anche nei browser che non lo conoscono
+            input.addEventListener("change", () => markChecked(label.closest("fieldset") || label.parentNode));
             item.appendChild(label);
             list.appendChild(item);
         });
