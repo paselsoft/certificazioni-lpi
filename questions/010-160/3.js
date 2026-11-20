@@ -271,6 +271,115 @@ addQuestions("010-160", [
             { t: "È un errore di grep, che ignora i modelli troppo corti", ok: false, why: "È il comportamento corretto delle espressioni regolari." }
         ]
     },
+    {
+        id: "3.2-17", type: "single", ref: "3.2_01#Pipe",
+        text: "Il file `note.txt` ha 12 righe. Che cosa stampa `wc -l note.txt`?",
+        options: [
+            { t: "`12 note.txt`", ok: true, why: "`wc -l` conta le righe (lines) e scrive il numero seguito dal nome del file. Con `wc -l < note.txt` scrive solo il numero." },
+            { t: "Le prime 12 righe di `note.txt`", ok: false, why: "Questo lo farebbe `head -n 12 note.txt`: `wc` conta, non mostra il contenuto." },
+            { t: "`12`, e sotto le righe numerate", ok: false, why: "`wc` non mostra mai il contenuto; per numerare le righe c'è `cat -n` (o `nl`)." },
+            { t: "Il numero di parole del file", ok: false, why: "Le parole si contano con `wc -w`; `-l` conta le righe." }
+        ]
+    },
+    {
+        id: "3.2-18", type: "fill", ref: "3.2_01#Pipe", placeholder: "comando",
+        text: "Scrivi il comando che mostra solo le prime 5 righe del file `registro.log`.",
+        answers: ["head -n 5 registro.log", "head -5 registro.log", "head -n5 registro.log"],
+        pattern: "^head (-n ?5|-5|--lines=5) (\\./)?registro\\.log$",
+        alsoAccepted: ["head --lines=5 registro.log", "head -n 5 ./registro.log"],
+        notAccepted: ["tail -n 5 registro.log", "head registro.log", "head -n 5"],
+        why: "`head` mostra l'inizio di un file: senza opzioni le prime 10 righe, con `-n 5` (o `-5`) le prime 5. Il suo contrario è `tail`, che mostra la fine."
+    },
+    {
+        id: "3.2-19", type: "single", ref: "3.2_01#Pipe",
+        text: "Che cosa fa `tail -f /var/log/syslog`?",
+        options: [
+            { t: "Mostra la fine del file e resta aperto, aggiungendo le righe nuove", ok: true, why: "`-f` (follow) segue il file: ogni riga che il sistema aggiunge compare subito. Si esce con Ctrl+C. È il modo classico di guardare un registro mentre succede qualcosa." },
+            { t: "Mostra le ultime righe e poi cancella il file per liberare spazio", ok: false, why: "`tail` legge soltanto: non cancella e non modifica mai il file." },
+            { t: "Mostra il file dall'ultima riga alla prima", ok: false, why: "Per rovesciare l'ordine delle righe c'è `tac` (`cat` al contrario)." },
+            { t: "Forza la scrittura nel registro dei messaggi ancora in memoria", ok: false, why: "La `f` non sta per «force»: sta per «follow», seguire il file." }
+        ]
+    },
+    {
+        id: "3.2-20", type: "single", ref: "3.2_01#Pipe",
+        text: "Il file `numeri.txt` contiene, uno per riga, 10, 9 e 100. Che cosa stampa `sort -n numeri.txt`?",
+        options: [
+            { t: "9, 10, 100", ok: true, why: "`-n` ordina per valore numerico. Senza `-n`, `sort` confronta il testo carattere per carattere e mette 10 e 100 prima di 9." },
+            { t: "10, 100, 9", ok: false, why: "Questo è l'ordine alfabetico, quello di `sort` senza `-n`: il carattere 1 viene prima del 9." },
+            { t: "100, 10, 9", ok: false, why: "Dal più grande al più piccolo servirebbe anche `-r`: `sort -nr numeri.txt`." },
+            { t: "10, 9, 100", ok: false, why: "È l'ordine del file: `sort` invece riordina sempre le righe." }
+        ]
+    },
+    {
+        id: "3.2-21", type: "single", ref: "3.2_01#Pipe",
+        text: "Il file `spesa.txt` contiene, uno per riga: pane, latte, pane. Che cosa stampa `uniq spesa.txt`?",
+        options: [
+            { t: "Tutte e tre le righe: pane, latte, pane", ok: true, why: "`uniq` toglie solo i doppioni **uno sotto l'altro**. Qui i due «pane» sono separati da «latte», quindi restano. Per togliere tutti i doppioni si ordina prima: `sort spesa.txt | uniq`." },
+            { t: "Due righe: pane e latte", ok: false, why: "Succederebbe con `sort spesa.txt | uniq` (che però stamperebbe latte e pane, in ordine) o con `sort -u`." },
+            { t: "Solo latte, la riga che compare una volta", ok: false, why: "Le righe che compaiono una volta sola si ottengono con `uniq -u`, e sempre su un file ordinato." },
+            { t: "Un errore, perché il file non è ordinato", ok: false, why: "`uniq` non controlla l'ordine: lavora comunque, confrontando ogni riga con quella precedente." }
+        ]
+    },
+    {
+        id: "3.2-22", type: "multiple", ref: "3.2_01#Pipe",
+        text: "Quali comandi mostrano soltanto l'ultima riga del file `elenco.txt`?",
+        options: [
+            { t: "`tail -n 1 elenco.txt`", ok: true, why: "`tail` mostra la fine del file; `-n 1` ne prende una riga sola." },
+            { t: "`cat elenco.txt | tail -1`", ok: true, why: "`tail` legge dalla pipe come da un file; `-1` è la forma breve di `-n 1`." },
+            { t: "`head -n 1 elenco.txt`", ok: false, why: "`head` mostra l'inizio: questa è la prima riga, non l'ultima." },
+            { t: "`wc -l elenco.txt`", ok: false, why: "`wc -l` conta le righe, non le mostra." },
+            { t: "`tail elenco.txt`", ok: false, why: "Senza opzioni `tail` mostra le ultime 10 righe." }
+        ]
+    },
+    {
+        id: "3.2-23", type: "single", ref: "3.2_01#Pipe",
+        text: "Che cosa stampa `sort -r nomi.txt`?",
+        options: [
+            { t: "Le righe in ordine alfabetico inverso, dalla Z alla A", ok: true, why: "`-r` (reverse) rovescia l'ordine di `sort`. Si combina con le altre opzioni: `sort -rn` ordina i numeri dal più grande." },
+            { t: "Le righe di `nomi.txt` dall'ultima alla prima, senza ordinarle", ok: false, why: "Rovesciare il file senza ordinarlo è il lavoro di `tac`." },
+            { t: "Le righe ordinate, e il file viene riscritto ordinato", ok: false, why: "`sort` scrive sullo schermo e non modifica il file; per salvarlo si usa `-o` o un reindirizzamento verso un file diverso." },
+            { t: "Ogni riga scritta al contrario, lettera per lettera", ok: false, why: "Rovesciare le lettere di ogni riga è il lavoro di `rev`." }
+        ]
+    },
+    {
+        id: "3.2-24", type: "fill", ref: "3.2_01#Pipe", placeholder: "comando",
+        text: "Scrivi un comando che conta le righe del file `/etc/passwd`, cioè quanti utenti ci sono.",
+        answers: ["wc -l /etc/passwd", "wc -l < /etc/passwd", "cat /etc/passwd | wc -l"],
+        pattern: "^(wc (-l|--lines) (< ?)?/etc/passwd|cat /etc/passwd \\| ?wc (-l|--lines)|wc (-l|--lines) ?< ?/etc/passwd)$",
+        alsoAccepted: ["wc --lines /etc/passwd", "wc -l </etc/passwd", "cat /etc/passwd |wc -l"],
+        notAccepted: ["wc -w /etc/passwd", "wc /etc/passwd -c", "grep -c /etc/passwd"],
+        why: "`wc -l` conta le righe; ogni utente in `/etc/passwd` occupa una riga. `wc -l /etc/passwd` scrive anche il nome del file, `wc -l < /etc/passwd` solo il numero."
+    },
+    {
+        id: "3.2-25", type: "single", ref: "3.2_01#Pipe",
+        text: "Che cosa ottieni con `sort voti.txt | uniq -c`?",
+        options: [
+            { t: "Ogni voto una volta, con davanti quante volte compare", ok: true, why: "`sort` mette vicini i doppioni, `uniq` li riduce a una riga e `-c` (count) scrive davanti quante erano. È il modo classico per contare le ripetizioni." },
+            { t: "Il numero dei voti diversi, scritto in un'unica riga", ok: false, why: "Per contare le righe diverse si aggiunge `wc -l`: `sort voti.txt | uniq | wc -l`." },
+            { t: "Solo i voti che compaiono più di una volta, senza numeri", ok: false, why: "Questo lo farebbe `uniq -d`." },
+            { t: "Il file ordinato, con le righe numerate da 1", ok: false, why: "La `c` di `uniq` sta per «count»: conta le ripetizioni, non numera le righe (che fa `cat -n`)." }
+        ]
+    },
+    {
+        id: "3.2-26", type: "single", ref: "3.2_01#Pipe",
+        text: "Che cosa conta `wc -w lettera.txt`?",
+        options: [
+            { t: "Le parole del file", ok: true, why: "`-w` (words) conta le parole, cioè i gruppi di caratteri separati da spazi o a capo. `-l` conta le righe, `-c` i byte; senza opzioni `wc` li mostra tutti e tre." },
+            { t: "Le righe vuote del file", ok: false, why: "`wc` non distingue le righe vuote; le conta insieme alle altre con `-l`." },
+            { t: "Le pagine, se il file si stampasse", ok: false, why: "`wc` non conosce le pagine: conta righe, parole e byte." },
+            { t: "Le volte che compare la lettera w", ok: false, why: "Per contare le righe con un certo testo si usa `grep -c`; la `w` di `wc -w` sta per «words»." }
+        ]
+    },
+    {
+        id: "3.2-27", type: "single", ref: "3.2_01#Pipe",
+        text: "Il file `clienti.csv` ha righe come `Rossi,Milano,02 1234567`. Che cosa stampa `cut -d, -f2 clienti.csv`?",
+        options: [
+            { t: "La città di ogni riga: Milano, ...", ok: true, why: "`-d,` dice che i campi sono separati dalla virgola, `-f2` prende il secondo campo. Con `-f1,3` si prenderebbero il primo e il terzo." },
+            { t: "Le prime due righe del file intero", ok: false, why: "Le prime righe si prendono con `head -n 2`: `cut` lavora sulle colonne, non sulle righe." },
+            { t: "I primi due caratteri di ogni riga", ok: false, why: "I caratteri si scelgono con `cut -c`, per esempio `cut -c1-2`." },
+            { t: "Il file senza il secondo campo di ogni riga", ok: false, why: "`-f2` sceglie il campo da tenere, non quello da togliere." }
+        ]
+    },
 
     // ---- 3.3 Trasformare i Comandi in uno Script ----
     {
@@ -434,6 +543,103 @@ addQuestions("010-160", [
             { t: "Perché senza virgolette la variabile non viene sostituita dal valore", ok: false, why: "Viene sostituita in tutti e due i casi; cambia come il valore viene diviso in parole." },
             { t: "Perché `rm` accetta solo nomi di file scritti tra virgolette", ok: false, why: "`rm` non vede mai le virgolette: le usa la shell." },
             { t: "Non c'è differenza: le virgolette servono solo a leggere meglio", ok: false, why: "C'è: con i nomi che contengono spazi il comando senza virgolette lavora sui file sbagliati." }
+        ]
+    },
+    {
+        id: "3.3-18", type: "single", ref: "3.3_02#Cicli For",
+        text: "Nella directory ci sono `a.txt` e `b.txt`. Che cosa vale `f` durante il ciclo?",
+        code: 'for f in *.txt; do\n    echo "Trovato: $f"\ndone',
+        options: [
+            { t: "Prima `a.txt`, poi `b.txt`", ok: true, why: "La shell sostituisce `*.txt` con i nomi dei file prima di cominciare; il ciclo gira una volta per nome, e `f` prende un nome alla volta." },
+            { t: "Sempre la stringa `*.txt`, a ogni giro", ok: false, why: "Senza virgolette `*.txt` viene espanso nei nomi dei file. Resterebbe `*.txt` solo se non ci fosse nessun file `.txt`." },
+            { t: "Il contenuto di `a.txt`, una riga per giro", ok: false, why: "Il ciclo scorre i nomi dei file, non il loro contenuto." },
+            { t: "Il numero dei file trovati, cioè 2", ok: false, why: "Per contarli servirebbe altro, per esempio `ls *.txt | wc -l`." }
+        ]
+    },
+    {
+        id: "3.3-19", type: "fill", ref: "3.3_02#Cicli For", placeholder: "parola",
+        text: "Completa il ciclo: `for nome in anna luca sara; ______ echo \"Ciao $nome\"; done`",
+        answers: ["do"],
+        why: "Un ciclo `for` ha tre parole fisse: `for VARIABILE in ELENCO`, poi `do` prima dei comandi da ripetere, e `done` alla fine. Su una sola riga si separano con `;`."
+    },
+    {
+        id: "3.3-20", type: "single", ref: "3.3_02#Codici di Uscita",
+        text: "Che cosa stampa `ls /nonesiste; echo $?`, dopo il messaggio di errore di `ls`?",
+        options: [
+            { t: "Un numero diverso da 0", ok: true, why: "`$?` vale il codice con cui è uscito il comando appena finito: `ls` non ha trovato la directory ed è uscito con un errore (con GNU `ls` il codice è 2)." },
+            { t: "0, perché `echo` funziona sempre", ok: false, why: "`$?` si legge prima che `echo` finisca: vale per il comando precedente, cioè `ls`." },
+            { t: "Niente: dopo un errore la riga si ferma", ok: false, why: "Con `;` il secondo comando parte comunque, anche se il primo fallisce. Si fermerebbe con `&&`." },
+            { t: "Il testo del messaggio di errore", ok: false, why: "`$?` contiene solo un numero, da 0 a 255; il messaggio va sullo standard error." }
+        ]
+    },
+    {
+        id: "3.3-21", type: "single", ref: "3.3_02#Codici di Uscita",
+        text: "La directory `/archivio` non esiste. Che cosa succede con `cd /archivio && rm -r vecchi`?",
+        options: [
+            { t: "`cd` fallisce e `rm` non parte", ok: true, why: "`&&` esegue il secondo comando solo se il primo è uscito con 0. È una protezione importante: senza, `rm -r vecchi` cancellerebbe `vecchi` nella directory sbagliata." },
+            { t: "`cd` fallisce, ma `rm` cancella `vecchi` dove ti trovi adesso", ok: false, why: "Succederebbe con `;` al posto di `&&`: per questo, prima di comandi pericolosi, si usa `&&`." },
+            { t: "Prima viene creata `/archivio`, poi `rm` cancella", ok: false, why: "`cd` non crea directory: per crearle c'è `mkdir`." },
+            { t: "I due comandi partono insieme, in parallelo", ok: false, why: "`&&` non avvia niente in parallelo: aspetta la fine del primo e ne guarda il codice di uscita." }
+        ]
+    },
+    {
+        id: "3.3-22", type: "single", ref: "3.3_02#Codici di Uscita",
+        text: "Che cosa stampa `grep -q anna /etc/passwd || echo \"anna non c'è\"`, se anna è un utente del sistema?",
+        options: [
+            { t: "Niente", ok: true, why: "`grep -q` non scrive niente ed esce con 0 se trova il testo. `||` esegue il secondo comando solo se il primo fallisce: qui `grep` riesce, quindi `echo` non parte." },
+            { t: "anna non c'è", ok: false, why: "Il messaggio comparirebbe solo se `grep` non trovasse anna: `||` vuol dire «altrimenti»." },
+            { t: "La riga di anna in `/etc/passwd`", ok: false, why: "`-q` (quiet) zittisce `grep`: conta solo il codice di uscita." },
+            { t: "La riga di anna, poi anna non c'è", ok: false, why: "Con `-q` `grep` non scrive, e con `||` il secondo comando parte solo se il primo fallisce." }
+        ]
+    },
+    {
+        id: "3.3-23", type: "multiple", ref: "3.3_02#Codici di Uscita",
+        text: "Quali di questi comandi escono con il codice 0 (successo)?",
+        options: [
+            { t: "`true`", ok: true, why: "`true` non fa niente ed esce sempre con 0." },
+            { t: "`test 5 -gt 3`", ok: true, why: "5 è maggiore di 3: la condizione è vera e `test` esce con 0." },
+            { t: "`false`", ok: false, why: "`false` esce sempre con 1." },
+            { t: "`ls /nonesiste`", ok: false, why: "La directory non esiste: `ls` dà errore ed esce con un codice diverso da 0." },
+            { t: "`test 2 -eq 3`", ok: false, why: "2 non è uguale a 3: la condizione è falsa e `test` esce con 1." }
+        ]
+    },
+    {
+        id: "3.3-24", type: "single", ref: "3.3_02#Codici di Uscita",
+        text: "Lo script `controlla.sh` finisce con la riga `exit 3`. Che cosa stampa `./controlla.sh; echo $?`, dopo l'output dello script?",
+        options: [
+            { t: "3", ok: true, why: "`exit` chiude lo script e sceglie il suo codice di uscita; chi lo ha lanciato lo trova in `$?`." },
+            { t: "0", ok: false, why: "0 è il codice di successo: lo script l'avrebbe restituito con `exit 0`, o senza `exit` se l'ultimo comando riesce." },
+            { t: "exit 3", ok: false, why: "`$?` contiene il numero, non il testo del comando." },
+            { t: "1", ok: false, why: "Lo script ha scelto esplicitamente il codice 3." }
+        ]
+    },
+    {
+        id: "3.3-25", type: "fill", ref: "3.3_02#Codici di Uscita", placeholder: "variabile",
+        text: "Completa il comando per vedere con quale codice è uscito il comando precedente: `echo ______`",
+        answers: ["$?"],
+        pattern: "^(\\$\\?|\"\\$\\?\"|\\$\\{\\?\\})$",
+        alsoAccepted: ["\"$?\"", "${?}"],
+        notAccepted: ["$#", "$0", "?"],
+        why: "`$?` vale 0 se l'ultimo comando è andato bene e un altro numero se c'è stato un errore. Va letta subito: il comando successivo la sostituisce con il suo codice."
+    },
+    {
+        id: "3.3-26", type: "single", ref: "3.3_02#Codici di Uscita",
+        text: "Che differenza c'è tra `mkdir prova; cd prova` e `mkdir prova && cd prova`?",
+        options: [
+            { t: "Con `&&`, se `mkdir` fallisce, `cd` non parte", ok: true, why: "`;` separa due comandi indipendenti; `&&` collega il secondo al successo del primo. Se `prova` esiste già, `mkdir` fallisce: con `&&` ci si ferma lì." },
+            { t: "Nessuna: sono due modi di scrivere la stessa cosa", ok: false, why: "La differenza c'è quando il primo comando fallisce: `;` va avanti comunque, `&&` no." },
+            { t: "Con `;` i comandi partono insieme, con `&&` uno dopo l'altro", ok: false, why: "Anche con `;` i comandi partono uno dopo l'altro: è `&` che manda un comando in background." },
+            { t: "Con `&&` la directory nasce già con i permessi giusti", ok: false, why: "`&&` non cambia quello che fanno i comandi: decide solo se il secondo parte." }
+        ]
+    },
+    {
+        id: "3.3-27", type: "single", ref: "3.3_02#Cicli For",
+        text: "Che cosa stampa `for x in rosso verde blu; do echo $x; done | wc -l`?",
+        options: [
+            { t: "3", ok: true, why: "Il ciclo esegue `echo` tre volte, una riga per colore; tutto l'output del ciclo passa nella pipe e `wc -l` conta 3 righe." },
+            { t: "1", ok: false, why: "Ogni giro del ciclo scrive una riga a sé: le righe sono tre." },
+            { t: "rosso verde blu", ok: false, why: "I colori vanno nella pipe, non sullo schermo: arriva solo il conteggio di `wc -l`." },
+            { t: "13", ok: false, why: "13 sono le lettere dei tre colori messe insieme; `wc -l` conta le righe, non i caratteri." }
         ]
     }
 ]);
