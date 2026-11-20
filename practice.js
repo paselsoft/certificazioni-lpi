@@ -7,6 +7,29 @@
 // una regione che i lettori di schermo leggono man mano (role="log").
 
 const practice = { sh: null, exercise: null, done: false, historyIndex: 0, draft: "" };
+
+// I tasti rapidi sotto il terminale: testo, nome per i lettori di schermo, testo da inserire
+const TERMINAL_KEYS = [
+    ["Tab", "Tab: completa il comando o il nome del file"],
+    ["↑", "Comando precedente"],
+    ["↓", "Comando successivo"],
+    ["|", "Barra verticale (pipe)"],
+    [">", "Maggiore (reindirizza in un file)"],
+    ["~", "Tilde (la directory home)"],
+    ["/", "Barra"],
+    ["-", "Trattino"],
+    ["*", "Asterisco"],
+    ["$", "Dollaro"],
+    ["&&", "E logico, &&", "&& "]
+];
+
+// Inserisce del testo al posto del cursore (o della selezione) in un campo
+function insertAtCaret(input, text) {
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    input.value = input.value.slice(0, start) + text + input.value.slice(end);
+    input.setSelectionRange(start + text.length, start + text.length);
+}
 const exerciseKey = exercise => `${exercise.exam}/${exercise.id}`;
 const exercisesOf = (examId, objectiveId) => EXERCISES.filter(exercise => exercise.exam === examId && (!objectiveId || exercise.objective === objectiveId));
 const exerciseHref = exercise => `#/terminale/${exercise.id}`;
@@ -155,7 +178,26 @@ function renderPractice(exam, exercise) {
     input.setAttribute("autocapitalize", "off");
     input.setAttribute("autocorrect", "off");
     form.append(prompt, input);
-    terminal.append(output, form);
+    // I tasti rapidi, per il telefono e il tablet: i caratteri difficili da trovare sulla tastiera
+    // del telefono, Tab e le frecce. Si vedono sugli schermi piccoli e su quelli touch (style.css)
+    const keys = el("div", "terminal-keys");
+    keys.setAttribute("role", "group");
+    keys.setAttribute("aria-label", "Tasti rapidi");
+    TERMINAL_KEYS.forEach(([text, label, insert]) => {
+        const key = el("button", "terminal-key", text);
+        key.type = "button";
+        key.setAttribute("aria-label", label);
+        // Il fuoco resta sulla riga di comando: la tastiera del telefono non si chiude
+        key.onpointerdown = event => event.preventDefault();
+        key.onclick = () => {
+            input.focus();
+            if (text === "Tab") complete();
+            else if (text === "↑" || text === "↓") historyStep(text === "↑" ? 1 : -1);
+            else insertAtCaret(input, insert || text);
+        };
+        keys.appendChild(key);
+    });
+    terminal.append(output, form, keys);
     page.appendChild(terminal);
 
     const tools = el("div", "pager practice-tools");
@@ -201,6 +243,7 @@ function renderPractice(exam, exercise) {
         page.appendChild(real);
     }
     if (!exercise) page.appendChild(el("p", "hint", "Scrivi help per l'elenco dei comandi. Il simulatore si comporta come Bash con LC_ALL=C; i messaggi di errore sono in italiano."));
+    page.appendChild(el("p", "hint terminal-tips", "Tab completa i comandi e i nomi dei file (con la riga vuota passa al pulsante successivo); ↑ e ↓ richiamano i comandi già scritti; Ctrl+L pulisce lo schermo."));
     main.appendChild(page);
 
     const start = () => {
@@ -246,17 +289,42 @@ function renderPractice(exam, exercise) {
             }
         }
     };
-    // ↑ e ↓: i comandi già scritti
-    input.onkeydown = event => {
+    // ↑ e ↓: i comandi già scritti (step 1 indietro, -1 avanti); true se è cambiato qualcosa
+    const historyStep = step => {
         const history = practice.sh.history;
-        if (event.key === "ArrowUp" && history.length) {
+        if (step > 0 && history.length) {
             if (practice.historyIndex === 0) practice.draft = input.value;
             practice.historyIndex = Math.min(history.length, practice.historyIndex + 1);
             input.value = history[history.length - practice.historyIndex];
-            event.preventDefault();
-        } else if (event.key === "ArrowDown" && practice.historyIndex > 0) {
+            return true;
+        }
+        if (step < 0 && practice.historyIndex > 0) {
             practice.historyIndex--;
             input.value = practice.historyIndex ? history[history.length - practice.historyIndex] : practice.draft;
+            return true;
+        }
+        return false;
+    };
+    // Tab: completa il comando o il nome del file; se i nomi possibili sono più di uno, li elenca
+    // sotto la riga, come Bash
+    const complete = () => {
+        const result = simComplete(practice.sh, input.value);
+        input.value = result.text;
+        input.setSelectionRange(input.value.length, input.value.length);
+        if (result.options.length) {
+            const echo = el("div", "terminal-command");
+            echo.append(el("span", "terminal-prompt", promptText(practice.sh)), document.createTextNode(input.value));
+            output.appendChild(echo);
+            lsColumns(result.options, terminalColumns(output)).forEach(line => output.appendChild(el("div", "terminal-text", line)));
+            output.scrollTop = output.scrollHeight;
+        }
+    };
+    input.onkeydown = event => {
+        if ((event.key === "ArrowUp" || event.key === "ArrowDown") && historyStep(event.key === "ArrowUp" ? 1 : -1)) {
+            event.preventDefault();
+        } else if (event.key === "Tab" && !event.shiftKey && !event.altKey && !event.ctrlKey && input.value.trim() !== "") {
+            // Con la riga vuota Tab porta al pulsante successivo, come in ogni pagina
+            complete();
             event.preventDefault();
         } else if (event.key === "l" && event.ctrlKey) {
             output.innerHTML = "";

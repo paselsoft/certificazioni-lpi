@@ -33,7 +33,8 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   jolly, archivi, grep e filtri, reindirizzamenti, script, permessi, link) su un piccolo Linux
   simulato nel browser, con gli obiettivi che si spuntano, suggerimento e soluzione; più un
   terminale libero. I filtri di testo vengono dal motore di Pipe Dreams; le soluzioni e oltre 200
-  casi tipici sono confrontati con Bash vero.
+  casi tipici sono confrontati con Bash vero. Tab completa comandi e nomi dei file; sul telefono
+  una fila di tasti rapidi (`|`, `>`, `~`, `/`, Tab, ↑...) sta sotto il terminale.
 - **Palestra su un Linux vero**: gli stessi esercizi nel terminale di un Linux vero (anche in
   VirtualBox). Dalla pagina del terminale si scarica `palestra.sh`; `sudo bash palestra.sh installa`
   crea l'utente anna (password anna) con gli stessi file, poi `su - anna` e `lpi-esercizio t2.3-01`
@@ -89,6 +90,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `shell-network.js` | la rete finta della shell simulata: `ip`, `ifconfig`, `route`, `ss`, `netstat`, `ping`, `host` |
 | `shell-users.js` | utenti e sicurezza nella shell simulata: `who`, `w`, `last`, `sudo` (`-l`, `-u`, `-i`), `su`, le shell una dentro l'altra |
 | `shell-accounts.js` | creare utenti e gruppi nella shell simulata: `useradd`, `groupadd`, `usermod`, `userdel`, `groupdel`, `passwd`, `chpasswd` |
+| `shell-complete.js` | il completamento con Tab nel terminale (comandi e nomi dei file) |
 | `shell-help.js` | l'aiuto nella shell simulata: pagine di manuale scritte per l'app, `man`, `info`, `--help`, `help`, `locate` |
 | `lib/pipedreams-*.js` | il motore dei filtri di Pipe Dreams, copiato senza modifiche |
 | `exercise-check.js`, `practice.js` | gli esercizi al terminale: controllo degli obiettivi e pagina (`#/terminale`) |

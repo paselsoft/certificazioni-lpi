@@ -322,6 +322,18 @@ la palestra davvero ed esegue le soluzioni da anna.
   --installa` verifica, per ogni esercizio che gira in Bash vero, che `verifica` dica «da fare»
   prima della soluzione quando il simulatore dice lo stesso, e «tutto fatto» dopo.
 
+- **Tasti rapidi, Tab e Chrome vecchi (21/11/2026).** Nel terminale Tab completa la prima parola
+  con i nomi dei comandi e le altre con i nomi dei file (le directory con la `/`, i nomi con gli
+  spazi protetti da `\`, i file nascosti solo se la parola inizia con un punto, anche con `~/` e
+  dopo `|`, `;`, `&&` e `>`); con più nomi possibili completa la parte comune, e se non c'è niente
+  da aggiungere li elenca sotto la riga, come Bash (`shell-complete.js`). Con la riga vuota Tab fa
+  il suo lavoro normale (passa al pulsante successivo): la tastiera non resta intrappolata. Sotto il
+  terminale, sugli schermi fino a 700 px e su quelli touch, una fila di tasti rapidi: Tab, ↑, ↓,
+  `|`, `>`, `~`, `/`, `-`, `*`, `$`, `&&`; inseriscono al posto del cursore e non tolgono il fuoco
+  alla riga di comando, così la tastiera del telefono resta aperta. L'opzione scelta delle domande
+  è evidenziata anche nei browser senza `:has()` (Chrome prima della 105), con la classe
+  `is-checked`.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -336,10 +348,7 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 4. **Domande nuove: fatto** (vedi sopra).
 
 5. **`lpi-esercizio verifica` nella palestra: fatto** (vedi sopra).
-6. **Telefono e High Sierra**: una fila di tasti rapidi sopra la tastiera (`|`, `>`, `~`, `/`,
-   `-`, freccia su) e il completamento dei nomi con Tab. L'app usa una sola funzione recente,
-   `:has()` (Chrome 105 o successivo): se manca, l'opzione scelta resta solo meno evidenziata.
-   Da sapere: la versione di Chrome sull'iMac (High Sierra arriva al massimo alla 116).
+6. **Telefono e High Sierra: fatto** (vedi sopra).
 7. **Simulazioni per obiettivo**: oggi si salvano solo per argomento; salvandole anche per
    obiettivo, «Sono pronto?» potrebbe mostrarle riga per riga.
 

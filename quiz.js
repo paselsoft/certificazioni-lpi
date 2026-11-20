@@ -21,6 +21,15 @@ function richText(text, tag = "span", className) {
     return node;
 }
 
+// L'opzione scelta resta evidenziata (classe is-checked) anche senza :has() nel CSS
+function markChecked(container) {
+    if (!container) return;
+    container.querySelectorAll("label.option").forEach(label => {
+        const input = label.querySelector("input");
+        label.classList.toggle("is-checked", Boolean(input && input.checked));
+    });
+}
+
 const questionsOf = (examId, objectiveId) => QUESTIONS.filter(q => q.exam === examId && q.objective === objectiveId);
 const correctCount = question => question.options ? question.options.filter(option => option.ok).length : 1;
 
@@ -156,6 +165,8 @@ function renderQuestion(exam, objective, body, focus) {
             input.value = String(index);
             input.id = `option-${index}`;
             label.append(input, richText(option.t, "span", "option-text"));
+            // Come :has(input:checked) in style.css, anche nei browser che non lo conoscono
+            input.addEventListener("change", () => markChecked(label.closest("fieldset") || label.parentNode));
             item.appendChild(label);
             list.appendChild(item);
         });

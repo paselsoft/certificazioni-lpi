@@ -395,6 +395,73 @@ module.exports = {
         await page.waitForSelector("#practice-success:not([hidden])");
     },
 
+    "Tab completa comandi e nomi dei file; con la riga vuota porta al pulsante successivo": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const value = () => page.inputValue("#terminal-input");
+        const tab = async text => {
+            await page.fill("#terminal-input", text);
+            await page.press("#terminal-input", "Tab");
+            return value();
+        };
+        assert.equal(await tab("mkd"), "mkdir ");
+        assert.equal(await tab("cd doc"), "cd documenti/");
+        assert.equal(await tab("cat documenti/le"), "cat documenti/lettera.txt ");
+        assert.equal(await tab("ls .ba"), "ls .bashrc ");
+        assert.equal(await tab("cat note.txt | gre"), "cat note.txt | grep ");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "terminal-input", "il fuoco resta sulla riga di comando");
+        // Più nomi possibili: la riga resta com'è e i nomi compaiono sotto, come in Bash
+        assert.equal(await tab("ch"), "ch");
+        assert.match(await outputText(page), /anna@lpi:~\$ ch\nchgrp\s+chmod\s+chown\s+chpasswd$/);
+        // Con la riga vuota Tab esce dal terminale (tastiera: nessuna trappola)
+        await page.fill("#terminal-input", "");
+        await page.press("#terminal-input", "Tab");
+        assert.notEqual(await page.evaluate(() => document.activeElement.id), "terminal-input");
+        assert.match(await page.textContent(".terminal-tips"), /Tab completa i comandi e i nomi dei file/);
+        // Sul computer (schermo largo, mouse) i tasti rapidi non si vedono; sul telefono sì
+        await page.setViewportSize({ width: 1200, height: 800 });
+        assert.equal(await page.isVisible(".terminal-keys"), false);
+        await page.setViewportSize({ width: 390, height: 800 });
+        assert.equal(await page.isVisible(".terminal-keys"), true);
+    },
+
+    "tasti rapidi sul telefono: caratteri al cursore, Tab, frecce; il fuoco resta sulla riga": async ({ page }) => {
+        await page.setViewportSize({ width: 320, height: 700 });
+        await open(page, { hash: "#/terminale/libero" });
+        assert.equal(await page.isVisible(".terminal-keys"), true);
+        // Il tasto si sceglie dal testo che mostra
+        const key = text => page.click(`.terminal-key >> text="${text}"`);
+        await page.fill("#terminal-input", "ls");
+        await key("|");
+        await page.type("#terminal-input", " wc -l");
+        assert.equal(await page.inputValue("#terminal-input"), "ls| wc -l");
+        // Il carattere va dove si trova il cursore
+        await page.evaluate(() => document.getElementById("terminal-input").setSelectionRange(2, 2));
+        await key("-");
+        assert.equal(await page.inputValue("#terminal-input"), "ls-| wc -l");
+        await page.fill("#terminal-input", "cd ");
+        await key("~");
+        await key("/");
+        await page.type("#terminal-input", "fo");
+        await key("Tab");
+        assert.equal(await page.inputValue("#terminal-input"), "cd ~/foto/");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "terminal-input");
+        await page.press("#terminal-input", "Enter");
+        await page.fill("#terminal-input", "echo $HOME");
+        await page.press("#terminal-input", "Enter");
+        await key("↑");
+        assert.equal(await page.inputValue("#terminal-input"), "echo $HOME");
+        await key("↑");
+        assert.equal(await page.inputValue("#terminal-input"), "cd ~/foto/");
+        await key("↓");
+        assert.equal(await page.inputValue("#terminal-input"), "echo $HOME");
+        await page.fill("#terminal-input", "true ");
+        await key("&&");
+        assert.equal(await page.inputValue("#terminal-input"), "true && ");
+        assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
+        const violations = await axeViolations(page);
+        if (violations !== null) assert.deepEqual(violations, []);
+    },
+
     "terminale libero, help, clear e Ctrl+L": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         assert.equal(await page.textContent("main h1"), "Terminale libero");
