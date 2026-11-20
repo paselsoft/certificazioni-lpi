@@ -358,6 +358,40 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 6. **Telefono e High Sierra: fatto** (vedi sopra).
 7. **Simulazioni per obiettivo: fatto** (vedi sopra).
 
+### Miglioramenti ancora da fare (analisi del 20/11/2026)
+
+Tutti quelli dell'analisi del 15/11 sono fatti. Questi sono i nuovi, in ordine di utilità per
+l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
+
+1. **Più domande dove sono poche.** Il 3.2 e il 3.3 hanno 27 domande, ma 4.1 ne ha 9, 1.1 e 5.4
+   10, molti altri 11-13. Una simulazione prende per ogni obiettivo tante domande quanto il peso:
+   con 10 domande le stesse tornano presto e si ricordano a memoria. Obiettivo: almeno 15 per
+   ogni obiettivo (circa 60 domande nuove), scritte da zero dagli obiettivi pubblici.
+2. **Gli editor vi e nano nel simulatore.** Sono nei termini del 3.3 («vi e nano») e all'esame si
+   chiede come si salva, come si esce senza salvare, i modi di vi (`i`, `Esc`, `:w`, `:q!`,
+   `:wq`, `ZZ`). Oggi il simulatore risponde che gli editor non ci sono. Un piccolo editor nella
+   pagina, con i comandi di base, ed esercizi «scrivi questo file con nano/vi».
+3. **I pacchetti nel simulatore.** `dpkg`, `apt-get`, `rpm`, `yum` sono nei termini dell'1.2 ma
+   il simulatore non li conosce. Un elenco finto di pacchetti: `dpkg -l`, `dpkg -L`,
+   `apt-get install/remove`, `apt search`/`apt-cache search`, e per i sistemi Red Hat
+   `rpm -qa`/`rpm -qi` e `yum install` (che dicono «su questo sistema Debian non c'è»,
+   come su Mint). Con esercizi.
+4. **Altri esercizi dove sono pochi.** 2.1 ne ha 4, 5.4 4, 2.3, 3.1 e 5.3 5. Si possono
+   aggiungere: `type`, `history`, `export` (2.1); `ls -R`, `ls -d`, `.` e `..` (2.3);
+   `bzip2`, `xz`, `tar -tf`, `unzip -l` (3.1); `chown`, `chmod` numerico e simbolico (5.3);
+   sticky bit, `/var/tmp`, link simbolici rotti (5.4). E i primi esercizi del 4.2: guardare
+   `/dev/sd*`, `/proc/cpuinfo`, `/proc/meminfo`, le partizioni.
+5. **La data dell'esame.** Chi studia indica il giorno dell'esame (entro aprile 2027); la pagina
+   principale e «Sono pronto?» mostrano i giorni che mancano e quanto fare a settimana per finire
+   in tempo (obiettivi da studiare, domande nuove al giorno, una simulazione a settimana nell'ultimo
+   mese).
+6. **L'andamento delle simulazioni.** Nella pagina della simulazione, un piccolo grafico (senza
+   librerie) con la percentuale di ogni simulazione nel tempo e la linea del 75%, con la stessa
+   informazione anche in tabella per i lettori di schermo.
+7. **Glossario dei termini.** I termini degli obiettivi (Debian, LTS, sticky bit, `/dev/sd*`,
+   GPL…) in una pagina sola, ognuno con una spiegazione breve scritta da zero e il collegamento
+   all'obiettivo e alla lezione; con una casella di ricerca.
+
 ## Regole del progetto
 
 - Tutto in italiano, accessibile (tastiera, lettori di schermo, contrasto), leggibile anche su
