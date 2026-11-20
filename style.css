@@ -507,4 +507,5 @@ main { display: block; }
 .ready-level { display: inline-block; border: 1px solid var(--border); border-radius: 999px; padding: 0 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
 .ready-level-solid { background: var(--ok-bg); color: var(--ok); border-color: var(--ok); }
 .ready-level-weak { color: var(--warn); border-color: var(--warn); }
-.ready-facts, .ready-actions { margin: 2px 0; }
+.ready-facts, .ready-actions, .ready-obj-sims { margin: 2px 0; }
+.ready-obj-sims-low { font-weight: 600; }

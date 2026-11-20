@@ -334,6 +334,13 @@ la palestra davvero ed esegue le soluzioni da anna.
   è evidenziata anche nei browser senza `:has()` (Chrome prima della 105), con la classe
   `is-checked`.
 
+- **Simulazioni per obiettivo (20/11/2026).** Alla fine di una simulazione d'esame l'app salva,
+  oltre al risultato per argomento, anche quello per obiettivo (`objectives` nello storico, anche
+  nel backup e nella sincronizzazione). In «Sono pronto?» ogni riga mostra le ultime simulazioni
+  per quell'obiettivo («Nelle ultime 3 simulazioni: 4 giuste su 6»); sotto la metà la riga è in
+  grassetto e dice «ripassalo». Contano le stesse ultime 3 simulazioni del riepilogo; quelle fatte
+  prima di questa modifica non hanno il dettaglio per obiettivo e restano solo negli argomenti.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -349,8 +356,7 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 
 5. **`lpi-esercizio verifica` nella palestra: fatto** (vedi sopra).
 6. **Telefono e High Sierra: fatto** (vedi sopra).
-7. **Simulazioni per obiettivo**: oggi si salvano solo per argomento; salvandole anche per
-   obiettivo, «Sono pronto?» potrebbe mostrarle riga per riga.
+7. **Simulazioni per obiettivo: fatto** (vedi sopra).
 
 ## Regole del progetto
 

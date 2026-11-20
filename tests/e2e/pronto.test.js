@@ -197,6 +197,41 @@ module.exports = {
         assert.match(await page.textContent("#ready-verdict"), /nelle ultime simulazioni sei sotto il 75%/);
     },
 
+    "le ultime simulazioni, obiettivo per obiettivo (le più vecchie senza obiettivi non contano)": async ({ page }) => {
+        await at(page, DAY);
+        const topics = { 1: [5, 7], 2: [6, 9], 3: [7, 9], 4: [4, 8], 5: [4, 7] };
+        const old = simulation(26, topics);
+        const withObjectives = (date, objectives) => Object.assign(simulation(26, topics), { date, objectives });
+        await open(page, {
+            hash: "#/pronto",
+            progress: {
+                simulations: [
+                    withObjectives("2026-11-01", { "1.1": [2, 2], "4.3": [0, 2] }),
+                    Object.assign(old, { date: "2026-11-02" }),
+                    withObjectives("2026-11-03", { "1.1": [1, 2], "4.3": [1, 2] }),
+                    withObjectives("2026-11-04", { "1.1": [2, 2], "4.3": [0, 2] })
+                ]
+            }
+        });
+        // Contano le ultime 3: una senza obiettivi, due con
+        assert.match(await page.textContent("#pronto-1-1 .ready-obj-sims"), /^Nelle ultime 2 simulazioni: 3 giuste su 4 \(75%\)\.$/);
+        assert.equal(await page.locator("#pronto-1-1 .ready-obj-sims-low").count(), 0);
+        assert.match(await page.textContent("#pronto-4-3 .ready-obj-sims"), /^Nelle ultime 2 simulazioni: 1 giusta su 4 \(25%\), meno della metà: ripassalo\.$/);
+        assert.equal(await page.locator("#pronto-4-3 .ready-obj-sims-low").count(), 1);
+        assert.equal(await page.locator("#pronto-2-1 .ready-obj-sims").count(), 0, "obiettivo senza dati");
+        // Solo la vecchia: nessuna riga per obiettivo, l'argomento sì
+        await page.evaluate(sims => { progress.simulations = sims; saveProgress(false); }, [old]);
+        await go(page, "#/");
+        await go(page, "#/pronto");
+        assert.equal(await page.locator(".ready-obj-sims").count(), 0);
+        assert.match(await page.textContent("#pronto-argomento-1 + .ready-topic-sims"), /Nell'ultima simulazione: 5 giuste su 7/);
+        // Una sola con gli obiettivi
+        await page.evaluate(sims => { progress.simulations = sims; saveProgress(false); }, [withObjectives("2026-11-05", { "1.1": [1, 2] })]);
+        await go(page, "#/");
+        await go(page, "#/pronto");
+        assert.match(await page.textContent("#pronto-1-1 .ready-obj-sims"), /^Nell'ultima simulazione: 1 giusta su 2 \(50%\)\.$/);
+    },
+
     "sono pronto: 320 px e nessuna violazione axe (riepilogo e punti deboli)": async ({ page }) => {
         await at(page, DAY);
         await page.setViewportSize({ width: 320, height: 640 });
@@ -204,7 +239,7 @@ module.exports = {
             hash: "#/pronto",
             progress: {
                 answers: answers({ "3.3": [IDS["3.3"].length, 0], "2.1": [7, 2], "4.3": [2, 5] }),
-                simulations: [simulation(30, { 1: [6, 7], 2: [7, 9], 3: [8, 9], 4: [4, 8], 5: [5, 7] })]
+                simulations: [Object.assign(simulation(30, { 1: [6, 7], 2: [7, 9], 3: [8, 9], 4: [4, 8], 5: [5, 7] }), { objectives: { "1.1": [2, 2], "4.3": [0, 2] } })]
             }
         });
         assert.equal(await overflow(page), 0, "niente scorrimento orizzontale nel riepilogo");

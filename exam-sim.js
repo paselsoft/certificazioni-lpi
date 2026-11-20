@@ -7,7 +7,8 @@
 //     riprende); allo scadere la prova termina da sola.
 //   - Alla fine: risposte giuste, soglia di riferimento, risultato per argomento, le domande da
 //     rivedere con le spiegazioni. Il risultato va nello storico (progress.simulations, anche nel
-//     backup) e le risposte date entrano nelle scatole del ripasso.
+//     backup, con il risultato per argomento e per obiettivo) e le risposte date entrano nelle
+//     scatole del ripasso.
 // Il punteggio ufficiale va da 200 a 800 e si supera con 500, ma quante risposte giuste servono
 // non è pubblico (dipende dalle domande): qui la soglia del 50% è solo un riferimento.
 
@@ -68,20 +69,25 @@ function simFinish(exam, data, reason) {
     const ended = Math.min(Date.now(), data.deadline);
     const topics = {};
     exam.topics.forEach(topic => { topics[topic.id] = [0, 0]; });
+    // Anche per obiettivo, per «Sono pronto?» (readiness.js)
+    const objectives = {};
+    allObjectives(exam).forEach(({ objective }) => { objectives[objective.id] = [0, 0]; });
     let right = 0;
     data.questions.forEach(entry => {
         const question = simQuestion(entry);
         const ok = simCorrect(question, entry);
         const topic = question.objective.split(".")[0];
         topics[topic][1]++;
+        if (objectives[question.objective]) objectives[question.objective][1]++;
         if (ok) {
             topics[topic][0]++;
+            if (objectives[question.objective]) objectives[question.objective][0]++;
             right++;
         }
         if (simAnswered(entry)) recordAnswer(question, ok);
     });
     const seconds = Math.max(0, Math.round((ended - data.started) / 1000));
-    progress.simulations.push({ exam: exam.id, date: todayKey(), right, total: data.questions.length, seconds, topics });
+    progress.simulations.push({ exam: exam.id, date: todayKey(), right, total: data.questions.length, seconds, topics, objectives });
     progress.simulations = progress.simulations.slice(-SIMULATIONS_KEPT);
     saveProgress();
     Object.assign(data, { finished: true, ended, reason, right, seconds, topics });
