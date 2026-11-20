@@ -147,6 +147,12 @@ module.exports = {
         // Storico e scatole del ripasso (solo le domande con una risposta)
         const saved = await stored(page);
         assert.deepEqual(saved.simulations.map(item => [item.right, item.total]), [[30, 40]]);
+        // Anche per obiettivo: tante domande quanto il peso, 30 giuste in tutto
+        const weights = await page.evaluate(() => Object.fromEntries(allObjectives(EXAMS[0]).map(({ objective }) => [objective.id, objective.weight])));
+        const perObjective = saved.simulations[0].objectives;
+        assert.deepEqual(Object.keys(perObjective).sort(), Object.keys(weights).sort());
+        Object.entries(perObjective).forEach(([id, [right, count]]) => assert.ok(count === weights[id] && right <= count, id));
+        assert.equal(Object.values(perObjective).reduce((sum, pair) => sum + pair[0], 0), 30);
         assert.ok(saved.simulations[0].seconds >= 1200 && saved.simulations[0].seconds < 1260, `tempo: ${saved.simulations[0].seconds} s`);
         const boxes = Object.values(saved.answers).map(entry => entry.box);
         assert.equal(boxes.length, 32);
@@ -192,11 +198,15 @@ module.exports = {
         await open(page, { progress: { simulations: [
             { exam: "010-160", date: "2026-11-01", right: 22, total: 40, seconds: 3000, topics: { "1": [4, 7] } },
             { exam: "010-160", date: "x", right: 22, total: 40, seconds: 3000, topics: {} },
-            { exam: "010-160", date: "2026-11-02", right: 50, total: 40, seconds: 3000, topics: {} }
+            { exam: "010-160", date: "2026-11-02", right: 50, total: 40, seconds: 3000, topics: {} },
+            // Le voci per obiettivo rovinate si scartano, la simulazione resta
+            { exam: "010-160", date: "2026-11-03", right: 20, total: 40, seconds: 3000, topics: {}, objectives: { "1.1": [1, 2], "1.2": [3, 2], "x": [0, 1] } }
         ] } });
         const backup = await page.evaluate(() => backupData().progress.simulations);
-        assert.equal(backup.length, 1);
-        assert.match(await page.textContent("#sim-latest"), /22 giuste su 40 \(55%\) il 01\/11\/2026/);
+        assert.equal(backup.length, 2);
+        assert.equal(backup[0].objectives, undefined);
+        assert.deepEqual(backup[1].objectives, { "1.1": [1, 2] });
+        assert.match(await page.textContent("#sim-latest"), /20 giuste su 40 \(50%\) il 03\/11\/2026/);
         await go(page, "#/simulazione");
         assert.match(await page.textContent("#history"), /01\/11\/2026.*22 su 40.*55% ✓.*50 min/);
     },

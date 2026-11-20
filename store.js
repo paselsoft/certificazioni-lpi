@@ -8,7 +8,9 @@
 //            per ogni domanda: risposte giuste e sbagliate, data e esito dell'ultima risposta,
 //            scatola del ripasso (1-5) e giorno in cui torna (vedi «Ripasso» più sotto)
 //   simulations: [ { exam: "010-160", date: "2026-11-12", right: 31, total: 40, seconds: 2520,
-//                    topics: { "1": [6, 7], ... } } ]   storico delle simulazioni d'esame
+//                    topics: { "1": [6, 7], ... }, objectives: { "1.1": [2, 2], ... } } ]
+//                 storico delle simulazioni d'esame (objectives: giuste e domande per obiettivo,
+//                 dal 20/11/2026; le simulazioni di prima non ce l'hanno)
 //   practice: { "010-160/t2.4-01": "2026-11-12" }    esercizi al terminale completati
 //   removed: { "studied|010-160:2.1": "2026-11-14T10:00:00.000Z" }  spunte tolte e quando (per la
 //            sincronizzazione: senza, una spunta tolta tornerebbe dagli altri dispositivi)
@@ -71,11 +73,19 @@ function cleanProgress(data) {
         removed: pick(source.removed, /^(studied\|[\w.-]+:\d+\.\d+|read\|[\w.-]+\/\d+\.\d+_\d+|practice\|[\w.-]+\/t\d+\.\d+-\d+)$/)
     };
     if (Array.isArray(source.simulations)) {
+        const isPair = pair => Array.isArray(pair) && pair.length === 2 && pair.every(isCount) && pair[0] <= pair[1];
         progress.simulations = source.simulations.filter(item => isPlainObject(item) && typeof item.exam === "string"
             && isDate(item.date) && isCount(item.right) && isCount(item.total) && item.total > 0 && item.right <= item.total
-            && isCount(item.seconds) && isPlainObject(item.topics)
-            && Object.values(item.topics).every(pair => Array.isArray(pair) && pair.length === 2 && pair.every(isCount) && pair[0] <= pair[1]))
-            .map(item => ({ exam: item.exam, date: item.date, right: item.right, total: item.total, seconds: item.seconds, topics: item.topics }))
+            && isCount(item.seconds) && isPlainObject(item.topics) && Object.values(item.topics).every(isPair))
+            .map(item => {
+                const clean = { exam: item.exam, date: item.date, right: item.right, total: item.total, seconds: item.seconds, topics: item.topics };
+                // Per obiettivo: si tengono solo le voci giuste (le simulazioni vecchie non le hanno)
+                if (isPlainObject(item.objectives)) {
+                    const objectives = Object.fromEntries(Object.entries(item.objectives).filter(([id, pair]) => /^\d+\.\d+$/.test(id) && isPair(pair)));
+                    if (Object.keys(objectives).length) clean.objectives = objectives;
+                }
+                return clean;
+            })
             .slice(-SIMULATIONS_KEPT);
     }
     Object.entries(isPlainObject(source.answers) ? source.answers : {}).forEach(([key, value]) => {

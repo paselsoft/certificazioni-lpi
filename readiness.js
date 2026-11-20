@@ -1,6 +1,7 @@
 // «Sono pronto?» (#/pronto): un riepilogo per obiettivo che unisce domande, ripasso, simulazioni,
 // lezioni ed esercizi al terminale, per capire dove si è deboli e se è ora di prenotare l'esame.
-// Non salva niente di nuovo: legge i progressi che ci sono già (store.js).
+// Non salva niente di nuovo: legge i progressi che ci sono già (store.js). Le ultime simulazioni
+// d'esame compaiono per argomento e, se le hanno salvate (dal 20/11/2026), anche per obiettivo.
 //
 // Per ogni obiettivo conta le domande la cui ULTIMA risposta è giusta, sul totale delle sue
 // domande: quelle mai viste contano come non sapute (stima prudente).
@@ -53,17 +54,26 @@ function examReadiness(exam) {
     const sims = progress.simulations.filter(item => item.exam === exam.id).slice(-READY_SIMS);
     const simRight = sims.reduce((sum, item) => sum + item.right, 0);
     const simTotal = sims.reduce((sum, item) => sum + item.total, 0);
-    const topics = {};
-    sims.forEach(item => Object.keys(item.topics || {}).forEach(id => {
-        const sum = topics[id] || (topics[id] = [0, 0]);
-        sum[0] += item.topics[id][0];
-        sum[1] += item.topics[id][1];
-    }));
+    // Le somme per argomento e per obiettivo; objectiveSims: quante delle ultime simulazioni hanno
+    // il risultato per obiettivo (le più vecchie non ce l'hanno)
+    const sumUp = key => {
+        const sums = {};
+        sims.forEach(item => Object.keys(item[key] || {}).forEach(id => {
+            const sum = sums[id] || (sums[id] = [0, 0]);
+            sum[0] += item[key][id][0];
+            sum[1] += item[key][id][1];
+        }));
+        return sums;
+    };
+    const topics = sumUp("topics");
+    const objectiveSims = sims.filter(item => item.objectives).length;
+    const objectives = sumUp("objectives");
+    rows.forEach(row => { row.sims = objectives[row.objective.id] || null; });
     // I più deboli: dove si guadagnano più domande d'esame (esclusi quelli già solidi)
     const weak = rows.filter(row => row.level !== "solid").sort((a, b) => b.gain - a.gain).slice(0, READY_WEAK);
     return {
         rows, weak, weight, total, answered, estimate, estimateShare: estimate / weight,
-        sims: sims.length, simShare: simTotal ? simRight / simTotal : null, topics
+        sims: sims.length, simShare: simTotal ? simRight / simTotal : null, topics, objectiveSims
     };
 }
 
@@ -112,8 +122,8 @@ function startWeakQuiz(exam) {
 
 const percentText = share => `${Math.round(share * 100)}%`;
 
-// Una riga: obiettivo, livello, barra delle domande giuste, dettagli e collegamenti
-function readinessItem(exam, row) {
+// Una riga: obiettivo, livello, barra delle domande giuste, dettagli, simulazioni e collegamenti
+function readinessItem(exam, row, objectiveSims = 0) {
     const { objective } = row;
     const item = el("li", `ready-item ready-${row.level}`);
     item.id = `pronto-${objective.id.replace(".", "-")}`;
@@ -131,6 +141,15 @@ function readinessItem(exam, row) {
     facts.push(`lezioni lette ${row.read} su ${row.lessons}`);
     if (row.exercises) facts.push(`esercizi al terminale ${row.practiced} su ${row.exercises}`);
     item.appendChild(el("p", "ready-facts hint", `${facts.join(" · ")}.`));
+    // Le ultime simulazioni, per questo obiettivo: meno della metà giuste è un campanello d'allarme
+    if (row.sims && row.sims[1]) {
+        const [right, total] = row.sims;
+        const when = objectiveSims === 1 ? "Nell'ultima simulazione" : `Nelle ultime ${objectiveSims} simulazioni`;
+        const low = right / total < READY_FAIR;
+        const line = el("p", `ready-obj-sims hint${low ? " ready-obj-sims-low" : ""}`,
+            `${when}: ${right} ${right === 1 ? "giusta" : "giuste"} su ${total} (${percentText(right / total)})${low ? ", meno della metà: ripassalo" : ""}.`);
+        item.appendChild(line);
+    }
     const actions = el("p", "ready-actions");
     const questions = link(`Domande ${objective.id}`, quizHref(exam, objective));
     actions.appendChild(questions);
@@ -237,7 +256,7 @@ function renderReadiness(exam) {
             section.appendChild(el("p", "ready-topic-sims hint", `${when}: ${sum[0]} giuste su ${sum[1]} (${percentText(sum[0] / sum[1])}).`));
         }
         const list = el("ul", "ready-list");
-        rows.forEach(row => list.appendChild(readinessItem(exam, row)));
+        rows.forEach(row => list.appendChild(readinessItem(exam, row, data.objectiveSims)));
         section.appendChild(list);
         page.appendChild(section);
     });

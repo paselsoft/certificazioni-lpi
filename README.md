@@ -21,8 +21,9 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   giusta la sposta nella scatola successiva (torna dopo 2, 4, 8, poi 16 giorni). Prima le domande
   scadute, poi quelle nuove degli obiettivi che stai studiando.
 - **Sono pronto?**: un riepilogo per obiettivo che unisce domande, ripasso, simulazioni, lezioni ed
-  esercizi; la stima «se l'esame fosse oggi», gli obiettivi da cui conviene ripartire e una serie
-  di 10 domande sui punti deboli. È un'indicazione, non una promessa: la soglia vera dell'esame
+  esercizi (con il risultato delle ultime simulazioni, obiettivo per obiettivo); la stima «se
+  l'esame fosse oggi», gli obiettivi da cui conviene ripartire e una serie di 10 domande sui punti
+  deboli. È un'indicazione, non una promessa: la soglia vera dell'esame
   non è pubblica.
 - **Simulazione d'esame**: 40 domande in 60 minuti, tante per obiettivo quanto il suo peso, come
   all'esame. Si può segnare una domanda e tornarci; il tempo continua anche chiudendo la pagina e
