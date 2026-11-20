@@ -295,6 +295,18 @@ la palestra davvero ed esegue le soluzioni da anna.
   Restano più lunghe di poco (al massimo del 20%) tre domande in cui le opzioni sono nomi brevi,
   come Impress e Writer.
 
+- **27 domande nuove (20/11/2026).** Sugli argomenti che ne avevano una sola o nessuna, scritte da
+  zero e già bilanciate per lunghezza: 11 per il 3.2 (`wc -l` e `-w`, `head -n`, `tail -f`,
+  `sort -n` e `-r`, `uniq` che toglie solo i doppioni vicini, `sort | uniq -c`, `cut -d -f`,
+  l'ultima riga con `tail`), 10 per il 3.3 (il ciclo `for` con i caratteri jolly e in una pipe, la
+  parola `do`, `$?` dopo un errore e dopo `exit 3`, `&&` contro `;`, `||`, quali comandi escono con
+  0) e 6 per il 4.4 (maschera e `/24`, la riga `UG` di `route -n`, `route -n` e `netstat -rn`,
+  perché `ifconfig` manca su molti sistemi, `-n`, quali comandi mostrano gli indirizzi). Ora sono
+  258 domande, da 9 a 27 per obiettivo. Ogni fatto citato (risultati di `uniq`, `sort -n`, il
+  codice 2 di `ls`, i conteggi) è stato provato con Bash vero; il controllo anti-copia ha fatto
+  riscrivere due frasi uguali a una lezione. I test nel browser leggono il numero delle domande
+  invece di averlo scritto.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -306,8 +318,8 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
    (2.2, 4.3, 4.4, 5.1, 5.2) hanno avuto 10 esercizi ciascuno o quasi (vedi sopra). Ora ogni
    obiettivo d'esame che si può provare al terminale ha i suoi esercizi.
 3. **Domande: risposte giuste troppo lunghe: fatto** (vedi sopra).
-4. **Domande nuove (25-30)** sugli argomenti con una sola domanda o nessuna: ciclo `for`, `$?`,
-   `sort`, `wc`, `head`; `&&` e `||`, `uniq`, `ifconfig` e `route`, `tail -f`.
+4. **Domande nuove: fatto** (vedi sopra).
+
 5. **`lpi-esercizio verifica` nella palestra**: su un Linux vero dice quali obiettivi
    dell'esercizio sono raggiunti. Funziona bene per file, permessi e archivi; gli obiettivi del
    tipo «l'ultimo comando mostra...» sul sistema vero non si controllano allo stesso modo.

@@ -482,5 +482,65 @@ addQuestions("010-160", [
         text: "Scrivi il comando moderno (con `ip`) che mostra la tabella di routing.",
         answers: ["ip route show", "ip route", "ip r", "ip route list", "ip r show", "ip r list"],
         why: "`ip route show` elenca le reti raggiungibili e il gateway predefinito; il comando più vecchio è `route`."
+    },
+    {
+        id: "4.4-15", type: "single", ref: "4.4_01#Sottoreti IPv4",
+        text: "`ifconfig` mostra `inet 192.168.1.50  netmask 255.255.255.0`. Come si scrive lo stesso indirizzo nella forma che usa `ip addr`?",
+        options: [
+            { t: "`192.168.1.50/24`", ok: true, why: "La maschera 255.255.255.0 ha 24 bit a 1 (tre volte 8): nella notazione CIDR si scrive `/24`. La rete è 192.168.1.0/24." },
+            { t: "`192.168.1.50/255`", ok: false, why: "Dopo la barra va il numero dei bit della maschera, non l'ultimo numero della maschera." },
+            { t: "`192.168.1.50/8`", ok: false, why: "`/8` corrisponde alla maschera 255.0.0.0." },
+            { t: "`192.168.1.0/50`", ok: false, why: "Un indirizzo IPv4 ha 32 bit: un prefisso di 50 non esiste." }
+        ]
+    },
+    {
+        id: "4.4-16", type: "single", ref: "4.4_01#Routing IPv4",
+        text: "In `route -n` c'è la riga `0.0.0.0  192.168.1.1  0.0.0.0  UG  100 0 0 enp0s3`. Che cosa vuol dire?",
+        options: [
+            { t: "Che il gateway predefinito è 192.168.1.1", ok: true, why: "La destinazione `0.0.0.0` con maschera `0.0.0.0` vale per tutte le reti non indicate altrove: è la riga `default`. La `G` dei flag dice che si passa da un gateway, `U` che la rotta è attiva." },
+            { t: "Che l'indirizzo IP del computer è 192.168.1.1", ok: false, why: "L'indirizzo del computer si vede con `ip addr` o `ifconfig`; in questa colonna c'è il router da cui passare." },
+            { t: "Che la scheda `enp0s3` non ha un indirizzo", ok: false, why: "`0.0.0.0` qui indica «tutte le destinazioni», non un indirizzo mancante." },
+            { t: "Che il traffico per 192.168.1.1 è bloccato", ok: false, why: "`route` non blocca niente: dice soltanto dove mandare i pacchetti." }
+        ]
+    },
+    {
+        id: "4.4-17", type: "fill", ref: "4.4_01#Routing IPv4", placeholder: "comando",
+        text: "Scrivi il comando storico (pacchetto net-tools) che mostra la tabella di instradamento con gli indirizzi in numeri, senza tradurli in nomi.",
+        answers: ["route -n", "netstat -rn", "netstat -nr"],
+        pattern: "^(route -n|netstat -(rn|nr)|netstat -r -n|netstat -n -r)$",
+        alsoAccepted: ["netstat -r -n", "netstat -n -r"],
+        notAccepted: ["route", "ip route show", "netstat -tln", "route -r"],
+        why: "`route -n` mostra le rotte con i numeri; `netstat -rn` fa lo stesso. Il comando moderno è `ip route show`. Senza `-n` si vedono nomi come `default` e `_gateway`."
+    },
+    {
+        id: "4.4-18", type: "single", ref: "4.4_01#Configurazione di Indirizzi IPv4",
+        text: "Su molte distribuzioni recenti `ifconfig` risponde «comando non trovato». Perché?",
+        options: [
+            { t: "Fa parte del vecchio pacchetto net-tools", ok: true, why: "`ifconfig`, `route` e `netstat` vengono da net-tools, che spesso non si installa più. Al loro posto ci sono `ip addr`, `ip route` e `ss` (iproute2); net-tools si può comunque installare." },
+            { t: "Serve sempre `sudo`, anche solo per leggere", ok: false, why: "Per guardare la configurazione `ifconfig` non richiede root; il messaggio «comando non trovato» vuol dire che il programma non c'è." },
+            { t: "Funziona solo con le reti Wi-Fi, non via cavo", ok: false, why: "`ifconfig` mostra tutte le interfacce, via cavo e senza fili." },
+            { t: "È stato rinominato `ipconfig`", ok: false, why: "`ipconfig` è il comando di Windows; su Linux il sostituto è `ip`." }
+        ]
+    },
+    {
+        id: "4.4-19", type: "single", ref: "4.4_01#Routing IPv4",
+        text: "Che cosa cambia l'opzione `-n` in `route -n` (e in `netstat -n`)?",
+        options: [
+            { t: "Mostra i numeri senza tradurli in nomi", ok: true, why: "Senza `-n` il comando prova a tradurre indirizzi e porte in nomi (per esempio `default` o `_gateway`), e se il DNS è lento aspetta. Con `-n` mostra subito i numeri." },
+            { t: "Mostra solo le rotte aggiunte di recente", ok: false, why: "`route` non tiene la data delle rotte: `-n` riguarda solo come vengono scritte." },
+            { t: "Elimina le rotte che non servono più", ok: false, why: "Per togliere una rotta si usa `route del` (o `ip route del`), come root." },
+            { t: "Conta le rotte e ne scrive il numero", ok: false, why: "La `n` sta per «numerico», non per «numero di righe»." }
+        ]
+    },
+    {
+        id: "4.4-20", type: "multiple", ref: "4.4_01#Configurazione di Indirizzi IPv4",
+        text: "Quali comandi mostrano gli indirizzi IP assegnati alle schede di rete del computer?",
+        options: [
+            { t: "`ip addr show`", ok: true, why: "È il comando moderno: per ogni scheda mostra le righe `inet` (IPv4) e `inet6` (IPv6)." },
+            { t: "`ifconfig`", ok: true, why: "Il comando storico di net-tools: mostra `inet`, `netmask` e `broadcast` di ogni scheda." },
+            { t: "`route -n`", ok: false, why: "`route` mostra la tabella di instradamento, cioè dove vanno i pacchetti, non gli indirizzi delle schede." },
+            { t: "`ss -tln`", ok: false, why: "`ss` mostra le porte in ascolto e le connessioni." },
+            { t: "`host lpi.org`", ok: false, why: "`host` chiede al DNS l'indirizzo di un nome, non quelli del tuo computer." }
+        ]
     }
 ]);

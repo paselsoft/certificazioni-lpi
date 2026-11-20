@@ -165,7 +165,8 @@ module.exports = {
         await go(page, "#/010-160/obiettivo/5.3");
         assert.match(await page.textContent("#domande + a + .hint"), /Hai risposto a 3 domande su 11: l'ultima risposta è giusta per 2\./);
         await go(page, "#/");
-        assert.match(await page.textContent("#summary"), /Domande con l'ultima risposta giusta: 2 su 231/);
+        const total = await page.evaluate(() => QUESTIONS.length);
+        assert.match(await page.textContent("#summary"), new RegExp(`Domande con l'ultima risposta giusta: 2 su ${total}`));
         assert.match(await page.textContent("#obiettivo-5-3"), /domande giuste 2 su 11/);
         // Le risposte entrano nel backup
         const backup = await page.evaluate(() => backupData());
@@ -176,7 +177,7 @@ module.exports = {
         await page.setViewportSize({ width: 320, height: 640 });
         await open(page);
         const ids = await page.evaluate(() => QUESTIONS.map(q => q.id));
-        assert.equal(ids.length, 231);
+        assert.ok(ids.length >= 250, `domande: ${ids.length}`);
         const problems = [];
         for (const id of ids) {
             await only(page, id.split("-")[0], [id]);
@@ -192,7 +193,7 @@ module.exports = {
             if (result.width > 0) problems.push(`${id}: scorre di lato di ${result.width} px`);
         }
         assert.deepEqual(problems, []);
-        assert.equal(Object.keys((await stored(page)).answers).length, 231);
+        assert.equal(Object.keys((await stored(page)).answers).length, ids.length);
         assert.ok(await overflow(page) <= 0);
     },
 
