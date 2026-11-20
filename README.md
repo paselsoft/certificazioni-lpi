@@ -37,7 +37,8 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
 - **Palestra su un Linux vero**: gli stessi esercizi nel terminale di un Linux vero (anche in
   VirtualBox). Dalla pagina del terminale si scarica `palestra.sh`; `sudo bash palestra.sh installa`
   crea l'utente anna (password anna) con gli stessi file, poi `su - anna` e `lpi-esercizio t2.3-01`
-  prepara l'esercizio e ne mostra il compito.
+  prepara l'esercizio e ne mostra il compito; alla fine `lpi-esercizio verifica` dice quali obiettivi
+  sono raggiunti.
 - **Progressi**: «Ho studiato questo obiettivo», «Ho letto questa lezione», le risposte alle domande,
   barre dei progressi.
   Restano nel browser; dalla pagina **Backup** si scaricano in un file e si ripristinano.
