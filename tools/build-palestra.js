@@ -13,7 +13,7 @@ const target = path.join(root, "palestra", "palestra.sh");
 
 function loadContext() {
     const context = vm.createContext({ TextEncoder });
-    for (const file of ["data/exams.js", "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "shell-accounts.js", "exercise-check.js", "exercises/010-160.js"]) {
+    for (const file of ["data/exams.js", "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "shell-accounts.js", "shell-editor.js", "exercise-check.js", "exercises/010-160.js"]) {
         vm.runInContext(fs.readFileSync(path.join(root, file), "utf8"), context, { filename: file });
     }
     return context;

@@ -7,9 +7,6 @@ const SIM_BUILTINS = new Set(["cd", "pwd", "echo", "export", "unset", "type", "h
 
 // Comandi che esistono su un sistema vero ma non nel simulatore
 const SIM_UNAVAILABLE = Object.fromEntries([
-    ["vi", "gli editor non sono disponibili nel simulatore: per scrivere in un file usa echo con > o >>"],
-    ["vim", "gli editor non sono disponibili nel simulatore: per scrivere in un file usa echo con > o >>"],
-    ["nano", "gli editor non sono disponibili nel simulatore: per scrivere in un file usa echo con > o >>"],
     ...["ps", "top", "free", "kill", "df", "du", "ping", "ip", "ss", "netstat", "ifconfig", "host", "dmesg", "journalctl",
         "useradd", "userdel", "groupadd", "passwd", "su", "apt", "apt-get", "yum", "dnf", "dpkg", "rpm", "ssh", "locate", "updatedb", "awk", "xargs"]
         .map(name => [name, "comando non disponibile nel simulatore (su un sistema Linux vero esiste: lo trovi nelle domande e nelle lezioni)"])
@@ -1667,6 +1664,7 @@ const SIM_HELP = [
     "  aiuto: man (anche man -k e man 5 passwd), apropos, whatis, info, COMANDO --help, help cd, locate, updatedb",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",
+    "  editor: nano FILE (Ctrl+O salva, Ctrl+X esce), vi FILE o vim FILE (i scrive, Esc, :wq salva ed esce, :q! esce senza salvare)",
     "Funzionano anche | ; && || > >> < 2> 2>&1 &>, le virgolette, $VARIABILI, ~ e i caratteri jolly * ? [ ].",
     "Con ↑ e ↓ richiami i comandi precedenti."
 ];

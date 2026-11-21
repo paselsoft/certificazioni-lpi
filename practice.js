@@ -6,7 +6,7 @@
 // Il terminale: una riga di comando (↑ e ↓ richiamano i comandi precedenti) e l'output sopra, in
 // una regione che i lettori di schermo leggono man mano (role="log").
 
-const practice = { sh: null, exercise: null, done: false, historyIndex: 0, draft: "" };
+const practice = { sh: null, exercise: null, done: false, historyIndex: 0, draft: "", editor: null };
 
 // I tasti rapidi sotto il terminale: testo, nome per i lettori di schermo, testo da inserire
 const TERMINAL_KEYS = [
@@ -243,7 +243,7 @@ function renderPractice(exam, exercise) {
         page.appendChild(real);
     }
     if (!exercise) page.appendChild(el("p", "hint", "Scrivi help per l'elenco dei comandi. Il simulatore si comporta come Bash con LC_ALL=C; i messaggi di errore sono in italiano."));
-    page.appendChild(el("p", "hint terminal-tips", "Tab completa i comandi e i nomi dei file (con la riga vuota passa al pulsante successivo); ↑ e ↓ richiamano i comandi già scritti; Ctrl+L pulisce lo schermo."));
+    page.appendChild(el("p", "hint terminal-tips", "Tab completa i comandi e i nomi dei file (con la riga vuota passa al pulsante successivo); ↑ e ↓ richiamano i comandi già scritti; Ctrl+L pulisce lo schermo. Gli editor nano e vi si aprono qui, al posto della riga di comando."));
     main.appendChild(page);
 
     const start = () => {
@@ -258,6 +258,7 @@ function renderPractice(exam, exercise) {
         if (exercise) updateGoals(goals, exercise);
     };
     restart.onclick = () => {
+        if (practice.editor) practice.editor.close();
         start();
         input.value = "";
         input.focus();
@@ -280,6 +281,16 @@ function renderPractice(exam, exercise) {
         while (output.childElementCount > 400) output.firstElementChild.remove();
         output.scrollTop = output.scrollHeight;
         prompt.textContent = promptText(practice.sh);
+        // nano, vi e vim: l'editor prende il posto del terminale finché non si esce
+        const editor = practice.sh.pendingEditor;
+        if (editor) {
+            practice.sh.pendingEditor = null;
+            openPracticeEditor(editor);
+            return;
+        }
+        afterCommand();
+    };
+    const afterCommand = () => {
         if (exercise) {
             updateGoals(goals, exercise);
             if (!practice.done && exerciseDone(practice.sh, exercise)) {
@@ -288,6 +299,19 @@ function renderPractice(exam, exercise) {
                 showPracticeSuccess(exam, exercise, success);
             }
         }
+    };
+    const terminalParts = [output, form, keys];
+    const openPracticeEditor = spec => {
+        terminalParts.forEach(part => { part.hidden = true; });
+        const sh = practice.sh;
+        practice.editor = openEditor(terminal, sh, spec, () => {
+            practice.editor = null;
+            terminalParts.forEach(part => { part.hidden = false; });
+            output.scrollTop = output.scrollHeight;
+            input.focus();
+            // «Ricomincia» chiude l'editor della shell di prima: gli obiettivi sono già quelli nuovi
+            if (practice.sh === sh) afterCommand();
+        });
     };
     // ↑ e ↓: i comandi già scritti (step 1 indietro, -1 avanti); true se è cambiato qualcosa
     const historyStep = step => {

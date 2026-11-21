@@ -796,6 +796,8 @@ function globToRegex(part) {
 function simRun(sh, text) {
     const display = [];
     sh.lastCommand = text;
+    // L'editor aperto dalla riga di prima (nano, vi) è già stato mostrato dalla pagina
+    sh.pendingEditor = null;
     if (text.trim()) sh.history.push(text);
     sh.lastOutput = "";
     sh.lastErrors = "";

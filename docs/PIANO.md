@@ -351,6 +351,22 @@ la palestra davvero ed esegue le soluzioni da anna.
   risultati dei comandi citati (`echo file[0-9].txt`, `tar -tf` su uno zip, `unzip -x`, `ls
   -size`) sono stati provati sul sistema vero.
 
+- **Gli editor nano e vi (21/11/2026).** Nel simulatore `nano`, `vi` e `vim` aprono un editor al
+  posto della riga di comando (`shell-editor.js` prepara l'apertura, `editor-view.js` lo mostra).
+  Il testo sta in una vera area di testo, letta dai lettori di schermo. nano: si scrive subito,
+  Ctrl+O salva chiedendo il nome, Ctrl+X esce (con modifiche chiede S/N/Ctrl+C), Ctrl+K e Ctrl+U
+  tagliano e incollano la riga, Ctrl+C dice la posizione; i comandi in basso sono anche pulsanti.
+  vi: modo comandi e modo inserimento (`i a I A o O`, Esc), `h j k l` e frecce, `0 $ gg G`,
+  `x dd yy p P u`, `/` e `n`, `:w :q :q! :wq :x :w NOME`, un numero per andare alla riga, `ZZ` e
+  `ZQ`; con modifiche `:q` si rifiuta (E37). Sul telefono il tasto Esc è un pulsante, e quello che
+  si scrive nel modo comandi viene intercettato dal testo cambiato. Si salva con i permessi di chi
+  ha aperto l'editor (`sudo nano /etc/hostname` sì, da anna no); non si apre in una pipe, con `>` o
+  in uno script. Pagine `man nano`, `man vi`, `man vim` e una riga in `help`. 5 esercizi nuovi nel
+  3.3 (ora 16): un file con nano, una riga aggiunta salvando all'uscita, un file con vi, `dd` per
+  togliere una riga, uno script scritto con vim. Negli esercizi con un editor, `steps` contiene i
+  tasti per i test nel browser; nella palestra (Linux vero) si usano i nano e vi veri, e
+  `lpi-esercizio verifica` controlla il contenuto dei file.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -374,10 +390,7 @@ Tutti quelli dell'analisi del 15/11 sono fatti. Questi sono i nuovi, in ordine d
 l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
 1. **Più domande dove sono poche: fatto** (vedi sopra).
-2. **Gli editor vi e nano nel simulatore.** Sono nei termini del 3.3 («vi e nano») e all'esame si
-   chiede come si salva, come si esce senza salvare, i modi di vi (`i`, `Esc`, `:w`, `:q!`,
-   `:wq`, `ZZ`). Oggi il simulatore risponde che gli editor non ci sono. Un piccolo editor nella
-   pagina, con i comandi di base, ed esercizi «scrivi questo file con nano/vi».
+2. **Gli editor vi e nano nel simulatore: fatto** (vedi sopra).
 3. **I pacchetti nel simulatore.** `dpkg`, `apt-get`, `rpm`, `yum` sono nei termini dell'1.2 ma
    il simulatore non li conosce. Un elenco finto di pacchetti: `dpkg -l`, `dpkg -L`,
    `apt-get install/remove`, `apt search`/`apt-cache search`, e per i sistemi Red Hat
