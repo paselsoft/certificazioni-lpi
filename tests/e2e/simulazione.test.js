@@ -211,6 +211,37 @@ module.exports = {
         assert.match(await page.textContent("#history"), /01\/11\/2026.*22 su 40.*55% ✓.*50 min/);
     },
 
+    "andamento: grafico delle simulazioni con la linea del 75%, descritto a parole, a 320 px": async ({ page }) => {
+        const sim = (date, right) => ({ exam: "010-160", date, right, total: 40, seconds: 3000, topics: {} });
+        // Una sola simulazione: niente grafico
+        await open(page, { hash: "#/simulazione", progress: { simulations: [sim("2026-11-01", 22)] } });
+        assert.equal(await page.locator("#history tbody tr").count(), 1);
+        assert.equal(await page.locator("#sim-chart").count(), 0);
+        // Quattro simulazioni: un punto per ognuna, in ordine di data; le due sopra il 75% piene
+        await page.evaluate(sims => { progress.simulations = sims; saveProgress(false); },
+            [sim("2026-11-01", 22), sim("2026-11-05", 26), sim("2026-11-09", 31), sim("2026-11-12", 33)]);
+        await go(page, "#/");
+        await go(page, "#/simulazione");
+        assert.equal(await page.locator("#sim-chart circle").count(), 4);
+        assert.equal(await page.locator("#sim-chart circle.is-above").count(), 2);
+        assert.equal(await page.getAttribute("#sim-chart svg", "role"), "img");
+        assert.equal(await page.textContent("#sim-chart-title"), "Andamento delle ultime 4 simulazioni: dal 55% del 01/11/2026 all'83% del 12/11/2026; il migliore 83%; 2 sopra il 75%. I numeri sono anche nella tabella.");
+        assert.equal(await page.textContent("#sim-chart-caption"), "Dalla prima all'ultima di queste 4: dal 55% all'83% (+28 punti). La linea tratteggiata è il 75%, il risultato da raggiungere con margine.");
+        assert.deepEqual(await page.evaluate(() => [withArticle("dal", 8), withArticle("al", 11), withArticle("al", 100), withArticle("dal", 81)]), ["dall'8%", "all'11%", "al 100%", "dall'81%"]);
+        // Il punto più alto è in alto (y più piccola), la linea del 75% c'è
+        const ys = await page.$$eval("#sim-chart circle", circles => circles.map(circle => Number(circle.getAttribute("cy"))));
+        assert.ok(ys[3] < ys[0], `y: ${ys.join(", ")}`);
+        assert.equal(await page.locator("#sim-chart .sim-chart-target").count(), 1);
+        assert.equal(await page.textContent("#sim-chart circle:last-of-type title"), "12/11/2026: 83%");
+        await page.setViewportSize({ width: 320, height: 700 });
+        assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
+        for (const scheme of ["light", "dark"]) {
+            await page.emulateMedia({ colorScheme: scheme });
+            const violations = await axeViolations(page);
+            if (violations !== null) assert.deepEqual(violations, [], scheme);
+        }
+    },
+
     "simulazione: 320 px e nessuna violazione axe (prova e risultato)": async ({ page }) => {
         await page.clock.install({ time: START });
         await page.setViewportSize({ width: 320, height: 640 });

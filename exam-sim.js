@@ -112,6 +112,79 @@ function tableWrap(table, label) {
     return wrap;
 }
 
+// ---- L'andamento: un piccolo grafico (SVG, senza librerie) con la percentuale di ogni
+// simulazione, dalla più vecchia alla più recente, e la linea del 75% consigliato in «Sono
+// pronto?». Per i lettori di schermo: una descrizione in parole; i numeri sono nella tabella.
+const SIM_CHART_MAX = 20;
+const SIM_CHART_TARGET = 0.75;
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function svgEl(tag, attributes = {}, text) {
+    const node = document.createElementNS(SVG_NS, tag);
+    Object.entries(attributes).forEach(([name, value]) => node.setAttribute(name, value));
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+
+const simPercent = item => Math.round(item.right / item.total * 100);
+// «al 55%» ma «all'83%»: davanti a uno, otto, undici e ottanta l'articolo si apostrofa
+function withArticle(preposition, percent) {
+    const elided = percent === 1 || percent === 8 || percent === 11 || (percent >= 80 && percent <= 89);
+    return elided ? `${preposition === "il" ? "l" : `${preposition}l`}'${percent}%` : `${preposition} ${percent}%`;
+}
+
+// Il grafico per le simulazioni (in ordine di data); null se sono meno di due
+function simChart(list) {
+    const items = list.slice(-SIM_CHART_MAX);
+    if (items.length < 2) return null;
+    const width = 360;
+    const height = 190;
+    const left = 40;
+    const right = 14;
+    const top = 12;
+    const bottom = 30;
+    const plotWidth = width - left - right;
+    const plotHeight = height - top - bottom;
+    const x = index => left + (items.length === 1 ? plotWidth / 2 : index * plotWidth / (items.length - 1));
+    const y = percent => top + plotHeight * (1 - percent / 100);
+    const percents = items.map(simPercent);
+    const first = items[0];
+    const last = items[items.length - 1];
+    const best = Math.max(...percents);
+    const above = percents.filter(percent => percent >= SIM_CHART_TARGET * 100).length;
+    const description = `Andamento delle ultime ${items.length} simulazioni: ${withArticle("dal", percents[0])} del ${formatDate(first.date)} ${withArticle("al", percents[percents.length - 1])} del ${formatDate(last.date)}; il migliore ${best}%; ${above === 1 ? "una sopra" : `${above} sopra`} il ${SIM_CHART_TARGET * 100}%. I numeri sono anche nella tabella.`;
+
+    const figure = el("figure", "sim-chart");
+    figure.id = "sim-chart";
+    const svg = svgEl("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-labelledby": "sim-chart-title", focusable: "false" });
+    svg.appendChild(svgEl("title", { id: "sim-chart-title" }, description));
+    // Le linee orizzontali: 0, 25, 50, 100 grigie; 75 tratteggiata, l'obiettivo consigliato
+    [0, 25, 50, 100].forEach(percent => {
+        svg.appendChild(svgEl("line", { x1: left, x2: width - right, y1: y(percent), y2: y(percent), class: "sim-chart-grid" }));
+        svg.appendChild(svgEl("text", { x: left - 6, y: y(percent) + 4, "text-anchor": "end", class: "sim-chart-label" }, `${percent}%`));
+    });
+    const target = SIM_CHART_TARGET * 100;
+    svg.appendChild(svgEl("line", { x1: left, x2: width - right, y1: y(target), y2: y(target), class: "sim-chart-target" }));
+    svg.appendChild(svgEl("text", { x: left - 6, y: y(target) + 4, "text-anchor": "end", class: "sim-chart-label sim-chart-target-label" }, `${target}%`));
+    // La linea dei risultati e un punto per ogni simulazione
+    svg.appendChild(svgEl("polyline", { points: percents.map((percent, index) => `${x(index)},${y(percent)}`).join(" "), class: "sim-chart-line" }));
+    percents.forEach((percent, index) => {
+        const point = svgEl("circle", { cx: x(index), cy: y(percent), r: 4, class: percent >= target ? "sim-chart-point is-above" : "sim-chart-point" });
+        point.appendChild(svgEl("title", {}, `${formatDate(items[index].date)}: ${percent}%`));
+        svg.appendChild(point);
+    });
+    // Le date della prima e dell'ultima
+    svg.appendChild(svgEl("text", { x: x(0), y: height - 8, "text-anchor": "start", class: "sim-chart-label" }, formatDate(first.date).slice(0, 5)));
+    svg.appendChild(svgEl("text", { x: x(items.length - 1), y: height - 8, "text-anchor": "end", class: "sim-chart-label" }, formatDate(last.date).slice(0, 5)));
+    figure.appendChild(svg);
+    const change = percents[percents.length - 1] - percents[0];
+    const trend = change > 0 ? `+${change} punti` : change < 0 ? `${change} punti` : "stesso risultato";
+    const caption = el("figcaption", "hint", `Dalla prima all'ultima di queste ${items.length}: ${withArticle("dal", percents[0])} ${withArticle("al", percents[percents.length - 1])} (${trend}). La linea tratteggiata è il ${target}%, il risultato da raggiungere con margine.`);
+    caption.id = "sim-chart-caption";
+    figure.appendChild(caption);
+    return figure;
+}
+
 function simHistory(exam) {
     const list = progress.simulations.filter(item => item.exam === exam.id).slice().reverse();
     if (!list.length) return null;
@@ -120,6 +193,8 @@ function simHistory(exam) {
     const title = el("h2", "", "Le tue simulazioni");
     title.id = "storico";
     section.appendChild(title);
+    const chart = simChart(list.slice().reverse());
+    if (chart) section.appendChild(chart);
     const table = el("table", "history");
     table.id = "history";
     const head = el("tr");

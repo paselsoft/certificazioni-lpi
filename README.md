@@ -29,7 +29,8 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
 - **Simulazione d'esame**: 40 domande in 60 minuti, tante per obiettivo quanto il suo peso, come
   all'esame. Si può segnare una domanda e tornarci; il tempo continua anche chiudendo la pagina e
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
-  rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
+  rivedere con le spiegazioni, lo storico con un grafico dell'andamento e la linea del 75%.
+  All'esame vero si supera con 500 su 200-800, ma quante
   risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
 - **Pratica al terminale**: 127 esercizi con i comandi dell'esame (pacchetti, hardware, directory, file,
   caratteri jolly, archivi, grep e filtri, reindirizzamenti, script, gli editor nano e vi,
