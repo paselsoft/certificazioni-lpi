@@ -341,6 +341,16 @@ la palestra davvero ed esegue le soluzioni da anna.
   grassetto e dice «ripassalo». Contano le stesse ultime 3 simulazioni del riepilogo; quelle fatte
   prima di questa modifica non hanno il dettaglio per obiettivo e restano solo negli argomenti.
 
+- **Più domande dove erano poche (21/11/2026).** 56 domande nuove, scritte da zero dagli obiettivi
+  pubblici, per gli obiettivi che ne avevano da 9 a 14: ora ognuno ne ha almeno 15 (3.2 e 3.3 27,
+  4.4 20), 314 in tutto. Tra gli argomenti nuovi: Linux Mint, Scientific Linux, RHEL e Fedora,
+  `apt-cache search`, PHP, GPL e vendita, CC BY-SA, LGPL, gestori di password, chiavi di GnuPG,
+  `find -size` e `-type`, `whatis`, `cp -r`, `[0-9]`, `tar -v`, `bzip2 -d`, `unzip -l`, rolling
+  release, versioni stabili, macOS, swap, core, `/proc/cpuinfo`, GECOS, `/etc/sudoers`,
+  `groupdel`, `!` in `/etc/shadow`, `chmod 640` e `go-r`, `chgrp`, hard link e `ls -i`. I
+  risultati dei comandi citati (`echo file[0-9].txt`, `tar -tf` su uno zip, `unzip -x`, `ls
+  -size`) sono stati provati sul sistema vero.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -363,10 +373,7 @@ In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la s
 Tutti quelli dell'analisi del 15/11 sono fatti. Questi sono i nuovi, in ordine di utilità per
 l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
-1. **Più domande dove sono poche.** Il 3.2 e il 3.3 hanno 27 domande, ma 4.1 ne ha 9, 1.1 e 5.4
-   10, molti altri 11-13. Una simulazione prende per ogni obiettivo tante domande quanto il peso:
-   con 10 domande le stesse tornano presto e si ricordano a memoria. Obiettivo: almeno 15 per
-   ogni obiettivo (circa 60 domande nuove), scritte da zero dagli obiettivi pubblici.
+1. **Più domande dove sono poche: fatto** (vedi sopra).
 2. **Gli editor vi e nano nel simulatore.** Sono nei termini del 3.3 («vi e nano») e all'esame si
    chiede come si salva, come si esce senza salvare, i modi di vi (`i`, `Esc`, `:w`, `:q!`,
    `:wq`, `ZZ`). Oggi il simulatore risponde che gli editor non ci sono. Un piccolo editor nella

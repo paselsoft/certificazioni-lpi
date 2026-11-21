@@ -90,6 +90,62 @@ addQuestions("010-160", [
             { t: "Qualsiasi distribuzione: hanno tutte lo stesso tipo di supporto", ok: false, why: "La durata del supporto cambia molto da una distribuzione all'altra." }
         ]
     },
+    {
+        id: "4.1-10", type: "single", ref: "4.1_01#Ciclo di Vita del Supporto Linux",
+        text: "Che cos'è una distribuzione «rolling release», come Arch Linux?",
+        options: [
+            { t: "Si aggiorna di continuo, senza grandi versioni numerate", ok: true, why: "Invece di una nuova versione ogni tanto, i pacchetti si aggiornano man mano che escono: non c'è mai da «passare alla versione successiva»." },
+            { t: "Esce con una versione nuova solo una volta ogni dieci anni", ok: false, why: "È il contrario: gli aggiornamenti arrivano di continuo." },
+            { t: "Funziona solo da una chiavetta USB, senza installazione", ok: false, why: "Il modo di aggiornarsi non c'entra con dove è installata." },
+            { t: "È una versione di prova che non va usata sul serio", ok: false, why: "Le distribuzioni rolling si usano davvero; le versioni di prova si chiamano beta." }
+        ]
+    },
+    {
+        id: "4.1-11", type: "single", ref: "4.1_01#Ciclo di Vita del Supporto Linux",
+        text: "Che cosa vuol dire che una versione di una distribuzione è stabile?",
+        options: [
+            { t: "È stata provata a lungo e riceve solo correzioni", ok: true, why: "Nelle versioni stabili i programmi non cambiano di continuo: arrivano soprattutto aggiornamenti di sicurezza e correzioni." },
+            { t: "Ha i programmi più recenti, usciti da pochi giorni", ok: false, why: "Le novità appena uscite sono nelle versioni di sviluppo o beta, non in quelle stabili." },
+            { t: "Non riceve più nessun aggiornamento", ok: false, why: "Quella è una versione a fine supporto (End of Life), da non usare più." },
+            { t: "Funziona solo sui computer vecchi", ok: false, why: "«Stabile» parla di affidabilità, non dell'età del computer." }
+        ]
+    },
+    {
+        id: "4.1-12", type: "single", ref: "4.1_01#Sistemi Operativi non Linux",
+        text: "Quale di questi sistemi operativi è proprietario, cioè con il codice sorgente chiuso?",
+        options: [
+            { t: "Windows", ok: true, why: "Il codice di Windows è di Microsoft e non è pubblico; per usarlo serve una licenza." },
+            { t: "Debian", ok: false, why: "Debian è una distribuzione Linux fatta di software libero." },
+            { t: "FreeBSD", ok: false, why: "FreeBSD non è Linux, ma è anche lui open source, con la licenza BSD." },
+            { t: "Fedora", ok: false, why: "Fedora è una distribuzione Linux libera, della comunità." }
+        ]
+    },
+    {
+        id: "4.1-13", type: "multiple", ref: "4.1_01#macOS",
+        text: "Quali affermazioni su macOS sono vere?",
+        options: [
+            { t: "Ha un terminale con una shell simile a Bash (oggi zsh)", ok: true, why: "Essendo un discendente di Unix, macOS ha una riga di comando con molti comandi uguali a quelli di Linux." },
+            { t: "Ufficialmente funziona solo sui computer Apple", ok: true, why: "La licenza di macOS permette di installarlo solo su hardware Apple." },
+            { t: "Usa il kernel Linux", ok: false, why: "macOS ha il suo kernel, XNU, con parti che vengono da BSD." },
+            { t: "È software libero con licenza GPL", ok: false, why: "macOS è proprietario: solo alcune sue parti sono open source." }
+        ]
+    },
+    {
+        id: "4.1-14", type: "fill", ref: "4.1_01#Tipi di Distribuzioni Linux", anyCase: true, placeholder: "una parola",
+        text: "Quale distribuzione della comunità, sponsorizzata da Red Hat, prova per prima le novità che poi arrivano in Red Hat Enterprise Linux? (una parola)",
+        answers: ["Fedora"],
+        why: "Fedora esce spesso, con programmi recenti: le novità che funzionano bene vengono poi stabilizzate in Red Hat Enterprise Linux."
+    },
+    {
+        id: "4.1-15", type: "single", ref: "4.1_01#Unix",
+        text: "Che cosa vuol dire che Linux, come Unix, è un sistema multiutente?",
+        options: [
+            { t: "Ognuno ha il suo account e i suoi file, anche lavorando nello stesso momento", ok: true, why: "Più persone (e servizi) possono usare lo stesso sistema insieme, ciascuno con i propri permessi." },
+            { t: "Va installato su un computer diverso per ogni persona che lo usa", ok: false, why: "È il contrario: un solo sistema serve più utenti." },
+            { t: "Tutti gli utenti condividono lo stesso account e la stessa password", ok: false, why: "Ogni utente ha il suo account: è proprio quello che separa i file di ciascuno." },
+            { t: "Ogni utente deve scegliere una distribuzione Linux diversa", ok: false, why: "Gli utenti condividono la stessa distribuzione; hanno account separati." }
+        ]
+    },
 
     // ---- 4.2 Comprendere l'Hardware del Computer ----
     {
@@ -198,6 +254,45 @@ addQuestions("010-160", [
             { t: "Una cartella condivisa in rete con altri utenti", ok: false, why: "Le partizioni stanno sui dischi, non in rete." },
             { t: "Una copia di sicurezza di tutto il disco", ok: false, why: "Una copia di sicurezza è un backup." }
         ]
+    },
+    {
+        id: "4.2-12", type: "single", ref: "4.2_01#Memoria",
+        text: "Che cos'è lo spazio di swap?",
+        options: [
+            { t: "Spazio sul disco che il sistema usa come RAM quando la memoria si riempie", ok: true, why: "Le parti di memoria usate meno vengono spostate sul disco, che però è molto più lento della RAM." },
+            { t: "Una memoria molto veloce che si trova dentro il processore", ok: false, why: "Quella è la cache del processore." },
+            { t: "La piccola memoria che conserva le impostazioni del firmware", ok: false, why: "Le impostazioni del BIOS o UEFI stanno in una memoria della scheda madre, non nello swap." },
+            { t: "Una copia di riserva di tutto il disco, fatta ogni notte", ok: false, why: "Lo swap non è un backup: si svuota e si riempie mentre il sistema lavora." }
+        ]
+    },
+    {
+        id: "4.2-13", type: "multiple", ref: "4.2_01#Archiviazione",
+        text: "Quali di questi componenti conservano i dati anche a computer spento?",
+        options: [
+            { t: "Un disco rigido (HDD)", ok: true, why: "I dati restano sui dischi magnetici anche senza corrente." },
+            { t: "Un disco a stato solido (SSD)", ok: true, why: "Usa una memoria flash, che non perde i dati allo spegnimento." },
+            { t: "Una chiavetta USB", ok: true, why: "Anche lei usa memoria flash, come gli SSD." },
+            { t: "La RAM", ok: false, why: "La RAM si svuota quando manca la corrente." },
+            { t: "La cache del processore", ok: false, why: "Anche la cache perde il contenuto allo spegnimento." }
+        ]
+    },
+    {
+        id: "4.2-14", type: "single", ref: "4.2_01#Processori",
+        text: "Un processore ha 4 core. Che cosa vuol dire?",
+        options: [
+            { t: "Ha quattro unità di calcolo che lavorano in parallelo", ok: true, why: "Ogni core esegue istruzioni per conto suo: il sistema può far lavorare quattro programmi (o parti di programma) insieme." },
+            { t: "È quattro volte più veloce di un processore a 1 GHz", ok: false, why: "La frequenza (GHz) e il numero di core sono due cose diverse." },
+            { t: "Ha 4 GB di memoria RAM al suo interno", ok: false, why: "La RAM è su moduli separati, montati sulla scheda madre." },
+            { t: "Può far girare al massimo quattro programmi", ok: false, why: "Il sistema alterna i programmi molto in fretta: ne girano centinaia anche con un solo core." }
+        ]
+    },
+    {
+        id: "4.2-15", type: "fill", ref: "4.2_01#Processori", placeholder: "percorso",
+        text: "In quale file di `/proc` Linux mostra le informazioni sul processore, come modello e numero di core? (percorso completo)",
+        answers: ["/proc/cpuinfo"],
+        pattern: "^(cat |less )?/proc/cpuinfo$",
+        alsoAccepted: ["cat /proc/cpuinfo"],
+        why: "`/proc/cpuinfo` non è un file vero sul disco: il kernel lo prepara al momento. `cat /proc/cpuinfo` mostra un blocco per ogni core."
     },
 
     // ---- 4.3 Dove Sono Memorizzati i Dati ----

@@ -112,6 +112,47 @@ addQuestions("010-160", [
             { t: "compress", ok: false, why: "`compress` è il vecchio programma di Unix: i suoi file finiscono con `.Z`, non con `.bz2`." }
         ]
     },
+    {
+        id: "3.1-12", type: "single", ref: "3.1_01#Strumenti di Archiviazione",
+        text: "Che cosa fa l'opzione `-v` in `tar -cvf archivio.tar foto`?",
+        options: [
+            { t: "Scrive il nome di ogni file mentre lo mette nell'archivio", ok: true, why: "`-v` (verbose, dettagliato) mostra i file uno per uno; senza `-v`, `tar` lavora in silenzio." },
+            { t: "Controlla alla fine che l'archivio non sia rovinato", ok: false, why: "`-v` non verifica niente: scrive solo i nomi dei file." },
+            { t: "Comprime l'archivio con xz", ok: false, why: "Per xz l'opzione è `-J`." },
+            { t: "Crea un archivio separato per ogni file della directory", ok: false, why: "`tar` crea sempre un solo archivio, quello indicato dopo `-f`." }
+        ]
+    },
+    {
+        id: "3.1-13", type: "single", ref: "3.1_01#Strumenti di Compressione",
+        text: "Che cosa fa `bzip2 -d relazione.txt.bz2`?",
+        options: [
+            { t: "Decomprime il file: resta `relazione.txt`", ok: true, why: "`-d` (decompress) fa lo stesso di `bunzip2`: il file compresso viene sostituito da quello originale." },
+            { t: "Cancella il file compresso senza decomprimerlo", ok: false, why: "`-d` sta per decompress, non per delete." },
+            { t: "Lo comprime di nuovo, con più forza", ok: false, why: "Il livello di compressione si sceglie con i numeri, come `-9`; `-d` decomprime." },
+            { t: "Ne mostra il contenuto senza cambiare niente", ok: false, why: "Per vederlo senza toccare il file si usa `bzcat` (o `bzip2 -dc`)." }
+        ]
+    },
+    {
+        id: "3.1-14", type: "single", ref: "3.1_01#Gestire i File ZIP",
+        text: "Quale comando elenca i file contenuti in `foto.zip` senza estrarli?",
+        options: [
+            { t: "`unzip -l foto.zip`", ok: true, why: "`-l` (list) mostra nomi, dimensioni e date dei file nell'archivio zip." },
+            { t: "`zip -l foto.zip`", ok: false, why: "In `zip`, `-l` converte i fine riga dei file di testo nel formato di Windows: non elenca niente." },
+            { t: "`tar -tf foto.zip`", ok: false, why: "GNU tar legge gli archivi tar, non quelli zip: direbbe che il file non sembra un archivio tar." },
+            { t: "`unzip -x foto.zip`", ok: false, why: "`-x` serve a escludere dei file quando si estrae: senza nomi dopo, estrae tutto." }
+        ]
+    },
+    {
+        id: "3.1-15", type: "multiple", ref: "3.1_01#Strumenti di Archiviazione",
+        text: "Quali di questi file sono, dal nome, archivi tar compressi?",
+        options: [
+            { t: "`backup.tar.gz`", ok: true, why: "Un archivio tar compresso con gzip." },
+            { t: "`foto.tgz`", ok: true, why: "`.tgz` è l'abbreviazione di `.tar.gz`." },
+            { t: "`dati.tar.xz`", ok: true, why: "Un archivio tar compresso con xz." },
+            { t: "`note.zip`", ok: false, why: "Uno zip è un archivio, ma nel formato zip, non tar." },
+            { t: "`relazione.txt.gz`", ok: false, why: "È un singolo file di testo compresso con gzip, non un archivio tar." }
+        ]
+    },
 
     // ---- 3.2 Ricerca ed Estrazione di Dati dai File ----
     {

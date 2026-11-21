@@ -140,6 +140,15 @@ addQuestions("010-160", [
             { t: "`export -COLORE`", ok: false, why: "Questa sintassi non esiste." }
         ]
     },
+    {
+        id: "2.1-15", type: "fill", ref: "2.1_02#Lavorare con le Variabili Globali", placeholder: "comando",
+        text: "Scrivi il comando che crea la variabile `LINGUA` con il valore `it` e la rende visibile anche ai programmi avviati da questa shell.",
+        answers: ["export LINGUA=it"],
+        pattern: "^export LINGUA=(it|\"it\"|'it')$",
+        alsoAccepted: ["export LINGUA=\"it\"", "export LINGUA='it'"],
+        notAccepted: ["LINGUA=it", "export LINGUA = it", "export $LINGUA=it"],
+        why: "`export` crea la variabile (o la marca) come variabile d'ambiente, che i programmi figli ricevono. Senza `export`, `LINGUA=it` resterebbe una variabile locale della shell. Attorno a `=` non vanno spazi."
+    },
 
     // ---- 2.2 Utilizzo della Command Line per Ottenere Aiuto ----
     {
@@ -243,6 +252,44 @@ addQuestions("010-160", [
             { t: "Cerca solo in `/home/anna`, senza entrare nelle sottodirectory", ok: false, why: "`find` entra nelle sottodirectory, a meno di limitarlo con `-maxdepth`." },
             { t: "Converte in PDF tutti i file della directory `/home/anna`", ok: false, why: "`find` cerca e basta." }
         ]
+    },
+    {
+        id: "2.2-12", type: "single", ref: "2.2_01#Il Comando find",
+        text: "Quale comando trova, sotto `/var/log`, i file più grandi di 10 MB?",
+        options: [
+            { t: "`find /var/log -size +10M`", ok: true, why: "`-size +10M` vuol dire «più di 10 mebibyte»; con `-10M` si cercano quelli più piccoli." },
+            { t: "`locate /var/log -size +10M`", ok: false, why: "`locate` cerca solo i nomi nel suo database: non conosce la dimensione dei file." },
+            { t: "`find /var/log -name +10M`", ok: false, why: "`-name` cerca i file che si chiamano così, cioè `+10M`: non guarda la dimensione." },
+            { t: "`ls -size +10M /var/log`", ok: false, why: "`ls` non ha un'opzione per filtrare per dimensione: legge `-size` come una serie di opzioni di una lettera." }
+        ]
+    },
+    {
+        id: "2.2-13", type: "single", ref: "2.2_01#Il Comando find",
+        text: "Che cosa fa `find . -type d`?",
+        options: [
+            { t: "Elenca le directory sotto quella corrente, a ogni livello", ok: true, why: "`.` è il punto di partenza, `-type d` tiene solo le directory (d); `find` scende anche nelle sottodirectory." },
+            { t: "Elenca solo i file normali della directory corrente", ok: false, why: "I file normali sono `-type f`, e `find` non si ferma alla directory corrente." },
+            { t: "Cancella le directory vuote sotto quella corrente", ok: false, why: "Senza `-delete` o `-exec`, `find` scrive solo i nomi: non cancella niente." },
+            { t: "Cerca i file con la lettera d nel nome", ok: false, why: "Per i nomi si usa `-name`, per esempio `-name \"*d*\"`; `-type` guarda il tipo." }
+        ]
+    },
+    {
+        id: "2.2-14", type: "single", ref: "2.2_01#Pagine Man",
+        text: "Stai leggendo `man ls`. Quale tasto chiude la pagina e torna al prompt?",
+        options: [
+            { t: "`q`", ok: true, why: "`q` (quit) esce dal programma che mostra la pagina, di solito `less`." },
+            { t: "`Esc`", ok: false, why: "In `less` il tasto Esc da solo non chiude la pagina." },
+            { t: "`x`", ok: false, why: "`x` non esce dalla pagina di manuale." },
+            { t: "`Ctrl+Z`", ok: false, why: "Ctrl+Z sospende il programma, che resta fermo in secondo piano: non lo chiude." }
+        ]
+    },
+    {
+        id: "2.2-15", type: "fill", ref: "2.2_01#Pagine Man", placeholder: "comando",
+        text: "Quale comando mostra solo la descrizione di una riga presa dal manuale, per esempio `______ ls`?",
+        answers: ["whatis"],
+        pattern: "^whatis( ls)?$",
+        alsoAccepted: ["whatis ls"],
+        why: "`whatis ls` stampa la riga del titolo della pagina di manuale, come `ls (1) - list directory contents`; lo stesso fa `man -f ls`."
     },
 
     // ---- 2.3 Utilizzo di Directory e Elenchi di File ----
@@ -359,6 +406,37 @@ addQuestions("010-160", [
             { t: "`ls -r`", ok: false, why: "`-r` inverte l'ordine, che senza altre opzioni resta alfabetico." },
             { t: "`ls -d`", ok: false, why: "`-d` mostra le directory stesse invece del loro contenuto." },
             { t: "`ls -n`", ok: false, why: "`-n` mostra i numeri di utente e gruppo invece dei nomi." }
+        ]
+    },
+    {
+        id: "2.3-13", type: "single", ref: "2.3_01#Percorsi Relativi Speciali",
+        text: "Che cosa indica `.` (un punto da solo) in un percorso come `./script.sh`?",
+        options: [
+            { t: "La directory corrente", ok: true, why: "`./script.sh` vuol dire «il file script.sh qui, nella directory corrente»." },
+            { t: "La directory superiore", ok: false, why: "La directory superiore è `..`, con due punti." },
+            { t: "La directory home", ok: false, why: "La directory home si indica con `~`." },
+            { t: "La radice del file system", ok: false, why: "La radice è `/`." }
+        ]
+    },
+    {
+        id: "2.3-14", type: "single", ref: "2.3_02#Percorsi Relativi alla Home",
+        text: "Sei l'utente anna e ti trovi in `/etc`. Quale comando ti porta in `/home/anna/documenti`?",
+        options: [
+            { t: "`cd ~/documenti`", ok: true, why: "`~` vale la tua home, `/home/anna`, da qualsiasi directory." },
+            { t: "`cd documenti`", ok: false, why: "È un percorso relativo: cercherebbe `/etc/documenti`." },
+            { t: "`cd /documenti`", ok: false, why: "Cercherebbe la directory `documenti` sotto la radice `/`." },
+            { t: "`cd ../documenti`", ok: false, why: "Da `/etc`, `..` è la radice: cercherebbe `/documenti`." }
+        ]
+    },
+    {
+        id: "2.3-15", type: "multiple", ref: "2.3_01#Percorsi Relativi Speciali",
+        text: "Sei l'utente anna e ti trovi in `/home/anna`. Quali comandi ti portano in `/home`?",
+        options: [
+            { t: "`cd ..`", ok: true, why: "`..` è la directory superiore di `/home/anna`, cioè `/home`." },
+            { t: "`cd /home`", ok: true, why: "È il percorso assoluto: funziona da qualsiasi directory." },
+            { t: "`cd ~/..`", ok: true, why: "`~` è `/home/anna`, e `..` sale di un livello: `/home`." },
+            { t: "`cd ~`", ok: false, why: "`cd ~` ti lascia nella tua home, `/home/anna`." },
+            { t: "`cd /`", ok: false, why: "`cd /` porta alla radice del file system." }
         ]
     },
 
@@ -480,6 +558,35 @@ addQuestions("010-160", [
             { t: "Rinomina `nota.txt` in un file chiamato `documenti`", ok: false, why: "Succederebbe solo se `documenti` non esistesse." },
             { t: "Sostituisce la directory `documenti` con il file", ok: false, why: "`mv` non sovrascrive una directory con un file." },
             { t: "Copia `nota.txt` dentro `documenti`", ok: false, why: "`mv` sposta: dopo, il file non è più nella directory di partenza." }
+        ]
+    },
+    {
+        id: "2.4-13", type: "single", ref: "2.4_01#Copiare File e Directory",
+        text: "La directory `copia_foto` non esiste. Che cosa fa `cp -r foto copia_foto`?",
+        options: [
+            { t: "Crea `copia_foto`, uguale a `foto` con tutto il suo contenuto", ok: true, why: "Con `-r` (ricorsivo) `cp` copia la directory e tutto quello che c'è dentro; se la destinazione non c'è, la crea con quel nome." },
+            { t: "Dà errore, perché la directory di destinazione deve esistere", ok: false, why: "Non serve: se la destinazione non esiste, `cp -r` la crea." },
+            { t: "Sposta `foto` in `copia_foto`, che prende il suo posto", ok: false, why: "`cp` copia: `foto` resta dov'è. Per spostare si usa `mv`." },
+            { t: "Copia solo i file di `foto`, senza le sottodirectory", ok: false, why: "Con `-r` copia anche le sottodirectory, a ogni livello." }
+        ]
+    },
+    {
+        id: "2.4-14", type: "fill", ref: "2.4_01#Copiare File e Directory", placeholder: "comando",
+        text: "Scrivi il comando che copia il file `nota.txt` nella directory `/tmp`.",
+        answers: ["cp nota.txt /tmp", "cp nota.txt /tmp/"],
+        pattern: "^cp (-[iv]+ )?(\\./)?nota\\.txt /tmp/?(nota\\.txt)?$",
+        alsoAccepted: ["cp -i nota.txt /tmp", "cp nota.txt /tmp/nota.txt", "cp ./nota.txt /tmp"],
+        notAccepted: ["mv nota.txt /tmp", "cp /tmp nota.txt"],
+        why: "`cp` vuole prima l'origine e poi la destinazione. Se la destinazione è una directory, la copia prende lo stesso nome: `/tmp/nota.txt`."
+    },
+    {
+        id: "2.4-15", type: "single", ref: "2.4_01#Globbing",
+        text: "Nella directory ci sono `file1.txt`, `file2.txt` e `fileA.txt`. Che cosa stampa `echo file[0-9].txt`?",
+        options: [
+            { t: "`file1.txt file2.txt`", ok: true, why: "`[0-9]` vale un solo carattere tra 0 e 9: la A non è una cifra." },
+            { t: "`file1.txt file2.txt fileA.txt`", ok: false, why: "`fileA.txt` resta fuori: `[0-9]` accetta solo le cifre." },
+            { t: "`file[0-9].txt`", ok: false, why: "Bash scrive il modello così com'è solo se nessun file corrisponde; qui due file corrispondono." },
+            { t: "`fileA.txt`", ok: false, why: "È proprio l'unico file che non corrisponde al modello." }
         ]
     }
 ]);
