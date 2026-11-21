@@ -248,7 +248,7 @@ function manRun(sh, args) {
             res.out += manPageText(page, sh.columns);
         } else if (section && manFind(word)) {
             res.fail(`Nessuna voce di manuale per ${word} nella sezione ${section}`, 16);
-        } else if (SIM_COMMANDS[word] || SIM_UNAVAILABLE[word]) {
+        } else if (simCommandFor(sh, word) || SIM_UNAVAILABLE[word]) {
             res.fail(`Nessuna voce di manuale per ${word} (su un sistema vero c'è; nel simulatore ci sono le pagine di: ${[...new Set(SIM_MAN.map(item => item.name))].join(", ")})`, 16);
         } else {
             res.fail(`Nessuna voce di manuale per ${word}`, 16);

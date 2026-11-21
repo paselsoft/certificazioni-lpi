@@ -30,8 +30,9 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
   rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
   risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
-- **Pratica al terminale**: 102 esercizi con i comandi dell'esame (directory, file, caratteri
-  jolly, archivi, grep e filtri, reindirizzamenti, script, gli editor nano e vi, permessi, link) su un piccolo Linux
+- **Pratica al terminale**: 107 esercizi con i comandi dell'esame (pacchetti, directory, file,
+  caratteri jolly, archivi, grep e filtri, reindirizzamenti, script, gli editor nano e vi,
+  permessi, link) su un piccolo Linux
   simulato nel browser, con gli obiettivi che si spuntano, suggerimento e soluzione; più un
   terminale libero. I filtri di testo vengono dal motore di Pipe Dreams; le soluzioni e oltre 200
   casi tipici sono confrontati con Bash vero. Tab completa comandi e nomi dei file; sul telefono
@@ -95,6 +96,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `shell-complete.js` | il completamento con Tab nel terminale (comandi e nomi dei file) |
 | `shell-editor.js` | i comandi `nano`, `vi` e `vim` del simulatore e il salvataggio dei file |
 | `editor-view.js` | l'editor nella pagina del terminale (nano e vi) |
+| `shell-packages.js` | i pacchetti nel simulatore: `dpkg`, `apt-get`, `apt-cache`, `apt`, `tree` |
 | `shell-help.js` | l'aiuto nella shell simulata: pagine di manuale scritte per l'app, `man`, `info`, `--help`, `help`, `locate` |
 | `lib/pipedreams-*.js` | il motore dei filtri di Pipe Dreams, copiato senza modifiche |
 | `exercise-check.js`, `practice.js` | gli esercizi al terminale: controllo degli obiettivi e pagina (`#/terminale`) |

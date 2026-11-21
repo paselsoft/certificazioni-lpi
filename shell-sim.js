@@ -304,7 +304,7 @@ function createShell(setup = {}) {
     add("l", base.links);
     add("l", setup.links);
     // I programmi: un file eseguibile in /usr/bin per ogni comando esterno, come su un sistema vero
-    Object.keys(SIM_COMMANDS).filter(name => !SIM_BUILTINS.has(name)).forEach(name => {
+    Object.keys(SIM_COMMANDS).filter(name => !SIM_BUILTINS.has(name) && simCommandFor(sh, name)).forEach(name => {
         simPut(sh, `/usr/bin/${name}`, simNode("f", null, { mode: 0o755, data: "#!ELF (programma)\n" }));
     });
     (setup.remove || []).forEach(path => {
@@ -1048,6 +1048,17 @@ function simAppend(sh, path, text) {
     found.node.mtime = sh.clock;
 }
 
+// Suggerimenti per i comandi che su questo sistema non ci sono (rpm, yum: shell-packages.js)
+const SIM_MISSING_HINTS = {};
+// Il comando con questo nome, se c'è: quelli che vengono da un pacchetto da installare (pkg,
+// shell-packages.js) ci sono solo quando il pacchetto è installato
+function simCommandFor(sh, name) {
+    const command = SIM_COMMANDS[name];
+    if (!command) return null;
+    if (command.pkg && !simPackageInstalled(sh, command.pkg)) return null;
+    return command;
+}
+
 // Esegue un comando già espanso: assegnazioni, sudo, comandi interni ed esterni
 function simExecute(sh, words, stdin, ctx) {
     // Assegnazioni davanti al comando: da sole impostano variabili della shell
@@ -1070,14 +1081,16 @@ function simExecute(sh, words, stdin, ctx) {
         const result = simSudo(sh, args, stdin, ctx);
         return { out: result.out || "", err: result.err || "", code: result.code || 0, clear: result.clear, chunks: result.chunks };
     }
-    const command = SIM_COMMANDS[name];
+    const command = simCommandFor(sh, name);
     if (!command) {
         if (SIM_UNAVAILABLE[name]) return { out: "", err: `${name}: ${SIM_UNAVAILABLE[name]}\n`, code: 127 };
         if (name.includes("/")) return simRunPath(sh, name, args, stdin, ctx);
         // Come Bash: il nome si cerca nelle directory di PATH (la directory corrente non c'è)
         const inPath = simSearchPath(sh, name);
         if (inPath) return simRunPath(sh, inPath, args, stdin, ctx);
-        return { out: "", err: `bash: ${name}: comando non trovato\n`, code: 127 };
+        // Un comando di un pacchetto non installato: come Ubuntu, dice come installarlo
+        const hint = SIM_COMMANDS[name] ? `si installa con: sudo apt-get install ${SIM_COMMANDS[name].pkg}` : SIM_MISSING_HINTS[name];
+        return { out: "", err: `bash: ${name}: comando non trovato${hint ? ` (${hint})` : ""}\n`, code: 127 };
     }
     if (args.includes("--help")) {
         // L'aiuto breve del comando (shell-help.js), per quelli che hanno una pagina di manuale
@@ -1121,7 +1134,7 @@ function simRunPath(sh, path, args = [], stdin = null, ctx = {}) {
         const data = found.node.data;
         if (data.startsWith("#!ELF")) {
             const command = baseName(path);
-            if (SIM_COMMANDS[command] && !SIM_BUILTINS.has(command)) return simExecute(sh, [command, ...args], stdin, ctx);
+            if (simCommandFor(sh, command) && !SIM_BUILTINS.has(command)) return simExecute(sh, [command, ...args], stdin, ctx);
         }
         if (data.startsWith("#!ELF") || isBinary(data)) return { out: "", err: `bash: ${path}: impossibile eseguire il file binario: il simulatore esegue solo script\n`, code: 126 };
         // Per leggere lo script serve anche il permesso di lettura

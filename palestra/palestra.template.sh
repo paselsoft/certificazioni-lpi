@@ -232,6 +232,16 @@ controlla_gruppo() {
     esac
 }
 
+# Un pacchetto: installato (ii), tolto con la configurazione rimasta (rc) o del tutto assente
+controlla_pacchetto() {
+    local testo="$1" stato
+    stato="$(dpkg-query -W -f='${db:Status-Abbrev}' "$2" 2>/dev/null | tr -d ' ' || true)"
+    case "$3" in
+        absent) esito "$testo" "$([ -z "$stato" ] || [ "$stato" = un ]; echo $?)" ;;
+        *) esito "$testo" "$([ "$stato" = "$3" ]; echo $?)" ;;
+    esac
+}
+
 verifica_obiettivi() {
     case "$1" in
 @@VERIFICHE@@

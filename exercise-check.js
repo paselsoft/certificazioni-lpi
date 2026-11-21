@@ -88,6 +88,8 @@ function goalMet(sh, exercise, goal) {
     if (goal.cwd !== undefined && sh.cwd.replace(/\/+$/, "") !== goal.cwd) return false;
     if (goal.user !== undefined && sh.user !== goal.user) return false;
     if (goal.account !== undefined && !accountMatches(sh, goal)) return false;
+    // Un pacchetto: "ii" installato, "rc" tolto ma con la configurazione, "absent" del tutto assente
+    if (goal.package !== undefined && (simPackages(sh)[goal.package] || "absent") !== goal.state) return false;
     if (goal.group !== undefined && goal.path === undefined) {
         const gid = usersGroups(sh)[goal.group];
         if (goal.exists === false) return gid === undefined;

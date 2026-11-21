@@ -613,6 +613,52 @@ module.exports = {
         assert.match(await outputText(page), /:q!\s+esce\s+senza\s+salvare/);
     },
 
+    "pacchetti: dpkg, apt-get con sudo, comandi che compaiono e spariscono, rc e purge, rpm e yum": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const last = async () => (await outputText(page)).split("\n").slice(-3).join("\n");
+        await type(page, "tree documenti");
+        assert.match(await last(), /bash: tree: comando non trovato \(si installa con: sudo apt-get install tree\)$/);
+        await type(page, "apt-get install tree");
+        assert.match(await last(), /Si è root\?$/);
+        await type(page, "sudo apt-get install tree");
+        assert.match(await last(), /Setting up tree \(2\.1\.1-2ubuntu3\) \.\.\.$/);
+        await page.click("#practice-restart");
+        // Ricomincia: il pacchetto non c'è più
+        await type(page, "type tree");
+        assert.match(await last(), /bash: type: tree: non trovato$/);
+        await type(page, "sudo apt-get install -y tree");
+        await type(page, "tree documenti");
+        assert.match(await outputText(page), /documenti\n\|-- lettera\.txt\n`-- spesa\.txt\n\s*\n1 directory, 2 files$/);
+        await type(page, "dpkg -l tree");
+        assert.match(await last(), /ii  tree\s+2\.1\.1-2ubuntu3\s+amd64\s+displays an indented directory tree, in color$/);
+        await type(page, "dpkg -S /usr/bin/nano");
+        assert.match(await last(), /nano: \/usr\/bin\/nano$/);
+        await type(page, "apt-cache search processes");
+        assert.match(await last(), /htop - interactive processes viewer$/);
+        // remove chiede conferma (nel simulatore non si risponde: -y), lascia la configurazione (rc); purge toglie tutto
+        await type(page, "sudo apt-get install nginx");
+        await type(page, "sudo apt-get remove nginx");
+        assert.match(await last(), /aggiungi -y per dire di sì/);
+        await type(page, "sudo apt-get remove -y nginx");
+        await type(page, "dpkg -l nginx");
+        assert.match(await last(), /rc  nginx/);
+        await type(page, "ls /etc/nginx");
+        assert.match(await last(), /nginx\.conf$/);
+        await type(page, "sudo apt-get purge -y nginx");
+        await type(page, "dpkg -l nginx");
+        assert.match(await last(), /dpkg-query: nessun pacchetto corrisponde a nginx$/);
+        // Togliere nano lo fa sparire; bash è essenziale
+        await type(page, "sudo apt-get remove -y nano");
+        await type(page, "nano prova.txt");
+        assert.match(await last(), /bash: nano: comando non trovato/);
+        await type(page, "sudo apt-get remove -y bash");
+        assert.match(await last(), /pacchetto essenziale per il sistema/);
+        await type(page, "rpm -qa");
+        assert.match(await last(), /bash: rpm: comando non trovato \(questo sistema è della famiglia Debian/);
+        await type(page, "man dpkg");
+        assert.match(await outputText(page), /ii\s+vuol\s+dire\s+installato,\s+rc\s+tolto/);
+    },
+
     "editor sul telefono: tasti come pulsanti, testo scritto intercettato, 320 px e axe": async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 700 });
         await open(page, { hash: "#/terminale/libero" });
