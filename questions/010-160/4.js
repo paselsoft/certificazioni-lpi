@@ -441,6 +441,76 @@ addQuestions("010-160", [
             { t: "La memoria della scheda video, usata per le immagini", ok: false, why: "La scheda video ha la sua memoria, che non si chiama swap." }
         ]
     },
+    {
+        id: "4.3-16", type: "multiple", ref: "4.3_02#Processi",
+        text: "Quali comandi mostrano i processi in esecuzione?",
+        options: [
+            { t: "`ps`", ok: true, why: "Mostra una fotografia dei processi in quel momento; `ps aux` tutti quelli del sistema." },
+            { t: "`top`", ok: true, why: "Mostra i processi e li aggiorna ogni pochi secondi, finché non premi `q`." },
+            { t: "`free`", ok: false, why: "`free` mostra la memoria usata e libera, non i processi." },
+            { t: "`dmesg`", ok: false, why: "`dmesg` mostra i messaggi del kernel." },
+            { t: "`uptime`", ok: false, why: "`uptime` dice da quanto il sistema è acceso e il carico medio." }
+        ]
+    },
+    {
+        id: "4.3-17", type: "single", ref: "4.3_02#Un’Istantanea dei Processi: ps",
+        text: "Nell'output di `ps aux`, che cosa indica la colonna `%MEM`?",
+        options: [
+            { t: "La parte di RAM che il processo sta usando", ok: true, why: "È la percentuale della memoria fisica del sistema occupata dal processo; `%CPU` è l'uso del processore." },
+            { t: "Quanta memoria resta libera nel sistema", ok: false, why: "La memoria libera, in totale, si vede con `free`." },
+            { t: "Lo spazio su disco occupato dal programma", ok: false, why: "`ps` parla della memoria in uso, non del disco." },
+            { t: "La velocità della RAM, in percentuale", ok: false, why: "Nessuna colonna di `ps` misura la velocità della memoria." }
+        ]
+    },
+    {
+        id: "4.3-18", type: "single", ref: "4.3_02#File di Log in /var/log",
+        text: "Che cos'è `/var/log/syslog` (su Red Hat, `/var/log/messages`)?",
+        options: [
+            { t: "Il registro generale dei messaggi del sistema e dei servizi", ok: true, why: "Il demone syslog (come rsyslog) ci scrive i messaggi che riceve; altri file di `/var/log` raccolgono messaggi più specifici, come `auth.log` per gli accessi." },
+            { t: "Il file di configurazione del demone rsyslog", ok: false, why: "La configurazione è in `/etc`, per esempio `/etc/rsyslog.conf`." },
+            { t: "L'elenco degli utenti che hanno fatto l'accesso oggi", ok: false, why: "Gli accessi si vedono con `last` (che legge `/var/log/wtmp`)." },
+            { t: "Una copia della memoria del kernel fatta all'avvio", ok: false, why: "I messaggi del kernel si leggono con `dmesg`; `syslog` è un file di testo con i messaggi di tutto il sistema." }
+        ]
+    },
+    {
+        id: "4.3-19", type: "fill", ref: "4.3_02#Accedere ai File di Log", placeholder: "comando e opzione",
+        text: "Quale comando, con la sua opzione, mostra le ultime righe di un file di log e continua a mostrare quelle nuove mentre arrivano?",
+        answers: ["tail -f"],
+        pattern: "^(sudo )?tail (-f|--follow|-F)( \\S+)?$",
+        alsoAccepted: ["tail -f /var/log/syslog", "tail -F"],
+        notAccepted: ["tail", "head -f"],
+        why: "`tail -f FILE` mostra le ultime righe e poi resta in ascolto: ogni riga nuova compare subito. Si esce con Ctrl+C. Utile per guardare un log mentre si prova qualcosa."
+    },
+    {
+        id: "4.3-20", type: "single", ref: "4.3_01#File di Configurazione nella HOME (Dotfile)",
+        text: "Dove stanno i file di configurazione personali di un utente, come `.bashrc`?",
+        options: [
+            { t: "Nella sua directory home", ok: true, why: "Sono file nascosti, con il punto davanti al nome: valgono solo per quell'utente, mentre quelli di `/etc` valgono per tutti." },
+            { t: "In `/etc`, insieme a quelli del sistema", ok: false, why: "`/etc` contiene la configurazione di tutto il sistema, non quella di un singolo utente." },
+            { t: "In `/var/log`, perché cambiano spesso", ok: false, why: "`/var/log` contiene i registri degli eventi." },
+            { t: "In `/boot`, letti all'avvio del computer", ok: false, why: "`/boot` contiene il kernel e i file per avviare il sistema." }
+        ]
+    },
+    {
+        id: "4.3-21", type: "single", ref: "4.3_02#Il Carico di Sistema",
+        text: "Quale comando mostra da quanto tempo il sistema è acceso, quanti utenti sono collegati e il carico medio?",
+        options: [
+            { t: "`uptime`", ok: true, why: "Per esempio: «10:30:01 up 3 days, 2 users, load average: 0.50, 0.30, 0.20». Gli stessi dati sono nella prima riga di `top`." },
+            { t: "`free`", ok: false, why: "`free` mostra la memoria." },
+            { t: "`dmesg`", ok: false, why: "`dmesg` mostra i messaggi del kernel." },
+            { t: "`ps`", ok: false, why: "`ps` elenca i processi, uno per riga." }
+        ]
+    },
+    {
+        id: "4.3-22", type: "single", ref: "4.3_01#La Directory /proc",
+        text: "Che cosa vuol dire che `/proc/cpuinfo` è un file «virtuale»?",
+        options: [
+            { t: "Non sta sul disco: il kernel lo prepara quando lo leggi", ok: true, why: "Tutto `/proc` (e `/sys`) funziona così: per questo `ls -l` mostra dimensione 0, anche se dentro c'è del testo." },
+            { t: "È un file nascosto, che si vede solo con il comando `ls -a`", ok: false, why: "I file nascosti hanno il nome che inizia con un punto; virtuale vuol dire un'altra cosa." },
+            { t: "È una copia di riserva di un file che sta in `/etc`", ok: false, why: "`/proc` non contiene copie: mostra lo stato del sistema in quel momento." },
+            { t: "Si può leggere solo quando Linux gira in una macchina virtuale", ok: false, why: "C'è su ogni sistema Linux, anche su un computer vero." }
+        ]
+    },
 
     // ---- 4.4 Il Tuo Computer in Rete ----
     {

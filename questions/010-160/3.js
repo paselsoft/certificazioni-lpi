@@ -682,5 +682,32 @@ addQuestions("010-160", [
             { t: "rosso verde blu", ok: false, why: "I colori vanno nella pipe, non sullo schermo: arriva solo il conteggio di `wc -l`." },
             { t: "13", ok: false, why: "13 sono le lettere dei tre colori messe insieme; `wc -l` conta le righe, non i caratteri." }
         ]
+    },
+    {
+        id: "3.3-28", type: "multiple", ref: "3.3_01#Rendere uno Script Eseguibile",
+        text: "Lo script `saluta.sh` è nella directory corrente (che non è nel `PATH`) e ha i permessi `rwxr-xr-x`. Quali comandi lo eseguono?",
+        options: [
+            { t: "`./saluta.sh`", ok: true, why: "Con il percorso, la shell non deve cercarlo nel `PATH`; il permesso di esecuzione c'è." },
+            { t: "`bash saluta.sh`", ok: true, why: "Così è Bash che legge il file: funzionerebbe anche senza il permesso di esecuzione." },
+            { t: "`saluta.sh`", ok: false, why: "Senza percorso la shell cerca solo nel `PATH`, dove lo script non c'è: «command not found»." },
+            { t: "`run saluta.sh`", ok: false, why: "Non c'è un comando `run` per avviare gli script." }
+        ]
+    },
+    {
+        id: "3.3-29", type: "single", ref: "3.3_01#Logica Condizionale",
+        text: "Che cosa stampa questo comando? (`/etc` è una directory.)",
+        code: "if [ -f /etc ]; then echo file; else echo altro; fi",
+        options: [
+            { t: "`altro`", ok: true, why: "`-f` è vero solo per un file normale: `/etc` esiste, ma è una directory. Per le directory c'è `-d`, per «esiste, di qualsiasi tipo» `-e`." },
+            { t: "`file`", ok: false, why: "`-f` controlla che sia un file normale, e `/etc` non lo è." },
+            { t: "Niente, perché la condizione è falsa", ok: false, why: "Quando la condizione è falsa si esegue il ramo `else`." },
+            { t: "Un errore: `[` non è un comando", ok: false, why: "`[` è proprio un comando, lo stesso di `test`: per questo vuole gli spazi attorno." }
+        ]
+    },
+    {
+        id: "3.3-30", type: "fill", ref: "3.3_01#Logica Condizionale", placeholder: "opzione",
+        text: "Completa la condizione che è vera se `dati.txt` esiste ed è un file normale: `if [ ___ dati.txt ]; then`",
+        answers: ["-f"],
+        why: "`-f` controlla che sia un file normale; `-d` che sia una directory; `-e` che esista, di qualsiasi tipo."
     }
 ]);

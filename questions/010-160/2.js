@@ -149,6 +149,78 @@ addQuestions("010-160", [
         notAccepted: ["LINGUA=it", "export LINGUA = it", "export $LINGUA=it"],
         why: "`export` crea la variabile (o la marca) come variabile d'ambiente, che i programmi figli ricevono. Senza `export`, `LINGUA=it` resterebbe una variabile locale della shell. Attorno a `=` non vanno spazi."
     },
+    {
+        id: "2.1-16", type: "multiple", ref: "2.1_01#Tipi di Comportamento dei Comandi",
+        text: "Quali di questi sono comandi interni della shell Bash, eseguiti senza avviare un programma separato?",
+        options: [
+            { t: "`cd`", ok: true, why: "`cd` deve cambiare la directory della shell stessa: un programma separato non potrebbe farlo. `type cd` risponde «cd is a shell builtin»." },
+            { t: "`export`", ok: true, why: "`export` cambia le variabili della shell, quindi è interno anche lui." },
+            { t: "`ls`", ok: false, why: "`ls` è un programma, in `/usr/bin/ls`: `type ls` lo mostra." },
+            { t: "`grep`", ok: false, why: "`grep` è un programma esterno, in `/usr/bin/grep`." },
+            { t: "`cp`", ok: false, why: "`cp` è un programma esterno, del pacchetto coreutils." }
+        ]
+    },
+    {
+        id: "2.1-17", type: "single", ref: "2.1_02#Lavorare con le Variabili Locali",
+        text: "Che cosa stampa la seconda riga? (`bash -c` avvia una nuova shell, figlia di quella corrente.)",
+        code: "NOME=Anna\nbash -c 'echo \"[$NOME]\"'",
+        options: [
+            { t: "`[]`", ok: true, why: "`NOME` non è stata esportata: è una variabile locale, e la shell figlia non la riceve. Con `export NOME=Anna` stamperebbe `[Anna]`." },
+            { t: "`[Anna]`", ok: false, why: "Succederebbe solo se `NOME` fosse esportata con `export`." },
+            { t: "`[$NOME]`", ok: false, why: "Tra virgolette doppie `$NOME` viene sostituita: la shell figlia la trova vuota." },
+            { t: "Un errore: la variabile non esiste", ok: false, why: "Una variabile che non esiste per Bash vale semplicemente vuoto, senza errori." }
+        ]
+    },
+    {
+        id: "2.1-18", type: "single", ref: "2.1_02#La Variabile PATH",
+        text: "Scrivi `grep` senza il percorso. Come trova la shell il programma da eseguire?",
+        options: [
+            { t: "Guarda le directory di `PATH`, in ordine, e usa la prima che lo contiene", ok: true, why: "Per questo un programma in una directory fuori da `PATH` si avvia solo con il percorso, come `./script.sh`." },
+            { t: "Cerca in tutto il disco, partendo dalla radice `/`, finché lo trova", ok: false, why: "Sarebbe lentissimo: la shell guarda solo le directory elencate in `PATH`." },
+            { t: "Lo cerca solo nella directory in cui ti trovi in quel momento", ok: false, why: "Su Linux la directory corrente non è nel `PATH`, per sicurezza." },
+            { t: "Lo chiede ogni volta al gestore dei pacchetti della distribuzione", ok: false, why: "Il gestore dei pacchetti installa i programmi, ma non c'entra con la loro esecuzione." }
+        ]
+    },
+    {
+        id: "2.1-19", type: "fill", ref: "2.1_02#Variabili", placeholder: "nome della variabile",
+        text: "Quale variabile d'ambiente contiene il percorso della tua directory home?",
+        answers: ["HOME"],
+        pattern: "^\\$?\\{?HOME\\}?$",
+        alsoAccepted: ["$HOME"],
+        why: "`HOME` vale per esempio `/home/anna`: `echo $HOME` la mostra. È la stessa directory a cui portano `cd` da solo e `~`."
+    },
+    {
+        id: "2.1-20", type: "single", ref: "2.1_01#Quoting",
+        text: "La variabile `USER` vale `anna`. Che cosa stampa questo comando?",
+        code: "echo 'Costa $5' \"per $USER\"",
+        options: [
+            { t: "`Costa $5 per anna`", ok: true, why: "Tra virgolette singole `$5` resta com'è; tra virgolette doppie `$USER` diventa `anna`. `echo` unisce i due argomenti con uno spazio." },
+            { t: "`Costa 5 per anna`", ok: false, why: "Il dollaro sparirebbe solo fuori dalle virgolette singole." },
+            { t: "`Costa $5 per $USER`", ok: false, why: "Tra virgolette doppie le variabili vengono sostituite." },
+            { t: "`Costa  per anna`", ok: false, why: "Tra virgolette singole `$5` non viene trattato come variabile." }
+        ]
+    },
+    {
+        id: "2.1-21", type: "multiple", ref: "2.1_01#Caratteri di Escape",
+        text: "Quali di questi comandi stampano proprio `$HOME`, con il dollaro, invece del percorso della home?",
+        options: [
+            { t: "`echo '$HOME'`", ok: true, why: "Tra virgolette singole niente viene sostituito." },
+            { t: "`echo \\$HOME`", ok: true, why: "La barra rovesciata toglie al dollaro il suo significato." },
+            { t: "`echo \"\\$HOME\"`", ok: true, why: "Anche tra virgolette doppie la barra rovesciata protegge il dollaro." },
+            { t: "`echo \"$HOME\"`", ok: false, why: "Tra virgolette doppie `$HOME` viene sostituita con il percorso." },
+            { t: "`echo $HOME`", ok: false, why: "Senza virgolette la variabile viene sostituita." }
+        ]
+    },
+    {
+        id: "2.1-22", type: "single", ref: "2.1_01#Struttura della Command Line",
+        text: "Poco fa hai scritto un comando lungo. Qual è il modo più rapido per riusarlo?",
+        options: [
+            { t: "Premere la freccia su finché ricompare", ok: true, why: "Bash ricorda i comandi: ↑ e ↓ scorrono la cronologia, che `history` mostra tutta." },
+            { t: "Riscriverlo: Bash non ricorda i comandi già dati", ok: false, why: "Bash li ricorda, e li salva anche in `~/.bash_history` quando esci." },
+            { t: "Aprire il file `/etc/history` con un editor", ok: false, why: "Quel file non esiste: la cronologia di ognuno è in `~/.bash_history`." },
+            { t: "Usare `type` seguito dalla prima parola", ok: false, why: "`type` dice che tipo di comando è una parola, non ripete i comandi." }
+        ]
+    },
 
     // ---- 2.2 Utilizzo della Command Line per Ottenere Aiuto ----
     {
@@ -290,6 +362,17 @@ addQuestions("010-160", [
         pattern: "^whatis( ls)?$",
         alsoAccepted: ["whatis ls"],
         why: "`whatis ls` stampa la riga del titolo della pagina di manuale, come `ls (1) - list directory contents`; lo stesso fa `man -f ls`."
+    },
+    {
+        id: "2.2-16", type: "multiple", ref: "2.2_01#Pagine Man",
+        text: "Non ricordi il nome di un comando, ma sai che serve a comprimere file. Quali comandi ti aiutano a trovarlo?",
+        options: [
+            { t: "`apropos compress`", ok: true, why: "Cerca la parola nei nomi e nelle descrizioni brevi di tutte le pagine di manuale." },
+            { t: "`man -k compress`", ok: true, why: "È lo stesso di `apropos`." },
+            { t: "`whatis compress`", ok: false, why: "`whatis` vuole il nome esatto di una pagina: non cerca nelle descrizioni." },
+            { t: "`locate compress`", ok: false, why: "`locate` trova file con quel nome, non comandi per un certo lavoro." },
+            { t: "`type compress`", ok: false, why: "`type` dice che cos'è un comando di cui conosci già il nome." }
+        ]
     },
 
     // ---- 2.3 Utilizzo di Directory e Elenchi di File ----
@@ -587,6 +670,17 @@ addQuestions("010-160", [
             { t: "`file1.txt file2.txt fileA.txt`", ok: false, why: "`fileA.txt` resta fuori: `[0-9]` accetta solo le cifre." },
             { t: "`file[0-9].txt`", ok: false, why: "Bash scrive il modello così com'è solo se nessun file corrisponde; qui due file corrispondono." },
             { t: "`fileA.txt`", ok: false, why: "È proprio l'unico file che non corrisponde al modello." }
+        ]
+    },
+    {
+        id: "2.4-16", type: "multiple", ref: "2.4_01#Eliminare File e Directory",
+        text: "Quali comandi eliminano la directory vuota `vecchia`?",
+        options: [
+            { t: "`rmdir vecchia`", ok: true, why: "`rmdir` elimina le directory, solo se sono vuote." },
+            { t: "`rm -r vecchia`", ok: true, why: "Con `-r` `rm` elimina una directory e quello che contiene (qui niente)." },
+            { t: "`rm vecchia`", ok: false, why: "Senza `-r` (o `-d`) `rm` si rifiuta: «Is a directory»." },
+            { t: "`delete vecchia`", ok: false, why: "Su Linux non c'è un comando `delete`." },
+            { t: "`mkdir -d vecchia`", ok: false, why: "`mkdir` crea directory, e non ha l'opzione `-d`." }
         ]
     }
 ]);
