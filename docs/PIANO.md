@@ -453,6 +453,31 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 6. **L'andamento delle simulazioni: fatto** (vedi sopra).
 7. **Glossario dei termini: fatto** (vedi sopra).
 
+### Miglioramenti ancora da fare (analisi del 21/11/2026)
+
+Tutti quelli dell'analisi del 20/11 sono fatti. Questi sono i nuovi, in ordine di utilità per
+l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
+
+1. **Più domande dove l'esame ne chiede di più.** Gli obiettivi di peso 3 e 4 valgono più domande
+   all'esame, ma 2.1 e 4.3 (peso 3) ne hanno 15 come quelli di peso 1. Obiettivo: almeno 22 per il
+   peso 3 e 30 per il 3.3 (peso 4). E più domande «scegli due» o «scegli tre»: in molti obiettivi
+   ce n'è una sola, mentre all'esame sono frequenti.
+2. **Ripasso dei termini con le carte.** Dal glossario, carte da girare: si vede il termine, si
+   prova a ricordare, si gira e si dice «lo sapevo» o «no». Le carte entrano nelle scatole del
+   ripasso come le domande, così i termini difficili tornano più spesso.
+3. **Simulazioni brevi.** Oltre a quella completa (40 domande, 60 minuti): una da 20 domande in
+   30 minuti, tante per obiettivo quanto il peso diviso a metà, e una per argomento. Per quando c'è
+   poco tempo, con lo stesso risultato per obiettivo.
+4. **Dalla lezione alle domande.** In fondo a ogni lezione, i pulsanti per le domande e gli esercizi
+   del suo obiettivo; segnata la lezione come letta, l'app propone di provare subito le domande.
+5. **Giorni di studio di fila.** Nella pagina principale, quanti giorni di fila hai studiato (una
+   risposta, un esercizio o una lezione letta bastano) e un piccolo riepilogo degli ultimi 7 giorni.
+6. **Segnala un errore.** In ogni domanda, esercizio e voce del glossario, un collegamento che apre
+   una segnalazione su GitHub già compilata (quale domanda, che cosa non va), per correggere in fretta.
+7. **La versione 2.0 (010-200).** Controllare su learning.lpi.org e lpi.org se le lezioni italiane
+   della 2.0 sono complete e se l'esame si può dare in italiano; se sì, preparare obiettivi e lezioni
+   (lo strumento di importazione c'è già), per chi darà l'esame dopo aprile 2027.
+
 ## Regole del progetto
 
 - Tutto in italiano, accessibile (tastiera, lettori di schermo, contrasto), leggibile anche su
