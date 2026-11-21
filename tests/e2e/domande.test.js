@@ -32,16 +32,17 @@ async function choose(page, ...texts) {
 module.exports = {
     "obiettivo: il pulsante porta alle sue domande": async ({ page }) => {
         await open(page, { hash: "#/010-160/obiettivo/2.1" });
-        assert.equal(await page.textContent("#train"), "🎯 Allenati con le 14 domande");
+        const count21 = await page.evaluate(() => questionsOf("010-160", "2.1").length);
+        assert.equal(await page.textContent("#train"), `🎯 Allenati con le ${count21} domande`);
         await page.click("#train");
         await ready(page, "#/010-160/domande/2.1");
         assert.equal(await page.textContent("main h1"), "Domande: 2.1 Nozioni di Base sulla Command Line");
         assert.equal(await page.title(), "Domande 2.1 Nozioni di Base sulla Command Line · Certificazioni LPI");
-        assert.match(await page.textContent(".meter-label"), /^Domanda 1 di 14$/);
+        assert.match(await page.textContent(".meter-label"), new RegExp(`^Domanda 1 di ${count21}$`));
         assert.equal(await page.locator("#question-text").count(), 1);
         // Domande in ordine casuale, ma tutte dell'obiettivo e tutte diverse
         const ids = await page.evaluate(() => quiz.session.questions.map(item => item.question.id));
-        assert.equal(new Set(ids).size, 14);
+        assert.equal(new Set(ids).size, count21);
         assert.ok(ids.every(id => id.startsWith("2.1-")));
     },
 
@@ -174,11 +175,12 @@ module.exports = {
         assert.match(await page.textContent("#question-text"), /chmod 755/);
 
         await go(page, "#/010-160/obiettivo/5.3");
-        assert.match(await page.textContent("#domande + a + .hint"), /Hai risposto a 3 domande su 11: l'ultima risposta è giusta per 2\./);
+        const count53 = await page.evaluate(() => questionsOf("010-160", "5.3").length);
+        assert.match(await page.textContent("#domande + a + .hint"), new RegExp(`Hai risposto a 3 domande su ${count53}: l'ultima risposta è giusta per 2\\.`));
         await go(page, "#/");
         const total = await page.evaluate(() => QUESTIONS.length);
         assert.match(await page.textContent("#summary"), new RegExp(`Domande con l'ultima risposta giusta: 2 su ${total}`));
-        assert.match(await page.textContent("#obiettivo-5-3"), /domande giuste 2 su 11/);
+        assert.match(await page.textContent("#obiettivo-5-3"), new RegExp(`domande giuste 2 su ${count53}`));
         // Le risposte entrano nel backup
         const backup = await page.evaluate(() => backupData());
         assert.equal(Object.keys(backup.progress.answers).length, 3);

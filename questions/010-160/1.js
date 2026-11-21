@@ -101,6 +101,52 @@ addQuestions("010-160", [
             { t: "Perché nel cloud serve sempre un'interfaccia grafica, e Linux ha la migliore", ok: false, why: "È il contrario: i server nel cloud di solito non hanno interfaccia grafica e si gestiscono dalla riga di comando." }
         ]
     },
+    {
+        id: "1.1-11", type: "single", ref: "1.1_01#Distribuzioni",
+        text: "Quale distribuzione deriva da Ubuntu ed è pensata per chi arriva da Windows, con il desktop Cinnamon?",
+        options: [
+            { t: "Linux Mint", ok: true, why: "Linux Mint parte da Ubuntu (quindi da Debian) e ha un desktop simile a quello di Windows: Cinnamon, oppure MATE o Xfce." },
+            { t: "Fedora", ok: false, why: "Fedora è la distribuzione della comunità legata a Red Hat, e usa i pacchetti RPM." },
+            { t: "openSUSE", ok: false, why: "openSUSE è la versione comunitaria di SUSE, non deriva da Ubuntu." },
+            { t: "CentOS", ok: false, why: "CentOS è ricostruita da Red Hat Enterprise Linux ed è pensata per i server." }
+        ]
+    },
+    {
+        id: "1.1-12", type: "single", ref: "1.1_01#Distribuzioni",
+        text: "Che cos'era Scientific Linux?",
+        options: [
+            { t: "Una ricostruzione di Red Hat Enterprise Linux curata dal Fermilab e dal CERN", ok: true, why: "Come CentOS, era ricostruita dai sorgenti di Red Hat; la curavano due grandi laboratori di fisica. Oggi non viene più sviluppata." },
+            { t: "Una distribuzione derivata da Debian per le lezioni di matematica nelle scuole", ok: false, why: "Non derivava da Debian ma da Red Hat Enterprise Linux, e non era pensata per le scuole." },
+            { t: "Un programma di calcolo scientifico che si installa su qualsiasi distribuzione", ok: false, why: "Era una distribuzione completa, non un singolo programma." },
+            { t: "Una versione di Ubuntu con un kernel modificato per i supercomputer", ok: false, why: "Non aveva niente a che fare con Ubuntu: veniva dai sorgenti di Red Hat." }
+        ]
+    },
+    {
+        id: "1.1-13", type: "multiple", ref: "1.1_01#Distribuzioni",
+        text: "Quali affermazioni su Red Hat Enterprise Linux (RHEL) sono vere?",
+        options: [
+            { t: "È una distribuzione commerciale, con assistenza a pagamento", ok: true, why: "Le aziende pagano un abbonamento per gli aggiornamenti certificati e l'assistenza di Red Hat." },
+            { t: "Molte sue novità vengono provate prima in Fedora", ok: true, why: "Fedora è il progetto della comunità sponsorizzato da Red Hat: le novità ci arrivano prima e poi, stabilizzate, entrano in RHEL." },
+            { t: "Deriva da Debian e usa i pacchetti `.deb`", ok: false, why: "RHEL usa i pacchetti RPM, che Red Hat stessa ha inventato; Debian è un'altra famiglia." },
+            { t: "È mantenuta solo da volontari, senza un'azienda dietro", ok: false, why: "Dietro c'è l'azienda Red Hat (oggi parte di IBM)." }
+        ]
+    },
+    {
+        id: "1.1-14", type: "fill", ref: "1.1_01#Android", anyCase: true, placeholder: "una parola",
+        text: "Debian, Ubuntu, Red Hat e anche Android usano lo stesso kernel. Come si chiama? (una parola)",
+        answers: ["Linux"],
+        why: "Tutte le distribuzioni hanno in comune il kernel Linux; Android lo usa anche lui, ma con sopra programmi molto diversi da quelli GNU."
+    },
+    {
+        id: "1.1-15", type: "single", ref: "1.1_01#Distribuzioni",
+        text: "Che differenza c'è tra il kernel Linux e una distribuzione Linux?",
+        options: [
+            { t: "Il kernel è il nucleo; la distribuzione lo unisce a programmi, installatore e pacchetti", ok: true, why: "Il kernel da solo non basta per usare un computer: una distribuzione ci aggiunge strumenti, programmi, un installatore e un sistema per aggiornare." },
+            { t: "Sono due nomi per la stessa cosa: ogni distribuzione scrive il suo kernel da zero", ok: false, why: "Le distribuzioni usano tutte il kernel Linux, al massimo con piccole modifiche; non lo riscrivono." },
+            { t: "La distribuzione è il kernel compilato apposta per un solo modello di computer", ok: false, why: "Una distribuzione gira su moltissimi computer diversi e contiene molto più del kernel." },
+            { t: "Il kernel è la parte grafica del sistema, la distribuzione è la riga di comando", ok: false, why: "Il kernel non disegna finestre: gestisce processore, memoria e dispositivi." }
+        ]
+    },
 
     // ---- 1.2 Principali Applicazioni Open Source ----
     {
@@ -231,6 +277,26 @@ addQuestions("010-160", [
             { t: "JavaScript", ok: false, why: "JavaScript si usa nei browser e nei server web, non nei kernel." }
         ]
     },
+    {
+        id: "1.2-14", type: "single", ref: "1.2_01#Pacchetti Software",
+        text: "Su Debian o Ubuntu, quale comando cerca nei repository i pacchetti che hanno una certa parola nel nome o nella descrizione?",
+        options: [
+            { t: "`apt-cache search parola`", ok: true, why: "`apt-cache search` (o `apt search`) cerca nell'elenco dei pacchetti disponibili, anche quelli non installati." },
+            { t: "`dpkg -i parola`", ok: false, why: "`dpkg -i` installa un file `.deb` già scaricato: non cerca niente." },
+            { t: "`apt-get remove parola`", ok: false, why: "`apt-get remove` toglie un pacchetto installato." },
+            { t: "`rpm -e parola`", ok: false, why: "`rpm -e` disinstalla un pacchetto RPM, e su Debian non si usa." }
+        ]
+    },
+    {
+        id: "1.2-15", type: "single", ref: "1.2_01#Linguaggi di Programmazione",
+        text: "In quale linguaggio, che gira sul server e prepara le pagine web, è scritto WordPress?",
+        options: [
+            { t: "PHP", ok: true, why: "PHP è nato per il web: il server lo esegue a ogni richiesta e manda al browser la pagina HTML che ne esce. WordPress è il suo esempio più famoso." },
+            { t: "C", ok: false, why: "C si usa per il kernel e per i programmi di sistema, non per scrivere siti come WordPress." },
+            { t: "Bash", ok: false, why: "Bash è la shell: serve per i comandi e gli script di amministrazione." },
+            { t: "SQL", ok: false, why: "SQL serve a interrogare i database (come quello che WordPress usa, MySQL o MariaDB), non a scrivere il programma." }
+        ]
+    },
 
     // ---- 1.3 Software e Licenze Open Source ----
     {
@@ -339,6 +405,42 @@ addQuestions("010-160", [
             { t: "Con nessuna licenza: il codice open source non si può mai usare in programmi chiusi", ok: false, why: "Con le licenze permissive si può." },
             { t: "Con qualsiasi licenza, se non dice a nessuno che usa quella libreria", ok: false, why: "Le licenze vanno rispettate anche se nessuno controlla: violarle è una violazione del diritto d'autore." }
         ]
+    },
+    {
+        id: "1.3-12", type: "single", ref: "1.3_01#Criteri di Definizione del Software Libero",
+        text: "Una delle libertà del software libero è studiare come funziona il programma e modificarlo. Che cosa serve per poterlo fare davvero?",
+        options: [
+            { t: "Avere il codice sorgente", ok: true, why: "Per capire e cambiare un programma serve il codice sorgente: per questo il software libero lo mette sempre a disposizione." },
+            { t: "Pagare una licenza allo sviluppatore", ok: false, why: "Il software libero non chiede licenze per studiarlo o modificarlo." },
+            { t: "Usarlo solo per scopi non commerciali", ok: false, why: "Il software libero si può usare per qualsiasi scopo, anche commerciale." },
+            { t: "Avere i permessi di amministratore", ok: false, why: "Essere root non ti dà il codice sorgente: senza quello non puoi studiare il programma." }
+        ]
+    },
+    {
+        id: "1.3-13", type: "single", ref: "1.3_01#Copyleft",
+        text: "Un programma ha la licenza GPL. Puoi venderne delle copie?",
+        options: [
+            { t: "Sì, ma chi lo compra deve ricevere il sorgente e le stesse libertà", ok: true, why: "La GPL permette di vendere il programma: «free» vuol dire libero, non gratis. Chi lo riceve però ha le stesse libertà, compresa quella di ridistribuirlo." },
+            { t: "No: il software libero va sempre distribuito gratis", ok: false, why: "La GPL non vieta di farsi pagare; vieta di togliere le libertà a chi riceve il programma." },
+            { t: "Sì, ma solo dopo aver tolto il nome degli autori originali", ok: false, why: "È il contrario: gli avvisi di copyright e licenza degli autori vanno mantenuti." },
+            { t: "Solo con il permesso scritto della Free Software Foundation", ok: false, why: "La licenza dà già il permesso a tutti: non serve chiedere a nessuno." }
+        ]
+    },
+    {
+        id: "1.3-14", type: "multiple", ref: "1.3_01#Creative Commons",
+        text: "Una foto ha la licenza Creative Commons BY-SA. Quali affermazioni sono vere?",
+        options: [
+            { t: "Chi la usa deve citare l'autore", ok: true, why: "BY (attribuzione) chiede di citare l'autore." },
+            { t: "Una versione modificata va condivisa con la stessa licenza", ok: true, why: "SA (share alike, condividi allo stesso modo) è il copyleft delle Creative Commons." },
+            { t: "È vietato usarla per scopi commerciali", ok: false, why: "Il divieto di uso commerciale è NC, che in questa licenza non c'è." },
+            { t: "È vietato modificarla", ok: false, why: "Il divieto di modifiche è ND, che in questa licenza non c'è." }
+        ]
+    },
+    {
+        id: "1.3-15", type: "fill", ref: "1.3_01#Licenze", anyCase: true, placeholder: "sigla",
+        text: "Quale licenza della Free Software Foundation, pensata per le librerie, permette di usarle anche dentro programmi proprietari? (sigla)",
+        answers: ["LGPL"],
+        why: "La LGPL (Lesser General Public License) è una GPL più leggera: chi modifica la libreria deve condividere le modifiche, ma un programma chiuso può usarla senza diventare libero."
     },
 
     // ---- 1.4 Competenze ICT - Lavorare con Linux ----
@@ -458,6 +560,36 @@ addQuestions("010-160", [
             { t: "Un computer che si usa solo attraverso Internet, senza schermo né tastiera", ok: false, why: "Quello è un server remoto: può essere fisico o virtuale." },
             { t: "Un programma Java che si installa nel browser", ok: false, why: "Java ha una sua «macchina virtuale», ma qui si parla di computer interi simulati." },
             { t: "Un computer di prova che non può mai collegarsi alla rete", ok: false, why: "Le macchine virtuali di solito sono in rete come i computer veri." }
+        ]
+    },
+    {
+        id: "1.4-13", type: "single", ref: "1.4_01#Scegliere la Giusta Password",
+        text: "Che cos'è un gestore di password (password manager)?",
+        options: [
+            { t: "Un programma che tiene cifrate le password, sbloccate da una password principale", ok: true, why: "Così puoi usare una password lunga e diversa per ogni sito e ricordarne una sola." },
+            { t: "Un servizio del browser che manda le password ai siti più in fretta, senza chiederle", ok: false, why: "Non serve a velocizzare: serve a conservare in modo sicuro password diverse." },
+            { t: "Un comando che ogni giorno cambia da solo la password di root", ok: false, why: "Non c'è nessun comando del genere: il gestore di password conserva le tue password." },
+            { t: "La pagina dove l'amministratore legge le password di tutti gli utenti", ok: false, why: "Le password non si leggono: il sistema ne conserva solo una forma cifrata." }
+        ]
+    },
+    {
+        id: "1.4-14", type: "single", ref: "1.4_01#Crittografia di File ed E-mail con GnuPG",
+        text: "Con GnuPG vuoi cifrare un messaggio per Marco, in modo che solo lui possa leggerlo. Quale chiave usi?",
+        options: [
+            { t: "La chiave pubblica di Marco", ok: true, why: "Si cifra con la chiave pubblica del destinatario: solo la sua chiave privata, che tiene per sé, può decifrare." },
+            { t: "La tua chiave privata", ok: false, why: "Con la tua chiave privata si firma, per dimostrare che il messaggio è tuo; non serve a nasconderlo." },
+            { t: "La chiave privata di Marco", ok: false, why: "La chiave privata di Marco ce l'ha solo lui: tu non puoi averla." },
+            { t: "La tua chiave pubblica", ok: false, why: "Quello che cifri con la tua chiave pubblica lo puoi decifrare solo tu, non Marco." }
+        ]
+    },
+    {
+        id: "1.4-15", type: "multiple", ref: "1.4_01#Ambienti Desktop",
+        text: "Quali affermazioni sugli ambienti desktop di Linux sono vere?",
+        options: [
+            { t: "Sullo stesso sistema se ne possono installare più di uno e scegliere all'accesso", ok: true, why: "La schermata di accesso permette di scegliere la sessione: per esempio GNOME un giorno e Xfce un altro." },
+            { t: "Xfce e LXDE sono pensati per i computer con poche risorse", ok: true, why: "Sono ambienti leggeri, che chiedono poca memoria e poco processore." },
+            { t: "Ogni distribuzione può usare un solo ambiente desktop, scelto dal kernel", ok: false, why: "Il kernel non c'entra con il desktop, e quasi tutte le distribuzioni ne offrono diversi." },
+            { t: "Senza un ambiente desktop Linux non può funzionare", ok: false, why: "Molti server Linux non hanno nessuna grafica e si usano solo dalla riga di comando." }
         ]
     }
 ]);

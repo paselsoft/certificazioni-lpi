@@ -111,6 +111,43 @@ addQuestions("010-160", [
             { t: "Niente: `w` è solo un nome più breve dello stesso `who`", ok: false, why: "Mostra più informazioni." }
         ]
     },
+    {
+        id: "5.1-12", type: "single", ref: "5.1_01#Comprendere il Campo GECOS",
+        text: "In una riga di `/etc/passwd`, che cosa c'è nel campo GECOS (il quinto)?",
+        options: [
+            { t: "Informazioni sull'utente, come il nome completo", ok: true, why: "Il campo GECOS è un commento: di solito contiene nome e cognome, a volte anche ufficio e telefono, separati da virgole." },
+            { t: "La password dell'utente, cifrata con SHA-512", ok: false, why: "La password cifrata è in `/etc/shadow`; in `/etc/passwd` al suo posto c'è una `x`, nel secondo campo." },
+            { t: "Il GID, cioè il numero del gruppo principale", ok: false, why: "Il GID è il quarto campo." },
+            { t: "Il percorso della shell che parte all'accesso", ok: false, why: "La shell è l'ultimo campo, il settimo." }
+        ]
+    },
+    {
+        id: "5.1-13", type: "single", ref: "5.1_01#Cambiare Utente e Aumentare i Privilegi",
+        text: "Quale file stabilisce chi può usare `sudo` e per quali comandi?",
+        options: [
+            { t: "`/etc/sudoers`", ok: true, why: "Si modifica con `visudo`, che controlla la sintassi prima di salvare: un errore lì potrebbe impedire a tutti di usare `sudo`." },
+            { t: "`/etc/passwd`", ok: false, why: "`/etc/passwd` elenca gli account, non i permessi di `sudo`." },
+            { t: "`/etc/shadow`", ok: false, why: "`/etc/shadow` contiene le password cifrate." },
+            { t: "`/etc/hosts`", ok: false, why: "`/etc/hosts` associa nomi di computer e indirizzi IP." }
+        ]
+    },
+    {
+        id: "5.1-14", type: "multiple", ref: "5.1_01#Ottenere Informazioni Sugli Utenti",
+        text: "Quali comandi mostrano chi sei, cioè l'utente con cui stai lavorando?",
+        options: [
+            { t: "`whoami`", ok: true, why: "Stampa solo il nome del tuo utente." },
+            { t: "`id`", ok: true, why: "Mostra UID, gruppo principale e gruppi, con i nomi." },
+            { t: "`pwd`", ok: false, why: "`pwd` stampa il percorso della directory corrente, non il nome dell'utente." },
+            { t: "`uptime`", ok: false, why: "`uptime` dice da quanto tempo il sistema è acceso." },
+            { t: "`useradd`", ok: false, why: "`useradd` crea un nuovo utente." }
+        ]
+    },
+    {
+        id: "5.1-15", type: "fill", ref: "5.1_01#Identificativi (UID/GID)", placeholder: "numero",
+        text: "Quale numero di GID ha il gruppo `root`?",
+        answers: ["0"],
+        why: "Come l'utente root ha UID 0, il gruppo root ha GID 0. Lo vedi nella riga `root:x:0:` di `/etc/group`."
+    },
 
     // ---- 5.2 Creazione di Utenti e Gruppi ----
     {
@@ -218,6 +255,45 @@ addQuestions("010-160", [
             { t: "1001", ok: false, why: "1001 tocca di solito al secondo utente: il primo prende 1000." },
             { t: "100", ok: false, why: "È ancora nell'intervallo degli account di sistema." }
         ]
+    },
+    {
+        id: "5.2-12", type: "single", ref: "5.2_01#Aggiungere ed Eliminare Gruppi",
+        text: "Che cosa fa `groupdel sviluppo`, eseguito da root?",
+        options: [
+            { t: "Elimina il gruppo `sviluppo`", ok: true, why: "Gli utenti restano; perdono solo l'appartenenza a quel gruppo. Non si può eliminare un gruppo che è il gruppo principale di un utente." },
+            { t: "Toglie gli utenti dal gruppo ma lascia il gruppo", ok: false, why: "`groupdel` elimina proprio il gruppo." },
+            { t: "Elimina il gruppo e anche tutti i suoi utenti", ok: false, why: "Gli account degli utenti non vengono toccati: si eliminano con `userdel`." },
+            { t: "Cancella tutti i file del gruppo `sviluppo`", ok: false, why: "I file restano; al posto del nome del gruppo `ls -l` mostrerà il suo numero." }
+        ]
+    },
+    {
+        id: "5.2-13", type: "single", ref: "5.2_01#Il File /etc/shadow",
+        text: "In `/etc/shadow`, il campo della password di un account inizia con `!`. Che cosa vuol dire?",
+        options: [
+            { t: "L'account è bloccato: con la password non si entra", ok: true, why: "`passwd -l` aggiunge `!` davanti alla password cifrata, `passwd -u` lo toglie: la password resta, ma non funziona finché c'è il punto esclamativo." },
+            { t: "La password è vuota: si entra senza scriverla", ok: false, why: "Una password vuota è un campo vuoto, non `!`." },
+            { t: "La password va cambiata entro oggi", ok: false, why: "Le scadenze sono negli altri campi della riga, non nel simbolo davanti alla password." },
+            { t: "L'utente ha i permessi di root", ok: false, why: "I permessi di root dipendono dallo UID 0 (o da `sudo`), non da `/etc/shadow`." }
+        ]
+    },
+    {
+        id: "5.2-14", type: "multiple", ref: "5.2_01#Aggiungere ed Eliminare Account Utenti",
+        text: "Su Debian o Ubuntu, quali file cambia di solito `useradd -m luca`?",
+        options: [
+            { t: "`/etc/passwd`", ok: true, why: "Ci aggiunge la riga dell'account `luca`." },
+            { t: "`/etc/shadow`", ok: true, why: "Ci aggiunge la riga con la password, per ora bloccata." },
+            { t: "`/etc/group`", ok: true, why: "Di solito crea anche il gruppo personale `luca`, con lo stesso nome dell'utente." },
+            { t: "`/etc/hosts`", ok: false, why: "`/etc/hosts` riguarda la rete, non gli utenti." },
+            { t: "`/etc/sudoers`", ok: false, why: "`useradd` non dà permessi di `sudo`: per quelli si modifica `/etc/sudoers` o si aggiunge l'utente al gruppo giusto." }
+        ]
+    },
+    {
+        id: "5.2-15", type: "fill", ref: "5.2_01#Il Comando passwd", placeholder: "comando",
+        text: "Scrivi il comando (da root) che imposta o cambia la password dell'utente `luca`.",
+        answers: ["passwd luca"],
+        pattern: "^(sudo )?passwd luca$",
+        alsoAccepted: ["sudo passwd luca"],
+        why: "Root può cambiare la password di qualsiasi utente con `passwd nome`, senza conoscere quella vecchia. Scritto da solo, `passwd` cambia la tua."
     },
 
     // ---- 5.3 Gestione delle Autorizzazioni e delle Proprietà dei File ----
@@ -327,6 +403,45 @@ addQuestions("010-160", [
             { t: "Cambia solo la directory, non i file che contiene", ok: false, why: "Senza `-R` sarebbe così." }
         ]
     },
+    {
+        id: "5.3-12", type: "single", ref: "5.3_01#Modalità Numerica",
+        text: "Quali permessi dà `chmod 640 dati.txt`?",
+        options: [
+            { t: "`rw-r-----`", ok: true, why: "6 = 4 + 2 = `rw-` al proprietario, 4 = `r--` al gruppo, 0 = `---` agli altri." },
+            { t: "`rw-r--r--`", ok: false, why: "Questi sono 644: anche gli altri potrebbero leggere." },
+            { t: "`rwxr-----`", ok: false, why: "Questi sono 740: il 7 darebbe anche l'esecuzione al proprietario." },
+            { t: "`r--rw----`", ok: false, why: "Questi sono 460: le cifre sono in ordine proprietario, gruppo, altri." }
+        ]
+    },
+    {
+        id: "5.3-13", type: "single", ref: "5.3_01#Modalità Simbolica",
+        text: "Che cosa fa `chmod go-r segreto.txt`?",
+        options: [
+            { t: "Toglie la lettura al gruppo e agli altri", ok: true, why: "`g` è il gruppo, `o` gli altri (others), `-r` toglie la lettura; il proprietario non cambia." },
+            { t: "Dà la lettura al gruppo e agli altri", ok: false, why: "Per dare si usa `+`; `-` toglie." },
+            { t: "Toglie la lettura solo al proprietario", ok: false, why: "Il proprietario è `u` (user); `o` sono gli altri, non il proprietario (owner)." },
+            { t: "Toglie tutti i permessi al gruppo", ok: false, why: "Toglie solo `r`, e non solo al gruppo: anche agli altri." }
+        ]
+    },
+    {
+        id: "5.3-14", type: "fill", ref: "5.3_01#Modificare la Proprietà dei File", placeholder: "comando",
+        text: "Scrivi il comando che cambia il gruppo del file `piano.txt` in `sviluppo`, senza cambiare il proprietario.",
+        answers: ["chgrp sviluppo piano.txt", "chown :sviluppo piano.txt"],
+        pattern: "^(sudo )?(chgrp sviluppo|chown :sviluppo) piano\\.txt$",
+        alsoAccepted: ["sudo chgrp sviluppo piano.txt"],
+        notAccepted: ["chown sviluppo piano.txt", "chgrp piano.txt sviluppo"],
+        why: "`chgrp gruppo file` cambia solo il gruppo; lo stesso fa `chown :gruppo file`, con i due punti davanti. Il proprietario può farlo solo verso un gruppo di cui fa parte."
+    },
+    {
+        id: "5.3-15", type: "multiple", ref: "5.3_01#Permessi sui File",
+        text: "Il file `piano.txt` ha i permessi `-rw-rw-r--`, proprietaria anna e gruppo `sviluppo`. Luca fa parte di `sviluppo`. Che cosa può fare luca?",
+        options: [
+            { t: "Leggere il file", ok: true, why: "Per luca contano i permessi del gruppo, `rw-`: c'è la `r`." },
+            { t: "Modificare il file", ok: true, why: "Il gruppo ha anche la `w`." },
+            { t: "Eseguire il file come programma", ok: false, why: "Nessuno ha la `x`." },
+            { t: "Cambiarne i permessi con `chmod`", ok: false, why: "Solo la proprietaria (o root) può cambiare i permessi, anche se gli altri possono scrivere nel file." }
+        ]
+    },
 
     // ---- 5.4 Directory e File Speciali ----
     {
@@ -426,6 +541,54 @@ addQuestions("010-160", [
             { t: "Il nome del link è scritto in corsivo nel terminale", ok: false, why: "Il terminale può usare colori, ma l'indicazione sicura è la `l` iniziale." },
             { t: "La dimensione del link è sempre 0 byte", ok: false, why: "La dimensione è la lunghezza del percorso a cui punta." },
             { t: "Non si può riconoscere: sembra un file normale", ok: false, why: "Si riconosce dalla `l` e dalla freccia." }
+        ]
+    },
+    {
+        id: "5.4-11", type: "single", ref: "5.4_01#Creare Hard Link",
+        text: "Che cosa fa `ln dati.txt copia.txt`, senza opzioni?",
+        options: [
+            { t: "Crea un hard link: due nomi per gli stessi dati", ok: true, why: "Senza `-s`, `ln` crea un hard link: `copia.txt` e `dati.txt` hanno lo stesso inode, e modificarne uno vuol dire modificare anche l'altro." },
+            { t: "Crea il link simbolico `copia.txt`", ok: false, why: "Per un link simbolico serve `-s`: `ln -s dati.txt copia.txt`." },
+            { t: "Copia il contenuto in un nuovo file indipendente", ok: false, why: "Quello lo fa `cp`: i dati verrebbero duplicati." },
+            { t: "Rinomina `dati.txt` in `copia.txt`", ok: false, why: "Per rinominare si usa `mv`; con `ln` il nome vecchio resta." }
+        ]
+    },
+    {
+        id: "5.4-12", type: "single", ref: "5.4_01#Gestire i Link Simbolici",
+        text: "`ls -l` mostra `lrwxrwxrwx 1 anna anna 10 mar 3 10:00 rete -> /etc/hosts`. Chi può modificare `/etc/hosts` passando dal link?",
+        options: [
+            { t: "Solo chi ha già il permesso di scrivere su `/etc/hosts`", ok: true, why: "I permessi `rwxrwxrwx` di un link simbolico non contano: valgono quelli del file a cui punta." },
+            { t: "Tutti, perché il link ha i permessi `rwxrwxrwx`", ok: false, why: "I link simbolici mostrano sempre `rwxrwxrwx`, ma questi permessi non vengono usati." },
+            { t: "Solo anna, la proprietaria del link", ok: false, why: "Essere proprietari del link non dà permessi sul file a cui punta." },
+            { t: "Nessuno: un link simbolico è sempre di sola lettura", ok: false, why: "Attraverso il link si può scrivere, se il file di destinazione lo permette." }
+        ]
+    },
+    {
+        id: "5.4-13", type: "single", ref: "5.4_01#Gestire gli Hard Link",
+        text: "Per un file normale, che cosa indica il numero subito dopo i permessi nell'elenco di `ls -l`?",
+        options: [
+            { t: "Quanti hard link ha, cioè quanti nomi", ok: true, why: "Un file appena creato ha 1; ogni `ln` senza `-s` lo aumenta di uno, ogni `rm` di uno dei nomi lo diminuisce." },
+            { t: "Quanti blocchi occupa sul disco", ok: false, why: "I blocchi si vedono con `ls -s` o `du`, non in quella colonna." },
+            { t: "Quante volte è stato aperto", ok: false, why: "Linux non conta le aperture dei file." },
+            { t: "Il suo numero di inode", ok: false, why: "L'inode si vede con `ls -i`." }
+        ]
+    },
+    {
+        id: "5.4-14", type: "fill", ref: "5.4_01#Gestire gli Hard Link", placeholder: "opzione",
+        text: "Quale opzione di `ls` mostra il numero di inode di ogni file?",
+        answers: ["-i", "--inode"],
+        pattern: "^(ls )?(-i|--inode|-li|-il)$",
+        alsoAccepted: ["ls -i", "ls -li"],
+        why: "`ls -i` scrive il numero di inode davanti a ogni nome: due hard link dello stesso file hanno lo stesso numero."
+    },
+    {
+        id: "5.4-15", type: "multiple", ref: "5.4_01#Lavorare con gli Hard Link",
+        text: "Quali affermazioni sugli hard link sono vere?",
+        options: [
+            { t: "Non si possono creare tra due file system diversi", ok: true, why: "Un hard link punta a un inode, e ogni file system ha i suoi inode." },
+            { t: "Di solito non si possono creare per le directory", ok: true, why: "Il sistema lo vieta per non creare giri senza uscita nell'albero delle directory." },
+            { t: "Se cancelli il nome originale, l'hard link non funziona più", ok: false, why: "I dati restano finché c'è almeno un nome: tutti gli hard link valgono allo stesso modo." },
+            { t: "Ognuno occupa tanto spazio quanto il file", ok: false, why: "I dati sono uno solo: un hard link aggiunge solo un nome." }
         ]
     }
 ]);
