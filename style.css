@@ -413,6 +413,35 @@ main { display: block; }
     cursor: pointer;
 }
 .terminal-key:hover { background: #30363d; }
+.terminal [hidden] { display: none !important; }
+/* ---- Editor nano e vi (editor-view.js) ---- */
+.editor { display: flex; flex-direction: column; }
+.editor-title { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 2px 10px; background: #e6edf3; color: #0d1117; }
+.editor-file { font-weight: 700; overflow-wrap: anywhere; }
+.editor-text {
+    display: block;
+    width: 100%;
+    min-height: 16rem;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 8px 10px;
+    border: 0;
+    resize: vertical;
+    background: #0d1117;
+    color: #e6edf3;
+    font: inherit;
+    line-height: 1.4;
+    caret-color: #7ee787;
+}
+.editor-text:focus { outline: none; }
+.editor-text::selection { background: #7ee787; color: #0d1117; }
+.editor-status { min-height: 1.4em; padding: 2px 10px; color: #7ee787; overflow-wrap: anywhere; }
+.editor-keys { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 4px 10px 10px; }
+.editor-key { min-height: 2.75rem; padding: 0 8px; border: 1px solid #484f58; border-radius: 6px; background: #21262d; color: #e6edf3; font: inherit; cursor: pointer; }
+.editor-key kbd { font: inherit; background: #e6edf3; color: #0d1117; padding: 0 3px; border-radius: 3px; }
+.editor-key:hover { background: #30363d; }
+.editor-key:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
+.editor-tip { color: #c9d1d9; font-size: 0.85em; }
 .terminal-key:focus-visible { outline: 3px solid var(--focus); outline-offset: 1px; }
 .practice-help { margin: 8px 0; }
 .solution-code { background: var(--code-bg); color: var(--code-text); padding: 8px 12px; border-radius: 8px; overflow-x: auto; font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }

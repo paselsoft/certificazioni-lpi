@@ -78,11 +78,16 @@ module.exports = {
 
     "tutte le soluzioni, scritte nel terminale della pagina, completano l'esercizio": async ({ page }) => {
         await open(page, { hash: "#/terminale" });
-        const exercises = await page.evaluate(() => EXERCISES.map(exercise => ({ id: exercise.id, solution: exercise.solution })));
+        const exercises = await page.evaluate(() => EXERCISES.map(exercise => ({ id: exercise.id, solution: exercise.steps || exercise.solution })));
         const problems = [];
         for (const exercise of exercises) {
             await go(page, `#/terminale/${exercise.id}`);
-            for (const line of exercise.solution) await type(page, line);
+            // Con gli editor: righe di comando, testo da scrivere e tasti (exercises/010-160.js)
+            for (const step of exercise.solution) {
+                if (typeof step === "string") await type(page, step);
+                else if (step.type !== undefined) await page.keyboard.type(step.type);
+                else await page.keyboard.press(step.press);
+            }
             if (!await page.isVisible("#practice-success")) problems.push(exercise.id);
         }
         assert.deepEqual(problems, []);
@@ -474,8 +479,173 @@ module.exports = {
         assert.match(await outputText(page), /CIAO/);
         await page.press("#terminal-input", "Control+l");
         assert.equal(await outputText(page), "");
-        await type(page, "nano note.txt");
-        assert.match(await outputText(page), /editor non sono disponibili nel simulatore/);
+    },
+
+    "nano: scrivere, Ctrl+O salva, Ctrl+X chiede se salvare, Ctrl+K e Ctrl+U, permessi e sudo": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const status = () => page.textContent("#editor-status");
+        const area = () => page.inputValue("#editor-text");
+        await type(page, "nano lista.txt");
+        assert.equal(await page.isVisible("#terminal-input"), false, "la riga di comando si nasconde");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "editor-text");
+        assert.equal(await status(), "[ File nuovo ]");
+        assert.match(await page.textContent(".editor-title"), /GNU nano.*lista\.txt/);
+        await page.keyboard.type("uno\ndue\ntre");
+        assert.match(await page.textContent(".editor-title"), /Modificato/);
+        await page.keyboard.press("Control+o");
+        assert.equal(await status(), "Nome del file da scrivere: lista.txt");
+        await page.keyboard.press("Enter");
+        assert.equal(await status(), "[ Scritte 3 righe ]");
+        // Ctrl+K taglia la riga del cursore, Ctrl+U la incolla
+        await page.evaluate(() => document.getElementById("editor-text").setSelectionRange(0, 0));
+        await page.keyboard.press("Control+k");
+        assert.equal(await area(), "due\ntre");
+        await page.keyboard.press("ArrowDown");
+        await page.keyboard.press("Control+u");
+        assert.equal(await area(), "due\nuno\ntre");
+        // Ctrl+X con modifiche: S salva (il nome è già scritto), Ctrl+C annulla, N esce senza salvare
+        await page.keyboard.press("Control+x");
+        assert.match(await status(), /Salvare il buffer modificato\?/);
+        await page.keyboard.press("Control+c");
+        assert.equal(await status(), "[ Annullato ]");
+        await page.keyboard.press("Control+x");
+        await page.keyboard.type("n");
+        assert.equal(await page.isVisible("#editor-text"), false);
+        assert.equal(await page.evaluate(() => document.activeElement.id), "terminal-input");
+        await type(page, "cat lista.txt");
+        assert.match(await outputText(page), /uno\ndue\ntre$/);
+        // Il file di root: anna lo legge ma non può salvarlo; con sudo sì
+        await type(page, "nano /etc/hostname");
+        assert.equal(await area(), "lpi\n");
+        await page.keyboard.type("x");
+        await page.keyboard.press("Control+o");
+        await page.keyboard.press("Enter");
+        assert.equal(await status(), "[ Errore scrivendo /etc/hostname: Permesso negato ]");
+        await page.keyboard.press("Control+x");
+        await page.keyboard.type("n");
+        await type(page, "sudo nano /etc/hostname");
+        await page.keyboard.press("Control+End");
+        await page.keyboard.type("server");
+        await page.keyboard.press("Control+x");
+        await page.keyboard.type("s");
+        await page.keyboard.press("Enter");
+        await type(page, "cat /etc/hostname");
+        assert.match(await outputText(page), /lpi\nserver$/);
+        // Non in una pipe; una directory non si apre; l'aiuto c'è
+        await type(page, "nano lista.txt | cat");
+        assert.match(await outputText(page), /nano: nel simulatore l'editor si apre solo sulla riga di comando/);
+        await type(page, "nano foto");
+        assert.match(await outputText(page), /nano: foto: È una directory$/);
+        await type(page, "man nano");
+        assert.match(await outputText(page), /Ctrl\+O\s+salva\s+il\s+file/);
+        await type(page, "help");
+        assert.match(await outputText(page), /editor: nano FILE/);
+    },
+
+    "vi: modi comandi e inserimento, :w :q :q! :wq, x dd yy p u, / e ZZ": async ({ page }) => {
+        await open(page, { hash: "#/terminale/libero" });
+        const status = () => page.textContent("#editor-status");
+        const area = () => page.inputValue("#editor-text");
+        await type(page, "echo -e 'alfa\\nbeta\\ngamma' > greco.txt");
+        await type(page, "vi greco.txt");
+        assert.equal(await status(), '"greco.txt" 3L, 16B');
+        assert.equal(await area(), "alfa\nbeta\ngamma");
+        // Nel modo comandi le lettere non entrano nel testo
+        await page.keyboard.type("x");
+        assert.equal(await area(), "lfa\nbeta\ngamma");
+        await page.keyboard.type("u");
+        assert.equal(await area(), "alfa\nbeta\ngamma");
+        await page.keyboard.type("jdd");
+        assert.equal(await area(), "alfa\ngamma");
+        await page.keyboard.type("p");
+        assert.equal(await area(), "alfa\ngamma\nbeta");
+        await page.keyboard.type("ggyyGp");
+        assert.equal(await area(), "alfa\ngamma\nbeta\nalfa");
+        // :q con modifiche si rifiuta
+        await page.keyboard.type(":q");
+        assert.equal(await status(), ":q");
+        await page.keyboard.press("Enter");
+        assert.equal(await status(), "E37: Non salvato dopo modifica (aggiungi ! per eseguire comunque)");
+        // Modo inserimento: A scrive in fondo alla riga, o apre una riga sotto
+        await page.keyboard.type("A");
+        assert.equal(await status(), "-- INSERISCI --");
+        await page.keyboard.type("!");
+        await page.keyboard.press("Escape");
+        await page.keyboard.type("o");
+        await page.keyboard.type("delta");
+        await page.keyboard.press("Escape");
+        assert.equal(await area(), "alfa\ngamma\nbeta\nalfa!\ndelta");
+        await page.keyboard.type("/gam");
+        await page.keyboard.press("Enter");
+        await page.keyboard.type("x");
+        assert.equal(await area(), "alfa\namma\nbeta\nalfa!\ndelta");
+        await page.keyboard.type(":w");
+        await page.keyboard.press("Enter");
+        assert.equal(await status(), '"greco.txt" 5L, 27B scritti');
+        await page.keyboard.type(":q");
+        await page.keyboard.press("Enter");
+        assert.equal(await page.isVisible("#editor-text"), false);
+        await type(page, "cat greco.txt");
+        assert.match(await outputText(page), /alfa\namma\nbeta\nalfa!\ndelta$/);
+        // :q! esce senza salvare; un comando sconosciuto dà errore; ZZ salva ed esce
+        await type(page, "vim greco.txt");
+        await page.keyboard.type("dddd");
+        await page.keyboard.type(":salva");
+        await page.keyboard.press("Enter");
+        assert.equal(await status(), "E492: Non è un comando dell'editor: salva");
+        await page.keyboard.type(":q!");
+        await page.keyboard.press("Enter");
+        await type(page, "wc -l greco.txt");
+        assert.match(await outputText(page), /5 greco\.txt$/);
+        await type(page, "vi");
+        await page.keyboard.type("itesto");
+        await page.keyboard.press("Escape");
+        await page.keyboard.type(":wq");
+        await page.keyboard.press("Enter");
+        assert.equal(await status(), "E32: Nessun nome di file");
+        await page.keyboard.type(":w nuovo.txt");
+        await page.keyboard.press("Enter");
+        assert.equal(await status(), '"nuovo.txt" [Nuovo] 1L, 6B scritti');
+        await page.keyboard.type("ZZ");
+        await type(page, "cat nuovo.txt");
+        assert.match(await outputText(page), /testo$/);
+        await type(page, "man vi");
+        assert.match(await outputText(page), /:q!\s+esce\s+senza\s+salvare/);
+    },
+
+    "editor sul telefono: tasti come pulsanti, testo scritto intercettato, 320 px e axe": async ({ page }) => {
+        await page.setViewportSize({ width: 320, height: 700 });
+        await open(page, { hash: "#/terminale/libero" });
+        await type(page, "vi prova.txt");
+        // Il telefono non dice quale tasto: si guarda che cosa cambia nel testo (qui: «i», poi «ciao»)
+        const typeLikePhone = text => page.evaluate(text => {
+            const area = document.getElementById("editor-text");
+            const at = area.selectionStart;
+            area.setRangeText(text, at, area.selectionEnd, "end");
+            area.dispatchEvent(new Event("input", { bubbles: true }));
+        }, text);
+        await typeLikePhone("i");
+        assert.equal(await page.inputValue("#editor-text"), "");
+        assert.equal(await page.textContent("#editor-status"), "-- INSERISCI --");
+        await typeLikePhone("ciao");
+        await page.click(".editor-key >> text=Esc");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "editor-text");
+        for (const char of ":wq\n") await typeLikePhone(char);
+        assert.equal(await page.isVisible("#editor-text"), false);
+        await type(page, "nano prova.txt");
+        assert.ok(await overflow(page) <= 0, `scorrimento di ${await overflow(page)} px`);
+        for (const scheme of ["light", "dark"]) {
+            await page.emulateMedia({ colorScheme: scheme });
+            const violations = await axeViolations(page);
+            if (violations !== null) assert.deepEqual(violations, [], scheme);
+        }
+        await page.keyboard.press("Control+End");
+        await page.keyboard.type("altro");
+        await page.click(".editor-key >> text=Esci");
+        await page.click(".editor-key >> text=Sì");
+        await page.click(".editor-key >> text=Conferma");
+        await type(page, "cat prova.txt");
+        assert.match(await outputText(page), /ciao\naltro$/);
     },
 
     "con un Linux vero: lo script della palestra e i comandi per installarlo": async ({ page }) => {

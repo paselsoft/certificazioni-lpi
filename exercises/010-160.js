@@ -18,6 +18,8 @@
 //     { noErrors: true }                         l'ultimo comando non mostra errori
 //   solution: i comandi di una soluzione (tools/check-shell.js li prova anche in Bash vero, se
 //   bash non è false); hint: un suggerimento; explain: cosa ricordare, dopo la soluzione.
+//   Con un editor (nano, vi) solution descrive i passi a parole e steps li fa davvero, per i test
+//   nel browser: righe di comando (testo), { type: "testo da scrivere" }, { press: "tasto" }.
 // Nei testi, `così` diventa codice.
 addExercises("010-160", [
     // ---- 2.1 Nozioni di base sulla command line ----
@@ -471,6 +473,69 @@ addExercises("010-160", [
         hint: "Senza argomenti (o con più di uno) lo script esce con 1. Con un argomento solo guarda se è un file: prova con un nome che non esiste.",
         solution: ["./controlla.sh nonesiste.txt", "echo $?"],
         explain: "`$# -ne 1` vuol dire «il numero degli argomenti è diverso da 1». Il ramo `else` scatta quando `[ -f \"$1\" ]` è falso: lì lo script sceglie di uscire con 2."
+    },
+    // Gli editor vi e nano (nel simulatore si aprono nella pagina, al posto della riga di comando)
+    {
+        id: "t3.3-12", title: "Il primo file con nano", bash: false,
+        task: "Con l'editor `nano` crea il file `spesa.txt` con tre righe: `pane`, `latte` e `uova`. Salva ed esci.",
+        goals: [
+            { text: "`spesa.txt` contiene le tre righe", path: "/home/anna/spesa.txt", content: "pane\nlatte\nuova\n" },
+            { text: "Hai usato `nano`", history: "^(sudo\\s+)?nano\\b" }
+        ],
+        hint: "Scrivi `nano spesa.txt`: il file non esiste ancora e nano lo apre vuoto. Scrivi le tre righe, poi Ctrl+O e Invio per salvare, Ctrl+X per uscire. In basso ^ vuol dire Ctrl.",
+        solution: ["nano spesa.txt", "(scrivi pane, Invio, latte, Invio, uova)", "Ctrl+O, poi Invio: salva", "Ctrl+X: esce"],
+        steps: ["nano spesa.txt", { type: "pane\nlatte\nuova" }, { press: "Control+o" }, { press: "Enter" }, { press: "Control+x" }],
+        explain: "In nano si scrive subito, e i comandi sono sempre elencati in basso: ^O (Ctrl+O, «write Out») salva, ^X esce. Salvando, nano aggiunge l'a capo dopo l'ultima riga, come si aspettano i programmi di Linux."
+    },
+    {
+        id: "t3.3-13", title: "Aggiungere una riga con nano", bash: false,
+        task: "Apri `amici.txt` con nano e aggiungi in fondo la riga `Sara`. Esci con Ctrl+X e, quando nano lo chiede, salva.",
+        setup: { files: { "/home/anna/amici.txt": "Marco\nGiulia\n" } },
+        goals: [
+            { text: "`amici.txt` contiene `Marco`, `Giulia` e `Sara`", path: "/home/anna/amici.txt", content: "Marco\nGiulia\nSara\n" },
+            { text: "Hai usato `nano`", history: "^(sudo\\s+)?nano\\b" }
+        ],
+        hint: "Con le frecce scendi sulla riga vuota in fondo e scrivi `Sara`. Ctrl+X esce: visto che hai cambiato il file, nano chiede se salvare. Rispondi S (sì) e conferma il nome con Invio.",
+        solution: ["nano amici.txt", "(con le frecce vai sulla riga vuota in fondo e scrivi Sara)", "Ctrl+X, poi S: salva", "Invio: conferma il nome del file"],
+        steps: ["nano amici.txt", { press: "Control+End" }, { type: "Sara" }, { press: "Control+x" }, { type: "s" }, { press: "Enter" }],
+        explain: "Con modifiche non salvate, Ctrl+X non esce subito: chiede «Salvare il buffer modificato?». S salva (poi chiede il nome, già scritto: basta Invio), N esce buttando le modifiche, Ctrl+C annulla e torna al testo."
+    },
+    {
+        id: "t3.3-14", title: "Il primo file con vi", bash: false,
+        task: "Con l'editor `vi` crea il file `promemoria.txt` con due righe: `prima riga` e `seconda riga`. Salva ed esci.",
+        goals: [
+            { text: "`promemoria.txt` contiene le due righe", path: "/home/anna/promemoria.txt", content: "prima riga\nseconda riga\n" },
+            { text: "Hai usato `vi` (o `vim`)", history: "^(sudo\\s+)?vim?\\b" }
+        ],
+        hint: "vi parte nel modo comandi: premi `i` per scrivere, poi Esc per tornare ai comandi. Per salvare e uscire scrivi `:wq` e premi Invio.",
+        solution: ["vi promemoria.txt", "i (modo inserimento)", "(scrivi prima riga, Invio, seconda riga)", "Esc (torna ai comandi)", ":wq, poi Invio: salva ed esce"],
+        steps: ["vi promemoria.txt", { press: "i" }, { type: "prima riga\nseconda riga" }, { press: "Escape" }, { type: ":wq" }, { press: "Enter" }],
+        explain: "vi ha due modi: nel modo comandi i tasti sono comandi (i, x, dd…), nel modo inserimento sono testo. Esc torna sempre ai comandi. `:w` salva, `:q` esce, `:wq` (o `:x`, o `ZZ`) fa tutte e due le cose."
+    },
+    {
+        id: "t3.3-15", title: "Togliere una riga con vi", bash: false,
+        task: "Con `vi` togli da `elenco.txt` la riga `due`, poi salva ed esci.",
+        setup: { files: { "/home/anna/elenco.txt": "uno\ndue\ntre\n" } },
+        goals: [
+            { text: "In `elenco.txt` restano `uno` e `tre`", path: "/home/anna/elenco.txt", content: "uno\ntre\n" },
+            { text: "Hai usato `vi` (o `vim`)", history: "^(sudo\\s+)?vim?\\b" }
+        ],
+        hint: "Nel modo comandi `j` (o la freccia giù) scende di una riga e `dd` cancella la riga intera. Se sbagli, `u` annulla. Poi `:wq` e Invio.",
+        solution: ["vi elenco.txt", "j (scende sulla riga due)", "dd (cancella la riga)", ":wq, poi Invio: salva ed esce"],
+        steps: ["vi elenco.txt", { press: "j" }, { type: "dd" }, { type: ":wq" }, { press: "Enter" }],
+        explain: "`dd` taglia la riga del cursore (si può incollare con `p`), `x` cancella un carattere, `u` annulla. Per uscire senza salvare le modifiche c'è `:q!`: con modifiche, `:q` da solo si rifiuta."
+    },
+    {
+        id: "t3.3-16", title: "Uno script scritto con vim", bash: false,
+        task: "Con `vim` scrivi lo script `ciao.sh`: la prima riga è `#!/bin/bash`, la seconda `echo Ciao dallo script`. Poi rendilo eseguibile e avvialo.",
+        goals: [
+            { text: "`ciao.sh` è eseguibile per il proprietario", path: "/home/anna/ciao.sh", modeHas: "100" },
+            { text: "Lo script, avviato, scrive `Ciao dallo script`", output: "words", words: ["Ciao", "dallo", "script"], command: "^(\\./|bash\\s+)ciao\\.sh\\s*$" }
+        ],
+        hint: "`vim ciao.sh`, poi `i`, le due righe, Esc e `:wq`. Fuori dall'editor: `chmod u+x ciao.sh` e `./ciao.sh`.",
+        solution: ["vim ciao.sh", "i, poi le due righe: #!/bin/bash e echo Ciao dallo script", "Esc, :wq e Invio", "chmod u+x ciao.sh", "./ciao.sh"],
+        steps: ["vim ciao.sh", { press: "i" }, { type: "#!/bin/bash\necho Ciao dallo script" }, { press: "Escape" }, { type: ":wq" }, { press: "Enter" }, "chmod u+x ciao.sh", "./ciao.sh"],
+        explain: "Gli script si scrivono proprio così, con un editor. Un file nuovo non è eseguibile: serve `chmod u+x`. La prima riga, `#!/bin/bash` (shebang), dice quale programma deve leggere lo script."
     },
 
     // ---- 4.3 Dove sono memorizzati i dati ----

@@ -30,12 +30,13 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   allo scadere la prova termina. Alla fine: risposte giuste, risultato per argomento, le domande da
   rivedere con le spiegazioni, lo storico. All'esame vero si supera con 500 su 200-800, ma quante
   risposte giuste servono non è pubblico: l'app usa il 50% solo come riferimento.
-- **Pratica al terminale**: 97 esercizi con i comandi dell'esame (directory, file, caratteri
-  jolly, archivi, grep e filtri, reindirizzamenti, script, permessi, link) su un piccolo Linux
+- **Pratica al terminale**: 102 esercizi con i comandi dell'esame (directory, file, caratteri
+  jolly, archivi, grep e filtri, reindirizzamenti, script, gli editor nano e vi, permessi, link) su un piccolo Linux
   simulato nel browser, con gli obiettivi che si spuntano, suggerimento e soluzione; più un
   terminale libero. I filtri di testo vengono dal motore di Pipe Dreams; le soluzioni e oltre 200
   casi tipici sono confrontati con Bash vero. Tab completa comandi e nomi dei file; sul telefono
-  una fila di tasti rapidi (`|`, `>`, `~`, `/`, Tab, ↑...) sta sotto il terminale.
+  una fila di tasti rapidi (`|`, `>`, `~`, `/`, Tab, ↑...) sta sotto il terminale. `nano`, `vi` e `vim`
+  aprono un editor al posto della riga di comando, con i tasti principali anche come pulsanti.
 - **Palestra su un Linux vero**: gli stessi esercizi nel terminale di un Linux vero (anche in
   VirtualBox). Dalla pagina del terminale si scarica `palestra.sh`; `sudo bash palestra.sh installa`
   crea l'utente anna (password anna) con gli stessi file, poi `su - anna` e `lpi-esercizio t2.3-01`
@@ -92,6 +93,8 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `shell-users.js` | utenti e sicurezza nella shell simulata: `who`, `w`, `last`, `sudo` (`-l`, `-u`, `-i`), `su`, le shell una dentro l'altra |
 | `shell-accounts.js` | creare utenti e gruppi nella shell simulata: `useradd`, `groupadd`, `usermod`, `userdel`, `groupdel`, `passwd`, `chpasswd` |
 | `shell-complete.js` | il completamento con Tab nel terminale (comandi e nomi dei file) |
+| `shell-editor.js` | i comandi `nano`, `vi` e `vim` del simulatore e il salvataggio dei file |
+| `editor-view.js` | l'editor nella pagina del terminale (nano e vi) |
 | `shell-help.js` | l'aiuto nella shell simulata: pagine di manuale scritte per l'app, `man`, `info`, `--help`, `help`, `locate` |
 | `lib/pipedreams-*.js` | il motore dei filtri di Pipe Dreams, copiato senza modifiche |
 | `exercise-check.js`, `practice.js` | gli esercizi al terminale: controllo degli obiettivi e pagina (`#/terminale`) |

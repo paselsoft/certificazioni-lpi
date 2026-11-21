@@ -16,7 +16,7 @@
 # modificarlo a mano. https://github.com/paselsoft/certificazioni-lpi
 set -euo pipefail
 
-ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.1-01  Chi sono io?\nt5.1-02  Chi è collegato?\nt5.1-03  Che cosa stanno facendo?\nt5.1-04  Gli accessi di luca\nt5.1-05  Un utente di sistema\nt5.1-06  Dove stanno le password\nt5.1-07  Che cosa posso fare con sudo?\nt5.1-08  Diventare luca\nt5.1-09  Un comando come un altro utente\nt5.1-10  Il prompt di root\nt5.2-01  Un nuovo utente\nt5.2-02  Nome completo e shell\nt5.2-03  La riga del nuovo utente\nt5.2-04  Il modello delle home\nt5.2-05  Un gruppo nuovo\nt5.2-06  Aggiungere a un gruppo\nt5.2-07  Una password per luigi\nt5.2-08  Bloccare un account\nt5.2-09  Un utente di sistema\nt5.2-10  Eliminare un utente\nt5.2-11  Il numero di un utente\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
+ELENCO=$'t2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt3.3-12  Il primo file con nano\nt3.3-13  Aggiungere una riga con nano\nt3.3-14  Il primo file con vi\nt3.3-15  Togliere una riga con vi\nt3.3-16  Uno script scritto con vim\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.1-01  Chi sono io?\nt5.1-02  Chi è collegato?\nt5.1-03  Che cosa stanno facendo?\nt5.1-04  Gli accessi di luca\nt5.1-05  Un utente di sistema\nt5.1-06  Dove stanno le password\nt5.1-07  Che cosa posso fare con sudo?\nt5.1-08  Diventare luca\nt5.1-09  Un comando come un altro utente\nt5.1-10  Il prompt di root\nt5.2-01  Un nuovo utente\nt5.2-02  Nome completo e shell\nt5.2-03  La riga del nuovo utente\nt5.2-04  Il modello delle home\nt5.2-05  Un gruppo nuovo\nt5.2-06  Aggiungere a un gruppo\nt5.2-07  Una password per luigi\nt5.2-08  Bloccare un account\nt5.2-09  Un utente di sistema\nt5.2-10  Eliminare un utente\nt5.2-11  Il numero di un utente\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
 APP_LOG=$'2026-11-12 08:00:01 INFO avvio del servizio\n2026-11-12 08:05:12 WARN disco quasi pieno\n2026-11-12 08:10:30 ERROR connessione al database fallita\n2026-11-12 08:10:31 INFO nuovo tentativo\n2026-11-12 08:10:35 ERROR connessione al database fallita\n2026-11-12 08:11:00 INFO connessione riuscita\n2026-11-12 09:00:00 error utente sconosciuto: mario\n'
 SEGRETO=$'solo per luca\n'
 
@@ -998,6 +998,98 @@ esercizio() {
         cartella foto
         cartella progetti
         file controlla.sh 755 4320 $'#!/bin/bash\nif [ $# -ne 1 ]; then\n    echo "Uso: $0 FILE"\n    exit 1\nfi\nif [ -f "$1" ]; then\n    echo "$1 esiste"\nelse\n    echo "$1 non esiste"\n    exit 2\nfi\n'
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t3.3-12)
+        TITOLO=$'Il primo file con nano'
+        COMPITO=$'Con l\'editor nano crea il file spesa.txt con tre righe: pane, latte e uova. Salva ed esci.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'nano spesa.txt\n(scrivi pane, Invio, latte, Invio, uova)\nCtrl+O, poi Invio: salva\nCtrl+X: esce'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t3.3-13)
+        TITOLO=$'Aggiungere una riga con nano'
+        COMPITO=$'Apri amici.txt con nano e aggiungi in fondo la riga Sara. Esci con Ctrl+X e, quando nano lo chiede, salva.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'nano amici.txt\n(con le frecce vai sulla riga vuota in fondo e scrivi Sara)\nCtrl+X, poi S: salva\nInvio: conferma il nome del file'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file amici.txt 644 4320 $'Marco\nGiulia\n'
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t3.3-14)
+        TITOLO=$'Il primo file con vi'
+        COMPITO=$'Con l\'editor vi crea il file promemoria.txt con due righe: prima riga e seconda riga. Salva ed esci.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'vi promemoria.txt\ni (modo inserimento)\n(scrivi prima riga, Invio, seconda riga)\nEsc (torna ai comandi)\n:wq, poi Invio: salva ed esce'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t3.3-15)
+        TITOLO=$'Togliere una riga con vi'
+        COMPITO=$'Con vi togli da elenco.txt la riga due, poi salva ed esci.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'vi elenco.txt\nj (scende sulla riga due)\ndd (cancella la riga)\n:wq, poi Invio: salva ed esce'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file elenco.txt 644 4320 $'uno\ndue\ntre\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t3.3-16)
+        TITOLO=$'Uno script scritto con vim'
+        COMPITO=$'Con vim scrivi lo script ciao.sh: la prima riga è #!/bin/bash, la seconda echo Ciao dallo script. Poi rendilo eseguibile e avvialo.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'vim ciao.sh\ni, poi le due righe: #!/bin/bash e echo Ciao dallo script\nEsc, :wq e Invio\nchmod u+x ciao.sh\n./ciao.sh'
+        cartella documenti
+        cartella foto
+        cartella progetti
         file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
         file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
         file foto/mare.jpg 644 14400 $'JPEG mare\n'
@@ -2213,6 +2305,26 @@ verifica_obiettivi() {
         ;;
     t3.3-11)
         occhio $'Dopo lo script, echo mostra il codice di uscita 2'
+        ;;
+    t3.3-12)
+        controlla_file $'spesa.txt contiene le tre righe' /home/anna/spesa.txt $'contenuto=pane\nlatte\nuova\n'
+        occhio $'Hai usato nano'
+        ;;
+    t3.3-13)
+        controlla_file $'amici.txt contiene Marco, Giulia e Sara' /home/anna/amici.txt $'contenuto=Marco\nGiulia\nSara\n'
+        occhio $'Hai usato nano'
+        ;;
+    t3.3-14)
+        controlla_file $'promemoria.txt contiene le due righe' /home/anna/promemoria.txt $'contenuto=prima riga\nseconda riga\n'
+        occhio $'Hai usato vi (o vim)'
+        ;;
+    t3.3-15)
+        controlla_file $'In elenco.txt restano uno e tre' /home/anna/elenco.txt $'contenuto=uno\ntre\n'
+        occhio $'Hai usato vi (o vim)'
+        ;;
+    t3.3-16)
+        controlla_file $'ciao.sh è eseguibile per il proprietario' /home/anna/ciao.sh $'permessiconti=100'
+        occhio $'Lo script, avviato, scrive Ciao dallo script'
         ;;
     t4.3-01)
         occhio $'Compare l\'elenco con la tua shell (bash) e il comando stesso'
