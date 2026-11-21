@@ -413,6 +413,16 @@ la palestra davvero ed esegue le soluzioni da anna.
   quanti sopra il 75%); i numeri restano nella tabella. Sotto, una frase: «dal 55% all'83%
   (+28 punti)», con l'articolo giusto («all'83%», «al 55%»). Colori dai temi chiaro e scuro.
 
+- **Glossario (21/11/2026).** Una pagina nuova, «📖 Glossario» nel menu (`#/glossario`): 208
+  termini degli obiettivi, almeno 3 per ognuno, con una spiegazione di una o due frasi scritta da
+  zero (`data/glossary-010-160.js`), in ordine alfabetico per lettera (i percorsi come `/etc/` sotto
+  la lettera del nome). La ricerca filtra mentre scrivi, nel termine e nella spiegazione, senza
+  badare a maiuscole e accenti e con le parole in qualsiasi ordine; il numero dei risultati è letto
+  dai lettori di schermo. Ogni voce porta al suo obiettivo; la pagina di un obiettivo porta ai
+  suoi termini (`#/glossario/5.4`). `tools/check-glossary.js` (in CI) controlla obiettivi,
+  doppioni, lunghezza, copertura e che nessuna frase sia copiata dalle lezioni (8 parole, come per
+  le domande): ha fatto riscrivere due spiegazioni.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -441,9 +451,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 4. **Altri esercizi dove sono pochi: fatto** (vedi sopra).
 5. **La data dell'esame: fatto** (vedi sopra).
 6. **L'andamento delle simulazioni: fatto** (vedi sopra).
-7. **Glossario dei termini.** I termini degli obiettivi (Debian, LTS, sticky bit, `/dev/sd*`,
-   GPL…) in una pagina sola, ognuno con una spiegazione breve scritta da zero e il collegamento
-   all'obiettivo e alla lezione; con una casella di ricerca.
+7. **Glossario dei termini: fatto** (vedi sopra).
 
 ## Regole del progetto
 

@@ -10,6 +10,7 @@
 //   #/simulazione/risultato          il risultato dell'ultima simulazione
 //   #/terminale                      pratica al terminale (practice.js): elenco degli esercizi
 //   #/terminale/t2.4-01              un esercizio; #/terminale/libero il terminale libero
+//   #/glossario                      glossario dei termini (glossary.js); #/glossario/2.1 un obiettivo
 //   #/backup                         backup dei progressi
 
 const APP_NAME = "Certificazioni LPI";
@@ -275,6 +276,14 @@ function renderObjective(exam, topic, objective) {
     objective.terms.forEach(term => termList.appendChild(el("li", "", term)));
     terms.appendChild(termList);
     terms.appendChild(el("p", "hint", "È l'elenco ufficiale (parziale) dell'obiettivo: all'esame possono comparire anche le opzioni più comuni di questi comandi."));
+    const glossaryCount = glossaryOf(exam.id, objective.id).length;
+    if (glossaryCount) {
+        const glossaryLine = el("p");
+        const glossaryLink = link(`📖 Glossario: ${glossaryCount} termini dell'obiettivo spiegati in breve`, `${GLOSSARY_HREF}/${objective.id}`);
+        glossaryLink.id = "objective-glossary";
+        glossaryLine.appendChild(glossaryLink);
+        terms.appendChild(glossaryLine);
+    }
     page.appendChild(terms);
 
     const areas = el("section", "block");
@@ -653,7 +662,7 @@ function finishRender(title, focusTarget) {
     document.querySelectorAll(".site-nav a").forEach(anchor => {
         const href = anchor.getAttribute("href");
         const hash = location.hash || "#/";
-        const here = href === "#/" ? !/^#\/(backup|ripasso|pronto|simulazione|terminale)/.test(hash) : hash === href || hash.startsWith(`${href}/`);
+        const here = href === "#/" ? !/^#\/(backup|ripasso|pronto|simulazione|terminale|glossario)/.test(hash) : hash === href || hash.startsWith(`${href}/`);
         if (here) anchor.setAttribute("aria-current", "page");
         else anchor.removeAttribute("aria-current");
     });
@@ -712,6 +721,11 @@ function render() {
     }
     if (hash === "#/backup") {
         finishRender(renderBackup());
+        return;
+    }
+    match = hash.match(/^#\/glossario(?:\/(\d+\.\d+))?$/);
+    if (match && (!match[1] || allObjectives(exam).some(item => item.objective.id === match[1]))) {
+        finishRender(renderGlossary(exam, match[1] || null));
         return;
     }
     match = hash.match(/^#\/([\w.-]+)\/(obiettivo|lezione|domande)\/([\d._]+)(?:\/([^/]+))?$/);

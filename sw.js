@@ -3,13 +3,13 @@
 // dai dati degli esami, così una lezione nuova entra da sola). Strategia «prima la rete»: online si
 // riceve sempre la versione più recente (e la copia salvata si aggiorna), offline si usa la copia.
 // Per far installare una nuova versione basta cambiare CACHE.
-const CACHE = "certlpi-v23";
+const CACHE = "certlpi-v24";
 
 importScripts("data/exams.js", "data/exam-010-160.js");
 
 const APP_FILES = [
     "./", "index.html", "style.css", "manifest.webmanifest", "icon.svg",
-    "version.js", "data/exams.js", "data/exam-010-160.js", "store.js", "lesson-view.js", "app.js", "sync.js", "quiz.js", "review.js", "exam-sim.js", "readiness.js",
+    "version.js", "data/exams.js", "data/exam-010-160.js", "data/glossary-010-160.js", "store.js", "lesson-view.js", "app.js", "sync.js", "quiz.js", "review.js", "exam-sim.js", "readiness.js", "glossary.js",
     "lib/pipedreams-commands.js", "lib/pipedreams-terminal.js", "shell-sim.js", "shell-commands.js", "shell-help.js", "shell-system.js", "shell-network.js", "shell-users.js", "shell-accounts.js", "shell-complete.js", "shell-editor.js", "shell-packages.js", "editor-view.js", "exercise-check.js", "practice.js", "exercises/010-160.js",
     "questions/010-160/1.js", "questions/010-160/2.js", "questions/010-160/3.js", "questions/010-160/4.js", "questions/010-160/5.js"
 ];

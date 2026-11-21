@@ -16,3 +16,9 @@ const EXERCISES = [];
 function addExercises(examId, list) {
     list.forEach(exercise => EXERCISES.push(Object.assign({ exam: examId, objective: exercise.id.slice(1).split("-")[0] }, exercise)));
 }
+
+// Glossario dei termini degli obiettivi (data/glossary-<codice>.js, pagina #/glossario: glossary.js)
+const GLOSSARY = [];
+function addGlossary(examId, list) {
+    list.forEach(entry => GLOSSARY.push(Object.assign({ exam: examId }, entry)));
+}
