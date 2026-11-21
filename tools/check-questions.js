@@ -3,8 +3,9 @@
 //     perché, risposte giuste (scelta singola: una sola; «scegli N»: almeno 2, non tutte;
 //     completamento: almeno una risposta accettata e la spiegazione);
 //   - il link alla lezione da ripassare: la lezione esiste e, se c'è, la sezione con quel titolo;
-//   - copertura: per ogni obiettivo almeno 6 + 2 × peso domande (peso 1 → 8, peso 4 → 14), con
-//     almeno una a scelta multipla e una di completamento;
+//   - copertura: per ogni obiettivo almeno 15 domande, e di più per quelli che all'esame pesano di
+//     più: 8 × peso − 2 (peso 3 → 22, peso 4 → 30); almeno due a scelta multipla («scegli due o
+//     tre», frequenti all'esame) e una di completamento;
 //   - nessuna frase copiata dalle lezioni LPI (licenza CC BY-NC-ND: le domande si scrivono da
 //     zero): nessuna sequenza di 8 parole uguale a una delle lezioni;
 //   - la risposta giusta non si riconosce dalla lunghezza: nelle domande a scelta singola non è
@@ -140,11 +141,11 @@ const stats = [];
 for (const exam of EXAMS) {
     for (const objective of exam.topics.flatMap(topic => topic.objectives)) {
         const list = QUESTIONS.filter(q => q.exam === exam.id && q.objective === objective.id);
-        const need = 6 + 2 * objective.weight;
+        const need = Math.max(15, 8 * objective.weight - 2);
         const count = type => list.filter(q => q.type === type).length;
         stats.push(`${exam.id} ${objective.id} (peso ${objective.weight}): ${list.length} domande, ${count("single")} singole, ${count("multiple")} multiple, ${count("fill")} completamenti`);
         if (list.length < need) problems.push(`${exam.id} ${objective.id}: ${list.length} domande, ne servono almeno ${need} (peso ${objective.weight})`);
-        if (list.length && (!count("multiple") || !count("fill"))) problems.push(`${exam.id} ${objective.id}: serve almeno una domanda a scelta multipla e una di completamento`);
+        if (list.length && (count("multiple") < 2 || !count("fill"))) problems.push(`${exam.id} ${objective.id}: servono almeno due domande a scelta multipla e una di completamento`);
     }
 }
 

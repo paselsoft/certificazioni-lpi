@@ -423,6 +423,15 @@ la palestra davvero ed esegue le soluzioni da anna.
   doppioni, lunghezza, copertura e che nessuna frase sia copiata dalle lezioni (8 parole, come per
   le domande): ha fatto riscrivere due spiegazioni.
 
+- **Più domande dove l'esame ne chiede di più (21/11/2026).** 19 domande nuove, 333 in tutto: 2.1 e
+  4.3 (peso 3) da 15 a 22, 3.3 (peso 4) da 27 a 30, e una «scegli due» in più per 2.2 e 2.4. Tra
+  gli argomenti: comandi interni, variabile non esportata e shell figlia, come la shell usa `PATH`,
+  `HOME`, virgolette e `\$`, ↑ e cronologia, `apropos` e `man -k`, `rmdir` e `rm -r`, `./script` e
+  `bash script`, `[ -f ]` su una directory, `ps` e `top`, `%MEM`, `/var/log/syslog`, `tail -f`,
+  file di configurazione nella home, `uptime`, file virtuali di `/proc`. Fatti provati con Bash vero.
+  `check-questions.js` ora chiede almeno 15 domande per obiettivo e 8 × peso − 2 per quelli che
+  pesano di più (peso 3: 22, peso 4: 30), e almeno due a scelta multipla per obiettivo.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -458,10 +467,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 Tutti quelli dell'analisi del 20/11 sono fatti. Questi sono i nuovi, in ordine di utilità per
 l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
-1. **Più domande dove l'esame ne chiede di più.** Gli obiettivi di peso 3 e 4 valgono più domande
-   all'esame, ma 2.1 e 4.3 (peso 3) ne hanno 15 come quelli di peso 1. Obiettivo: almeno 22 per il
-   peso 3 e 30 per il 3.3 (peso 4). E più domande «scegli due» o «scegli tre»: in molti obiettivi
-   ce n'è una sola, mentre all'esame sono frequenti.
+1. **Più domande dove l'esame ne chiede di più: fatto** (vedi sopra).
 2. **Ripasso dei termini con le carte.** Dal glossario, carte da girare: si vede il termine, si
    prova a ricordare, si gira e si dice «lo sapevo» o «no». Le carte entrano nelle scatole del
    ripasso come le domande, così i termini difficili tornano più spesso.
