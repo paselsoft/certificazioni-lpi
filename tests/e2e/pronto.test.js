@@ -102,8 +102,9 @@ module.exports = {
         assert.ok(await page.locator("#pronto-3-3.ready-solid").count());
         // 2.1 metà giuste, due sbagliate (in scadenza oggi), una lezione letta, due esercizi fatti
         assert.equal(await page.textContent("#pronto-2-1 .ready-level"), "Da rinforzare");
+        const practice21 = await page.evaluate(() => EXERCISES.filter(exercise => exercise.objective === "2.1").length);
         assert.match(await page.textContent("#pronto-2-1 .ready-facts"),
-            new RegExp(`mai viste ${n21 - half - 2} · sbagliate l'ultima volta 2 · da ripassare oggi 2 · lezioni lette 1 su 2 · esercizi al terminale 2 su 4\\.`));
+            new RegExp(`mai viste ${n21 - half - 2} · sbagliate l'ultima volta 2 · da ripassare oggi 2 · lezioni lette 1 su 2 · esercizi al terminale 2 su ${practice21}\\.`));
         assert.equal(await page.getAttribute("#pronto-2-1 .ready-actions a", "href"), "#/010-160/domande/2.1");
         // 4.3: 2 giuste su 15, debole; gli esercizi al terminale ci sono, ma nessuno è fatto
         assert.equal(await page.textContent("#pronto-4-3 .ready-level"), "Debole");

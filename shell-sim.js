@@ -755,15 +755,17 @@ function simGlob(sh, field) {
         }
         current = next;
     }
-    // I percorsi letterali alla fine devono esistere
+    // I percorsi letterali alla fine devono esistere; con la / in fondo (*/) solo le directory,
+    // anche attraverso un link
+    const dirsOnly = pattern.endsWith("/");
     return current.filter(item => {
         try {
-            simLookup(sh, item.path, false);
-            return Boolean(simLookup(sh, item.path, false).node);
+            const node = simLookup(sh, item.path, dirsOnly).node;
+            return Boolean(node) && (!dirsOnly || node.type === "d");
         } catch (e) {
             return false;
         }
-    }).map(item => item.shown + (pattern.endsWith("/") ? "/" : ""));
+    }).map(item => item.shown + (dirsOnly ? "/" : ""));
 }
 
 function globToRegex(part) {

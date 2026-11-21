@@ -45,9 +45,11 @@ file() {
     touch -d "@$((ADESSO - $3 * 60))" "$CASA/$1"
 }
 
+# collegamento LINK DESTINAZIONE ETÀ_IN_MINUTI
 collegamento() {
     [ "$PREPARA" = 1 ] || return 0
     ln -s "$2" "$CASA/$1"
+    touch -h -d "@$((ADESSO - $3 * 60))" "$CASA/$1"
 }
 
 # data CARTELLA PERMESSI ETÀ_IN_MINUTI
@@ -146,7 +148,7 @@ controlla_path() {
 
 # controlla_file TESTO PERCORSO [tipo=dir|file|link|absent] [contenuto=...] [permessi=644]
 #   [contenutocome=COMANDO] [permessiconti=100] [proprietario=...] [destinazione=...] [stessidati=PERCORSO]
-#   [archivio=tar|tar.gz|gzip|zip] [contiene=nome,nome]
+#   [archivio=tar|tar.gz|tar.bz2|tar.xz|gzip|bzip2|xz|zip] [contiene=nome,nome]
 controlla_file() {
     local testo="$1" file elenco kind="" voce nome
     file="$(percorso "$2")"
@@ -166,6 +168,7 @@ controlla_file() {
             permessi=*) [ "$((8#$(stat -c %a "$file")))" = "$((8#${voce#permessi=}))" ] || { da_fare "$testo"; return; } ;;
             permessiconti=*) [ $((8#$(stat -c %a "$file") & 8#${voce#permessiconti=})) = $((8#${voce#permessiconti=})) ] || { da_fare "$testo"; return; } ;;
             proprietario=*) [ "$(stat -c %U "$file")" = "${voce#proprietario=}" ] || { da_fare "$testo"; return; } ;;
+            gruppo=*) [ "$(stat -c %G "$file")" = "${voce#gruppo=}" ] || { da_fare "$testo"; return; } ;;
             destinazione=*) [ "$(readlink "$file")" = "${voce#destinazione=}" ] || { da_fare "$testo"; return; } ;;
             stessidati=*) [ "$(stat -c %d:%i "$file")" = "$(stat -c %d:%i "$(percorso "${voce#stessidati=}")" 2>/dev/null)" ] || { da_fare "$testo"; return; } ;;
             archivio=*) kind="${voce#archivio=}" ;;
@@ -175,7 +178,11 @@ controlla_file() {
         case "$kind" in
             tar) elenco="$(tar -tf "$file" 2>/dev/null)" && ! gzip -t "$file" 2>/dev/null ;;
             tar.gz) elenco="$(tar -tzf "$file" 2>/dev/null)" ;;
-            gzip) gzip -t "$file" 2>/dev/null; elenco="" ;;
+            tar.bz2) elenco="$(tar -tjf "$file" 2>/dev/null)" ;;
+            tar.xz) elenco="$(tar -tJf "$file" 2>/dev/null)" ;;
+            gzip) gzip -t "$file" 2>/dev/null && elenco="" ;;
+            bzip2) bzip2 -t "$file" 2>/dev/null && elenco="" ;;
+            xz) xz -t "$file" 2>/dev/null && elenco="" ;;
             zip) elenco="$(unzip -Z1 "$file" 2>/dev/null)" ;;
         esac || { da_fare "$testo"; return; }
         for voce in "$@"; do

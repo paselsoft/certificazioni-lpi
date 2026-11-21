@@ -47,7 +47,7 @@ function homeLines(base, setup) {
         const s = files.get(p);
         lines.push(`file ${quote(p)} ${s.mode || "644"} ${s.age === undefined ? DEFAULT_AGE : s.age} ${bashString(s.content || "")}`);
     });
-    [...under(base.links), ...under(setup.links)].forEach(([p, s]) => lines.push(`collegamento ${quote(p)} ${quote(typeof s === "string" ? s : s.target)}`));
+    [...under(base.links), ...under(setup.links)].forEach(([p, s]) => lines.push(`collegamento ${quote(p)} ${quote(typeof s === "string" ? s : s.target)} ${typeof s === "object" && s.age !== undefined ? s.age : DEFAULT_AGE}`));
     // Le date delle directory alla fine, dalla più profonda (creare un file cambia la data della directory)
     [...dirs.keys()].sort().reverse().forEach(d => {
         const s = dirs.get(d);
@@ -99,6 +99,7 @@ function verifyLines(exercise) {
             if (goal.mode !== undefined) checks.push(`permessi=${goal.mode}`);
             if (goal.modeHas !== undefined) checks.push(`permessiconti=${goal.modeHas}`);
             if (goal.owner !== undefined) checks.push(`proprietario=${goal.owner}`);
+            if (goal.group !== undefined) checks.push(`gruppo=${goal.group}`);
             if (goal.target !== undefined) checks.push(`destinazione=${goal.target}`);
             if (goal.sameAs !== undefined) checks.push(`stessidati=${goal.sameAs}`);
             if (goal.archive !== undefined) checks.push(`archivio=${goal.archive}`);

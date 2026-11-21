@@ -202,9 +202,20 @@ function lsColumns(names, width) {
 
 // ---- ls ----
 
+// Il numero di inode di un nodo: assegnato la prima volta che serve, sempre lo stesso per lo
+// stesso nodo (gli hard link sono lo stesso nodo)
+function simInode(sh, node) {
+    if (!sh.inodes) {
+        sh.inodes = new WeakMap();
+        sh.nextInode = 1310721;
+    }
+    if (!sh.inodes.has(node)) sh.inodes.set(node, sh.nextInode++);
+    return sh.inodes.get(node);
+}
+
 function lsRun(sh, args, stdin, ctx) {
     const res = simOutput();
-    const { flags, operands } = parseOptions(args, "alhRdtr1AFS", "", { all: "a", "almost-all": "A", recursive: "R", directory: "d", "human-readable": "h" });
+    const { flags, operands } = parseOptions(args, "alhRdtr1AFSi", "", { all: "a", "almost-all": "A", recursive: "R", directory: "d", "human-readable": "h", inode: "i" });
     const targets = operands.length ? operands : ["."];
     const files = [];
     const dirs = [];
@@ -230,6 +241,12 @@ function lsRun(sh, args, stdin, ctx) {
         return flags.r ? sorted.reverse() : sorted;
     };
     const suffix = node => !flags.F ? "" : node.type === "d" ? "/" : node.type === "l" ? "@" : node.mode & 0o111 ? "*" : "";
+    // -i: il numero di inode davanti a ogni nome (due hard link hanno lo stesso)
+    const inodes = list => {
+        const numbers = list.map(({ node }) => String(simInode(sh, node)));
+        const width = Math.max(0, ...numbers.map(text => text.length));
+        return numbers.map(text => `${text.padStart(width)} `);
+    };
     const format = (list, withTotal) => {
         if (flags.l) {
             const rows = list.map(({ name, node }) => ({
@@ -239,14 +256,16 @@ function lsRun(sh, args, stdin, ctx) {
                 name: name + (node.type === "l" ? ` -> ${node.target}` : suffix(node))
             }));
             const width = key => Math.max(0, ...rows.map(row => row[key].length));
-            const lines = rows.map(row => `${row.mode} ${row.links.padStart(width("links"))} ${row.owner.padEnd(width("owner"))} ${row.group.padEnd(width("group"))} ${row.size.padStart(width("size"))} ${row.date} ${row.name}`);
+            const prefixes = flags.i ? inodes(list) : list.map(() => "");
+            const lines = rows.map((row, index) => `${prefixes[index]}${row.mode} ${row.links.padStart(width("links"))} ${row.owner.padEnd(width("owner"))} ${row.group.padEnd(width("group"))} ${row.size.padStart(width("size"))} ${row.date} ${row.name}`);
             if (withTotal) {
                 const blocks = list.reduce((sum, { node }) => sum + blocksOf(node), 0);
                 lines.unshift(`total ${flags.h ? humanSize(blocks * 1024) : blocks}`);
             }
             return lines;
         }
-        const names = list.map(({ name, node }) => name + suffix(node));
+        const prefixes = flags.i ? inodes(list) : list.map(() => "");
+        const names = list.map(({ name, node }, index) => prefixes[index] + name + suffix(node));
         return ctx.tty && !flags["1"] ? lsColumns(names, sh.columns) : names;
     };
     const blocks = [];

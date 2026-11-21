@@ -15,7 +15,8 @@ const SIM_MAN = [
         description: ["Mostra i nomi dei file indicati o, senza argomenti, il contenuto della directory corrente, in ordine alfabetico."],
         options: [["-a, --all", "mostra anche i nomi che iniziano con un punto"], ["-l", "formato lungo: permessi, proprietario, dimensione, data"],
             ["-h, --human-readable", "con -l, dimensioni leggibili (K, M, G)"], ["-R, --recursive", "elenca anche le sottodirectory"],
-            ["-d, --directory", "mostra le directory stesse, non il loro contenuto"], ["-t", "ordina per data di modifica, dal più recente"], ["-r", "inverte l'ordine"]],
+            ["-d, --directory", "mostra le directory stesse, non il loro contenuto"], ["-t", "ordina per data di modifica, dal più recente"], ["-r", "inverte l'ordine"],
+            ["-i, --inode", "mostra il numero di inode di ogni file"]],
         see: ["cp(1)", "find(1)"]
     },
     {
