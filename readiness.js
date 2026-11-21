@@ -1,6 +1,7 @@
 // «Sono pronto?» (#/pronto): un riepilogo per obiettivo che unisce domande, ripasso, simulazioni,
 // lezioni ed esercizi al terminale, per capire dove si è deboli e se è ora di prenotare l'esame.
-// Non salva niente di nuovo: legge i progressi che ci sono già (store.js). Le ultime simulazioni
+// Salva solo il giorno dell'esame (progress.plans), da cui calcola il piano fino a quel giorno;
+// il resto lo legge dai progressi che ci sono già (store.js). Le ultime simulazioni
 // d'esame compaiono per argomento e, se le hanno salvate (dal 20/11/2026), anche per obiettivo.
 //
 // Per ogni obiettivo conta le domande la cui ULTIMA risposta è giusta, sul totale delle sue
@@ -21,6 +22,10 @@ const READY_SIMS = 3;
 const READY_WEAK = 4;
 const READY_QUIZ_SIZE = 10;
 const READY_HREF = "#/pronto";
+// L'ultimo giorno in cui si può sostenere l'esame (la versione 1.6 fino ad aprile 2027, docs/PIANO.md)
+const EXAM_LAST_DAY = { "010-160": "2027-04-30" };
+// Nell'ultimo mese prima dell'esame: simulazioni e ripasso, una simulazione a settimana
+const PLAN_FINAL_DAYS = 28;
 const READY_QUIZ_HREF = "#/pronto/domande";
 
 // I numeri di un obiettivo
@@ -122,6 +127,157 @@ function startWeakQuiz(exam) {
 
 const percentText = share => `${Math.round(share * 100)}%`;
 
+// ---- Il giorno dell'esame e il piano fino a quel giorno ----
+
+const examDateOf = exam => {
+    const plan = progress.plans && progress.plans[exam.id];
+    return plan && plan.date ? plan.date : null;
+};
+
+function setExamDate(exam, date) {
+    progress.plans = progress.plans || {};
+    progress.plans[exam.id] = { date, at: nowStamp() };
+    saveProgress();
+}
+
+const daysText = days => days === 1 ? "1 giorno" : `${days} giorni`;
+
+// Che cosa fare da oggi al giorno dell'esame: gli obiettivi non ancora solidi divisi per le
+// settimane di studio, le domande mai viste divise per i giorni, l'ultimo mese per le simulazioni
+function examPlan(exam, data, today = todayKey()) {
+    const date = examDateOf(exam);
+    if (!date) return null;
+    const daysLeft = daysBetween(today, date);
+    const plan = { date, daysLeft, items: [], tooLate: EXAM_LAST_DAY[exam.id] && date > EXAM_LAST_DAY[exam.id] };
+    if (daysLeft <= 0) return plan;
+    const toWork = data.rows.filter(row => row.level !== "solid").length;
+    const unseen = data.total - data.answered;
+    // Prima dell'ultimo periodo: lo studio si divide tra i giorni che restano fino a quel punto
+    if (daysLeft > PLAN_FINAL_DAYS) {
+        const studyDays = daysLeft - PLAN_FINAL_DAYS;
+        const weeks = Math.ceil(studyDays / 7);
+        const finalStart = addDays(date, -PLAN_FINAL_DAYS);
+        if (toWork) {
+            const perWeek = Math.ceil(toWork / weeks);
+            plan.items.push({ id: "plan-objectives", text: `Obiettivi da portare a «solido»: ${toWork}. Circa ${perWeek} a settimana${weeks > 1 ? `, per ${weeks} settimane` : ""}: lezione, domande ed esercizi.` });
+        } else {
+            plan.items.push({ id: "plan-objectives", text: "Tutti gli obiettivi sono solidi: tienili così con il ripasso di ogni giorno." });
+        }
+        if (unseen) plan.items.push({ id: "plan-questions", text: `Domande mai viste: ${unseen}. Circa ${Math.ceil(unseen / studyDays)} al giorno, oltre al ripasso.` });
+        plan.items.push({ id: "plan-final", text: `Dal ${formatDate(finalStart)}, l'ultimo periodo: una simulazione d'esame a settimana e il ripasso di ogni giorno.` });
+    } else {
+        const recent = progress.simulations.filter(item => item.exam === exam.id && item.date >= addDays(today, -PLAN_FINAL_DAYS)).length;
+        plan.items.push({ id: "plan-final", text: `Sei nell'ultimo periodo prima dell'esame: una simulazione a settimana (nelle ultime 4 settimane ne hai fatte ${recent}) e il ripasso di ogni giorno.` });
+        if (toWork) plan.items.push({ id: "plan-objectives", text: `Obiettivi ancora da rinforzare: ${toWork}. Parti da quelli indicati qui sotto, che valgono più domande.` });
+    }
+    return plan;
+}
+
+// La riga breve per la pagina principale
+function examDateLine(exam) {
+    const line = el("p", "plan-line");
+    line.id = "plan-line";
+    const date = examDateOf(exam);
+    if (!date) {
+        line.append(document.createTextNode("📅 Hai già scelto il giorno dell'esame? "), link("Indicalo in «Sono pronto?»", READY_HREF), document.createTextNode(": l'app ti dice quanto fare ogni settimana."));
+        return line;
+    }
+    const days = daysBetween(todayKey(), date);
+    const when = days > 0 ? `mancano ${daysText(days)}` : days === 0 ? "è oggi! In bocca al lupo" : "la data è passata";
+    line.append(document.createTextNode(`📅 Esame il ${formatDate(date)}: ${when}. `), link("Il tuo piano", READY_HREF));
+    return line;
+}
+
+// La sezione di «Sono pronto?»: scegliere il giorno e vedere il piano
+function examDateSection(exam, data) {
+    const section = el("section", "block plan");
+    section.id = "piano";
+    section.setAttribute("aria-labelledby", "plan-title");
+    const title = el("h2", "", "📅 Il giorno dell'esame");
+    title.id = "plan-title";
+    section.appendChild(title);
+    const plan = examPlan(exam, data);
+    const status = el("div", "plan-status");
+    status.id = "plan-status";
+    if (!plan) {
+        status.appendChild(el("p", "", "Indica il giorno in cui darai l'esame: l'app calcola quanti giorni mancano e quanto fare ogni settimana per arrivarci pronto."));
+    } else if (plan.daysLeft < 0) {
+        status.appendChild(el("p", "", `La data che avevi scelto, il ${formatDate(plan.date)}, è passata: com'è andata? Se devi ancora dare l'esame, scegli un nuovo giorno.`));
+    } else if (plan.daysLeft === 0) {
+        status.appendChild(el("p", "ok", "L'esame è oggi: in bocca al lupo! Leggi con calma ogni domanda, e segna quelle da rivedere alla fine."));
+    } else {
+        const lead = el("p", "plan-days", `Mancano ${daysText(plan.daysLeft)} all'esame, il ${formatDate(plan.date)}.`);
+        lead.id = "plan-days";
+        status.appendChild(lead);
+        const list = el("ul", "plan-list");
+        plan.items.forEach(item => {
+            const li = el("li", "", item.text);
+            li.id = item.id;
+            list.appendChild(li);
+        });
+        status.appendChild(list);
+    }
+    if (plan && plan.tooLate) status.appendChild(el("p", "warning", `Attenzione: l'esame ${exam.id} (versione ${exam.version}) si può sostenere ${exam.available}. Scegli un giorno entro il ${formatDate(EXAM_LAST_DAY[exam.id])}.`));
+    section.appendChild(status);
+
+    const form = el("form", "plan-form");
+    const label = el("label", "", "Giorno dell'esame");
+    label.htmlFor = "plan-date";
+    const input = el("input");
+    input.type = "date";
+    input.id = "plan-date";
+    input.min = todayKey();
+    if (EXAM_LAST_DAY[exam.id]) input.max = EXAM_LAST_DAY[exam.id];
+    if (plan) input.value = plan.date;
+    const save = el("button", "button primary", plan ? "Cambia la data" : "Salva la data");
+    save.type = "submit";
+    save.id = "plan-save";
+    form.append(label, input, save);
+    const message = el("p", "plan-message");
+    message.id = "plan-message";
+    message.setAttribute("role", "status");
+    form.onsubmit = event => {
+        event.preventDefault();
+        if (!isDate(input.value)) {
+            message.textContent = "Scegli un giorno nel calendario (oppure scrivilo come 15/03/2027, se il browser lo chiede così).";
+            input.focus();
+            return;
+        }
+        if (input.value < todayKey()) {
+            message.textContent = "Il giorno dell'esame non può essere già passato.";
+            input.focus();
+            return;
+        }
+        setExamDate(exam, input.value);
+        rerenderPlan();
+        announce(`Giorno dell'esame salvato: ${formatDate(input.value)}.`);
+    };
+    section.appendChild(form);
+    if (plan) {
+        const remove = el("button", "button", "Togli la data");
+        remove.type = "button";
+        remove.id = "plan-remove";
+        remove.onclick = () => {
+            setExamDate(exam, null);
+            rerenderPlan();
+            announce("Giorno dell'esame tolto.");
+        };
+        const line = el("p");
+        line.appendChild(remove);
+        section.appendChild(line);
+    }
+    section.appendChild(message);
+    // Dopo un cambiamento la sezione si ridisegna e il fuoco torna sul titolo
+    const rerenderPlan = () => {
+        const fresh = examDateSection(exam, data);
+        section.replaceWith(fresh);
+        const heading = fresh.querySelector("h2");
+        heading.tabIndex = -1;
+        heading.focus();
+    };
+    return section;
+}
+
 // Una riga: obiettivo, livello, barra delle domande giuste, dettagli, simulazioni e collegamenti
 function readinessItem(exam, row, objectiveSims = 0) {
     const { objective } = row;
@@ -199,6 +355,9 @@ function renderReadiness(exam) {
     box.appendChild(sims);
     box.appendChild(el("p", "hint", `Come si legge: per ogni obiettivo contano le domande con l'ultima risposta giusta; quelle mai viste contano come non sapute. La stima pesa ogni obiettivo quanto all'esame. È un'indicazione, non una promessa: quante risposte giuste servono davvero non è pubblico, per questo conviene arrivare all'${READY_SOLID * 100}% nelle domande e al ${READY_SIM_TARGET * 100}% nelle simulazioni.`));
     page.appendChild(box);
+
+    // Il giorno dell'esame e il piano
+    page.appendChild(examDateSection(exam, data));
 
     // I più deboli
     const weak = el("section", "block ready-weak");

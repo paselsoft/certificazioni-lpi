@@ -233,6 +233,68 @@ module.exports = {
         assert.match(await page.textContent("#pronto-1-1 .ready-obj-sims"), /^Nell'ultima simulazione: 1 giusta su 2 \(50%\)\.$/);
     },
 
+    "il giorno dell'esame: piano per settimane, ultimo periodo, data passata o troppo tardi, nella home": async ({ page }) => {
+        await at(page, DAY);
+        await open(page, { hash: "#/" });
+        assert.match(await page.textContent("#plan-line"), /Hai già scelto il giorno dell'esame\?/);
+        await page.click("#plan-line a");
+        await ready(page, "#/pronto");
+        assert.match(await page.textContent("#plan-status"), /Indica il giorno in cui darai l'esame/);
+        assert.equal(await page.getAttribute("#plan-date", "min"), TODAY);
+        assert.equal(await page.getAttribute("#plan-date", "max"), "2027-04-30");
+        // Senza data: un messaggio, niente salvato
+        await page.click("#plan-save");
+        assert.match(await page.textContent("#plan-message"), /Scegli un giorno nel calendario/);
+        assert.deepEqual(await page.evaluate(() => progress.plans), {});
+        // 120 giorni: 28 per l'ultimo periodo, 92 di studio (14 settimane)
+        await page.fill("#plan-date", "2027-03-15");
+        await page.click("#plan-save");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "plan-title");
+        assert.equal(await page.textContent("#plan-days"), "Mancano 120 giorni all'esame, il 15/03/2027.");
+        assert.equal(await page.textContent("#plan-objectives"), "Obiettivi da portare a «solido»: 19. Circa 2 a settimana, per 14 settimane: lezione, domande ed esercizi.");
+        assert.equal(await page.textContent("#plan-questions"), `Domande mai viste: ${TOTAL}. Circa ${Math.ceil(TOTAL / 92)} al giorno, oltre al ripasso.`);
+        assert.match(await page.textContent("#plan-final"), /Dal 15\/02\/2027, l'ultimo periodo: una simulazione d'esame a settimana/);
+        const saved = (await stored(page)).plans["010-160"];
+        assert.equal(saved.date, "2027-03-15");
+        assert.match(saved.at, /T/);
+        await go(page, "#/");
+        assert.match(await page.textContent("#plan-line"), /📅 Esame il 15\/03\/2027: mancano 120 giorni\. Il tuo piano/);
+        // Nell'ultimo periodo: simulazioni
+        await at(page, "2027-03-01T10:00:00");
+        await go(page, "#/pronto");
+        assert.equal(await page.textContent("#plan-days"), "Mancano 14 giorni all'esame, il 15/03/2027.");
+        assert.match(await page.textContent("#plan-final"), /Sei nell'ultimo periodo prima dell'esame: una simulazione a settimana \(nelle ultime 4 settimane ne hai fatte 0\)/);
+        // Il giorno stesso, e dopo
+        await at(page, "2027-03-15T08:00:00");
+        await go(page, "#/");
+        assert.match(await page.textContent("#plan-line"), /è oggi! In bocca al lupo/);
+        await go(page, "#/pronto");
+        assert.match(await page.textContent("#plan-status"), /L'esame è oggi: in bocca al lupo!/);
+        await at(page, "2027-03-20T08:00:00");
+        await go(page, "#/");
+        await go(page, "#/pronto");
+        assert.match(await page.textContent("#plan-status"), /il 15\/03\/2027, è passata/);
+        // Togliere la data
+        await page.click("#plan-remove");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "plan-title");
+        assert.equal((await stored(page)).plans["010-160"].date, null);
+        assert.match(await page.textContent("#plan-status"), /Indica il giorno/);
+        assert.equal(await page.locator("#plan-remove").count(), 0);
+    },
+
+    "il giorno dell'esame: oltre aprile 2027 un avviso; arriva anche dal backup e dall'unione": async ({ page }) => {
+        await at(page, DAY);
+        await open(page, { hash: "#/pronto", progress: { plans: { "010-160": { date: "2027-05-10", at: "2026-11-14T10:00:00.000Z" }, "x": { date: "domani", at: "ieri" } } } });
+        assert.match(await page.textContent("#plan-status"), /Attenzione: l'esame 010-160 \(versione 1\.6\) si può sostenere fino ad aprile 2027\. Scegli un giorno entro il 30\/04\/2027\./);
+        assert.deepEqual(await page.evaluate(() => Object.keys(progress.plans)), ["010-160"]);
+        // Unione di due dispositivi: vince la scelta più recente, anche se è «tolta»
+        const merged = await page.evaluate(() => mergeProgress(
+            cleanProgress({ plans: { "010-160": { date: "2027-03-01", at: "2026-11-14T10:00:00.000Z" } } }),
+            cleanProgress({ plans: { "010-160": { date: null, at: "2026-11-15T10:00:00.000Z" } } })).plans);
+        assert.deepEqual(merged, { "010-160": { date: null, at: "2026-11-15T10:00:00.000Z" } });
+        assert.equal((await page.evaluate(() => backupData().progress.plans))["010-160"].date, "2027-05-10");
+    },
+
     "sono pronto: 320 px e nessuna violazione axe (riepilogo e punti deboli)": async ({ page }) => {
         await at(page, DAY);
         await page.setViewportSize({ width: 320, height: 640 });

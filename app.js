@@ -133,6 +133,7 @@ function renderHome(exam) {
             link("Tutte le simulazioni", "#/simulazione"));
         box.appendChild(line);
     }
+    box.appendChild(examDateLine(exam));
     const ready = el("p", "ready-link");
     const readyLink = link("🎯 Sono pronto? Punti deboli e stima per l'esame", READY_HREF, "button");
     readyLink.id = "ready-link";

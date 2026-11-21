@@ -12,6 +12,8 @@
 //                 storico delle simulazioni d'esame (objectives: giuste e domande per obiettivo,
 //                 dal 20/11/2026; le simulazioni di prima non ce l'hanno)
 //   practice: { "010-160/t2.4-01": "2026-11-12" }    esercizi al terminale completati
+//   plans:   { "010-160": { date: "2027-03-15", at: "2026-11-21T10:00:00.000Z" } }  il giorno
+//            dell'esame scelto (date null: tolto) e quando è stato scelto (readiness.js)
 //   removed: { "studied|010-160:2.1": "2026-11-14T10:00:00.000Z" }  spunte tolte e quando (per la
 //            sincronizzazione: senza, una spunta tolta tornerebbe dagli altri dispositivi)
 // Le spunte nuove hanno l'ora esatta (ISO), le risposte anche «at»: con più dispositivi vince
@@ -70,6 +72,9 @@ function cleanProgress(data) {
         answers: {},
         simulations: [],
         practice: pick(source.practice, /^[\w.-]+\/t\d+\.\d+-\d+$/),
+        plans: Object.fromEntries(Object.entries(isPlainObject(source.plans) ? source.plans : {})
+            .filter(([key, value]) => /^[\w.-]+$/.test(key) && isPlainObject(value) && (value.date === null || isDate(value.date)) && isStamp(value.at))
+            .map(([key, value]) => [key, { date: value.date, at: value.at }])),
         removed: pick(source.removed, /^(studied\|[\w.-]+:\d+\.\d+|read\|[\w.-]+\/\d+\.\d+_\d+|practice\|[\w.-]+\/t\d+\.\d+-\d+)$/)
     };
     if (Array.isArray(source.simulations)) {
@@ -198,12 +203,21 @@ function recordAnswer(question, right) {
 //   - spunte (studied, read, practice): ci sono se l'ultima azione è stata metterle;
 //   - risposte alle domande: per ogni domanda la più recente, con la sua scatola del ripasso;
 //   - simulazioni: tutte, senza doppioni, in ordine di data;
+//   - giorno dell'esame: la scelta più recente;
 //   - punto di lettura (last): quello di questo dispositivo (a).
 function mergeProgress(a, b) {
     const later = (x, y) => (x === undefined ? y : y === undefined ? x : x >= y ? x : y);
     const removed = { ...a.removed };
     Object.entries(b.removed).forEach(([key, when]) => { removed[key] = later(removed[key], when); });
-    const merged = { studied: {}, read: {}, practice: {}, removed, last: a.last || b.last, answers: {}, simulations: [] };
+    const merged = { studied: {}, read: {}, practice: {}, removed, last: a.last || b.last, answers: {}, simulations: [], plans: {} };
+    // Il giorno dell'esame: per ogni esame la scelta più recente (anche se è stata toglierlo)
+    const plansA = a.plans || {};
+    const plansB = b.plans || {};
+    new Set([...Object.keys(plansA), ...Object.keys(plansB)]).forEach(key => {
+        const x = plansA[key];
+        const y = plansB[key];
+        merged.plans[key] = !x ? y : !y ? x : y.at > x.at ? y : x;
+    });
     ["studied", "read", "practice"].forEach(kind => {
         new Set([...Object.keys(a[kind]), ...Object.keys(b[kind])]).forEach(key => {
             const marked = later(a[kind][key], b[kind][key]);
