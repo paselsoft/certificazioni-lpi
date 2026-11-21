@@ -7,6 +7,7 @@
 //     { history: "regex" }                       uno dei comandi scritti nell'esercizio
 //     { account, exists, shell, comment, uidBelow, groups, locked, password }   un utente
 //     { group, exists, gid }                     un gruppo
+//     { package, state: "ii" | "rc" | "absent" } un pacchetto: installato, tolto con la configurazione, assente
 //   Nella palestra (Linux vero) realContent dice con quale comando si calcola il contenuto giusto,
 //   quando dipende dal sistema (per esempio i suoi utenti).
 //     { path, is: "dir" | "file" | "link" | "absent", content, mode, owner, target, sameAs }
@@ -22,6 +23,59 @@
 //   nel browser: righe di comando (testo), { type: "testo da scrivere" }, { press: "tasto" }.
 // Nei testi, `così` diventa codice.
 addExercises("010-160", [
+    // ---- 1.2 Principali applicazioni open source: i pacchetti ----
+    // (un sistema come Ubuntu e Mint: dpkg e apt-get; i pacchetti e Internet sono finti, quindi niente Bash vero)
+    {
+        id: "t1.2-01", title: "Che cosa è installato?", bash: false,
+        task: "Con `dpkg` controlla se il pacchetto `nano` è installato e quale versione c'è.",
+        goals: [{ text: "Compare la riga di `nano`, con lo stato `ii` e la versione", output: "words", words: ["ii", "nano", "7.2-2build1"], command: "^dpkg\\s+(-l|--list)\\b" }],
+        hint: "`dpkg -l` elenca i pacchetti installati; se scrivi anche un nome (o un modello come `'n*'`) mostra solo quelli.",
+        solution: ["dpkg -l nano"],
+        explain: "Nella prima colonna `ii` vuol dire «da installare, installato»: il pacchetto c'è. Seguono nome, versione, architettura e descrizione. `dpkg -s nano` mostra lo stato in modo più dettagliato."
+    },
+    {
+        id: "t1.2-02", title: "Installare un programma", bash: false,
+        task: "Il comando `tree`, che disegna l'albero delle directory, non c'è. Installa il pacchetto `tree` con `apt-get`, poi usalo per vedere la directory `documenti`.",
+        goals: [
+            { text: "Il pacchetto `tree` è installato", package: "tree", state: "ii" },
+            { text: "`tree documenti` mostra l'albero", output: "words", words: ["documenti", "spesa.txt", "files"], command: "^tree\\b.*documenti" }
+        ],
+        hint: "Installare cambia il sistema: serve root, quindi `sudo apt-get install tree`. Poi `tree documenti`.",
+        solution: ["sudo apt-get install tree", "tree documenti"],
+        explain: "`apt-get install` scarica il pacchetto dai repository, con le eventuali dipendenze, e lo installa. Senza `sudo` risponde che non riesce a prendere il «lock» di dpkg: solo root può installare."
+    },
+    {
+        id: "t1.2-03", title: "Cercare un pacchetto", bash: false,
+        task: "Non ricordi il nome del programma per vedere i processi in modo interattivo. Cerca nei repository i pacchetti che hanno `processes` nel nome o nella descrizione.",
+        goals: [{ text: "Nei risultati compare `htop`", output: "words", words: ["htop"], command: "^apt(-cache)?\\s+search\\s" }],
+        hint: "`apt-cache search PAROLA` (o `apt search PAROLA`) cerca nell'elenco di tutti i pacchetti, anche quelli non installati. Non cambia niente, quindi non serve `sudo`.",
+        solution: ["apt-cache search processes"],
+        explain: "La ricerca guarda il nome e la descrizione breve. Poi `apt-cache show htop` mostra i dettagli e `sudo apt-get install htop` lo installa."
+    },
+    {
+        id: "t1.2-04", title: "Di quale pacchetto è?", bash: false,
+        task: "Scopri quale pacchetto ha installato il file `/usr/bin/nano`, poi elenca tutti i file di quel pacchetto.",
+        goals: [
+            { text: "Hai chiesto a `dpkg` di chi è `/usr/bin/nano`", history: "^dpkg\\s+(-S|--search)\\s+\\S*nano" },
+            { text: "Compare l'elenco dei file del pacchetto `nano`", output: "words", words: ["/usr/bin/nano", "/etc/nanorc"], command: "^dpkg\\s+(-L|--listfiles)\\s+nano\\s*$" }
+        ],
+        hint: "`dpkg -S FILE` dice a quale pacchetto appartiene un file; `dpkg -L PACCHETTO` elenca i file di un pacchetto.",
+        solution: ["dpkg -S /usr/bin/nano", "dpkg -L nano"],
+        explain: "dpkg tiene un elenco dei file di ogni pacchetto installato: così sa che cosa togliere quando lo disinstalli. `/etc/nanorc` è un file di configurazione."
+    },
+    {
+        id: "t1.2-05", title: "Togliere tutto", bash: false,
+        task: "Il server web `nginx` è installato ma non serve più. Toglilo del tutto con `apt-get`, compresi i suoi file di configurazione.",
+        setup: { prepare: ["sudo apt-get install nginx"] },
+        goals: [
+            { text: "`nginx` non c'è più, nemmeno come «rc»", package: "nginx", state: "absent" },
+            { text: "`/etc/nginx/nginx.conf` non c'è più", path: "/etc/nginx/nginx.conf", is: "absent" }
+        ],
+        hint: "`remove` toglie il programma ma lascia la configurazione (in `dpkg -l` lo stato diventa `rc`); `purge` toglie anche quella. apt-get chiede conferma: aggiungi `-y`.",
+        solution: ["sudo apt-get purge -y nginx"],
+        explain: "`apt-get remove` conserva i file di configurazione, nel caso tu reinstalli il pacchetto; `apt-get purge` (o `dpkg -P`) li toglie. Su Red Hat e CentOS lo stesso lavoro si fa con `yum remove` (oggi `dnf`)."
+    },
+
     // ---- 2.1 Nozioni di base sulla command line ----
     {
         id: "t2.1-01", title: "Una variabile",

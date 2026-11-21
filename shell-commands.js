@@ -8,7 +8,7 @@ const SIM_BUILTINS = new Set(["cd", "pwd", "echo", "export", "unset", "type", "h
 // Comandi che esistono su un sistema vero ma non nel simulatore
 const SIM_UNAVAILABLE = Object.fromEntries([
     ...["ps", "top", "free", "kill", "df", "du", "ping", "ip", "ss", "netstat", "ifconfig", "host", "dmesg", "journalctl",
-        "useradd", "userdel", "groupadd", "passwd", "su", "apt", "apt-get", "yum", "dnf", "dpkg", "rpm", "ssh", "locate", "updatedb", "awk", "xargs"]
+        "useradd", "userdel", "groupadd", "passwd", "su", "ssh", "locate", "updatedb", "awk", "xargs"]
         .map(name => [name, "comando non disponibile nel simulatore (su un sistema Linux vero esiste: lo trovi nelle domande e nelle lezioni)"])
 ]);
 
@@ -1629,7 +1629,7 @@ function typeRun(sh, args) {
     const res = simOutput();
     for (const name of args) {
         if (SIM_BUILTINS.has(name)) res.print(`${name} is a shell builtin`);
-        else if (SIM_COMMANDS[name] || SIM_UNAVAILABLE[name]) res.print(`${name} is /usr/bin/${name}`);
+        else if (simCommandFor(sh, name) || SIM_UNAVAILABLE[name]) res.print(`${name} is /usr/bin/${name}`);
         else res.fail(`bash: type: ${name}: non trovato`);
     }
     return res;
@@ -1639,7 +1639,7 @@ function whichRun(sh, args) {
     const res = simOutput();
     let found = false;
     for (const name of args) {
-        if ((SIM_COMMANDS[name] && !SIM_BUILTINS.has(name)) || SIM_UNAVAILABLE[name]) {
+        if ((simCommandFor(sh, name) && !SIM_BUILTINS.has(name)) || SIM_UNAVAILABLE[name]) {
             res.print(`/usr/bin/${name}`);
             found = true;
         } else {
@@ -1664,6 +1664,7 @@ const SIM_HELP = [
     "  aiuto: man (anche man -k e man 5 passwd), apropos, whatis, info, COMANDO --help, help cd, locate, updatedb",
     "  script: bash script.sh, ./script.sh (con chmod u+x), gli argomenti $1 $2 $# $@ $0, exit",
     "  cicli e condizioni: for f in *.txt; do ...; done   if [ -f file ]; then ...; else ...; fi   test",
+    "  pacchetti: dpkg -l, -L, -s, -S; sudo apt-get install, remove, purge, update, upgrade; apt-cache search e show; apt (rpm e yum no: è un sistema come Ubuntu)",
     "  editor: nano FILE (Ctrl+O salva, Ctrl+X esce), vi FILE o vim FILE (i scrive, Esc, :wq salva ed esce, :q! esce senza salvare)",
     "Funzionano anche | ; && || > >> < 2> 2>&1 &>, le virgolette, $VARIABILI, ~ e i caratteri jolly * ? [ ].",
     "Con ↑ e ↓ richiami i comandi precedenti."

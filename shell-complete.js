@@ -58,7 +58,7 @@ function simComplete(sh, text) {
     const { word, before, first } = completionWord(text);
     let matches;
     if (first && !word.includes("/")) {
-        const names = new Set([...Object.keys(SIM_COMMANDS), ...SIM_BUILTINS]);
+        const names = new Set([...Object.keys(SIM_COMMANDS).filter(name => simCommandFor(sh, name)), ...SIM_BUILTINS]);
         matches = [...names].filter(name => name.startsWith(word) && /^[a-z]/.test(name)).sort()
             .map(name => ({ name, value: name, dir: false }));
     } else {

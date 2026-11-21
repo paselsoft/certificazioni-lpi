@@ -367,6 +367,21 @@ la palestra davvero ed esegue le soluzioni da anna.
   tasti per i test nel browser; nella palestra (Linux vero) si usano i nano e vi veri, e
   `lpi-esercizio verifica` controlla il contenuto dei file.
 
+- **I pacchetti nel simulatore (21/11/2026).** Il simulatore è un sistema della famiglia Debian,
+  come Ubuntu e Mint (`shell-packages.js`): `dpkg -l` (con gli stati `ii` e `rc`), `-L`, `-s`,
+  `-S`, `-r`, `-P` (e `-i`, che spiega di usare apt-get); `apt-get update`, `upgrade`, `install`,
+  `remove`, `purge`, `autoremove`; `apt-cache search`, `show`, `policy`; `apt` con gli stessi e
+  `list`. Installare e togliere richiede root (senza `sudo` c'è l'errore del «lock» di dpkg),
+  `remove` chiede conferma (nel simulatore non si può rispondere: si usa `-y`) e lascia i file di
+  configurazione, `purge` li toglie; i pacchetti essenziali non si tolgono. Ogni shell ha il suo
+  elenco: installare `tree` fa comparire il comando (con il vero formato di `tree` con
+  LC_ALL=C, provato sul sistema vero), togliere `nano` o `vim-tiny` fa sparire gli editor; per un
+  comando di un pacchetto non installato il messaggio dice come installarlo. `rpm`, `yum`, `dnf`
+  e `zypper` non ci sono, e il messaggio spiega a quali distribuzioni servono. Pagine `man dpkg`,
+  `man apt-get`, `man apt-cache`. Nuovo tipo di obiettivo `{ package, state }`, controllato anche
+  dalla palestra con `dpkg-query`. 5 esercizi per l'1.2, che non ne aveva: `dpkg -l`,
+  installare `tree`, cercare con `apt-cache search`, `dpkg -S` e `-L`, `purge` di nginx.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -391,11 +406,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
 1. **Più domande dove sono poche: fatto** (vedi sopra).
 2. **Gli editor vi e nano nel simulatore: fatto** (vedi sopra).
-3. **I pacchetti nel simulatore.** `dpkg`, `apt-get`, `rpm`, `yum` sono nei termini dell'1.2 ma
-   il simulatore non li conosce. Un elenco finto di pacchetti: `dpkg -l`, `dpkg -L`,
-   `apt-get install/remove`, `apt search`/`apt-cache search`, e per i sistemi Red Hat
-   `rpm -qa`/`rpm -qi` e `yum install` (che dicono «su questo sistema Debian non c'è»,
-   come su Mint). Con esercizi.
+3. **I pacchetti nel simulatore: fatto** (vedi sopra).
 4. **Altri esercizi dove sono pochi.** 2.1 ne ha 4, 5.4 4, 2.3, 3.1 e 5.3 5. Si possono
    aggiungere: `type`, `history`, `export` (2.1); `ls -R`, `ls -d`, `.` e `..` (2.3);
    `bzip2`, `xz`, `tar -tf`, `unzip -l` (3.1); `chown`, `chmod` numerico e simbolico (5.3);
