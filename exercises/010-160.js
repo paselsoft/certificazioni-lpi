@@ -10,8 +10,8 @@
 //     { package, state: "ii" | "rc" | "absent" } un pacchetto: installato, tolto con la configurazione, assente
 //   Nella palestra (Linux vero) realContent dice con quale comando si calcola il contenuto giusto,
 //   quando dipende dal sistema (per esempio i suoi utenti).
-//     { path, is: "dir" | "file" | "link" | "absent", content, mode, owner, target, sameAs }
-//     { path, archive: "tar" | "tar.gz" | "gzip" | "zip", has: [nomi] }
+//     { path, is: "dir" | "file" | "link" | "absent", content, mode, owner, group, target, sameAs }
+//     { path, archive: "tar" | "tar.gz" | "tar.bz2" | "tar.xz" | "gzip" | "bzip2" | "xz" | "zip", has: [nomi] }
 //     { variable, value, exported }
 //     { output: "same" }                         l'ultimo comando mostra lo stesso testo della soluzione
 //     { output: "words", words: [...] }          l'ultimo comando mostra (almeno) queste parole
@@ -111,6 +111,33 @@ addExercises("010-160", [
         hint: "Il comando che descrive come la shell interpreta un nome è `type`.",
         solution: ["type cd cp"],
         explain: "`cd` è un comando interno (deve cambiare la directory della shell stessa); `cp` è un programma in `/usr/bin`."
+    },
+    {
+        id: "t2.1-05", title: "Una variabile per i programmi",
+        task: "Crea la variabile d'ambiente `LINGUA` con il valore `it`, visibile anche ai programmi avviati dalla shell. Poi controlla con `env` e `grep` che ci sia.",
+        goals: [
+            { text: "`LINGUA` vale `it` ed è esportata", variable: "LINGUA", value: "it", exported: true },
+            { text: "`env` filtrato con `grep` mostra `LINGUA=it`", output: "words", words: ["LINGUA=it"], command: "^(env|printenv)\\b.*\\|\\s*grep\\b" }
+        ],
+        hint: "`export NOME=valore` crea la variabile e la esporta. `env` elenca tutte le variabili d'ambiente: con `| grep LINGUA` tieni solo la riga che ti interessa.",
+        solution: ["export LINGUA=it", "env | grep LINGUA"],
+        explain: "Una variabile esportata passa ai processi figli, cioè ai programmi avviati dalla shell: per questo compare nell'elenco di `env`, che è proprio un programma figlio. Senza `export` resterebbe una variabile locale e `env` non la vedrebbe."
+    },
+    {
+        id: "t2.1-06", title: "I comandi già scritti", bash: false,
+        task: "Scrivi `echo uno` e poi `echo due`. Poi mostra l'elenco numerato dei comandi che hai scritto.",
+        goals: [{ text: "L'elenco comprende `echo uno` ed `echo due`", output: "words", words: ["echo", "uno", "due"], command: "^history\\b" }],
+        hint: "Il comando che mostra la cronologia dei comandi ha un nome inglese: «storia».",
+        solution: ["echo uno", "echo due", "history"],
+        explain: "`history` mostra i comandi con un numero davanti; Bash li salva in `~/.bash_history` quando chiudi la shell. Con `!` e il numero (per esempio `!2`) si riesegue un comando, con ↑ lo si richiama."
+    },
+    {
+        id: "t2.1-07", title: "Il dollaro tra virgolette doppie",
+        task: "Crea la variabile `NOME` con il valore `Anna`. Poi, con un solo `echo` tra virgolette doppie, stampa `Ciao Anna, il biglietto costa $5`: il nome deve venire dalla variabile.",
+        goals: [{ text: "Compare la frase, con il nome preso da `NOME` e il simbolo del dollaro", output: "same", command: "^echo\\s+\".*\\$\\{?NOME" }],
+        hint: "Tra virgolette doppie `$NOME` diventa il valore della variabile. Per avere un dollaro vero, invece, mettigli davanti la barra rovesciata: `\\$`.",
+        solution: ["NOME=Anna", "echo \"Ciao $NOME, il biglietto costa \\$5\""],
+        explain: "Le virgolette doppie tengono insieme la frase ma lasciano funzionare `$`: `$NOME` diventa `Anna`. La barra rovesciata toglie il significato speciale al carattere che segue: `\\$5` resta `$5`. Tra virgolette singole, invece, niente viene sostituito."
     },
 
     // ---- 2.2 Aiuto dalla riga di comando ----
@@ -233,6 +260,37 @@ addExercises("010-160", [
         solution: ["ls -lt documenti"],
         explain: "`ls -lt` ordina per data di modifica, dal più recente; con `-ltr` si parte dal più vecchio."
     },
+    {
+        id: "t2.3-06", title: "Torna indietro",
+        task: "Vai nella directory `/etc`, poi torna nella directory di prima con il comando più breve.",
+        goals: [
+            { text: "Sei di nuovo nella tua home, `/home/anna`", cwd: "/home/anna" },
+            { text: "Sei tornato con `cd -`", history: "^cd\\s+-\\s*$" }
+        ],
+        hint: "C'è un argomento di `cd`, fatto di un solo carattere, che vuol dire «la directory dove ero prima».",
+        solution: ["cd /etc", "cd -"],
+        explain: "`cd -` torna alla directory precedente e la scrive sullo schermo; ripetuto, fa avanti e indietro tra le due. La directory di prima è nella variabile `OLDPWD`."
+    },
+    {
+        id: "t2.3-07", title: "A casa con una parola",
+        task: "Sei in `/var/log`. Torna nella tua home con il comando più corto che ci sia.",
+        setup: { cwd: "/var/log" },
+        goals: [
+            { text: "Sei nella tua home, `/home/anna`", cwd: "/home/anna" },
+            { text: "Hai usato `cd` da solo, senza argomenti", history: "^cd\\s*$" }
+        ],
+        hint: "`cd` senza niente dopo porta in un posto preciso.",
+        solution: ["cd"],
+        explain: "`cd` da solo, `cd ~` e `cd $HOME` portano tutti nella tua home: la sua posizione è nella variabile `HOME`."
+    },
+    {
+        id: "t2.3-08", title: "Solo le directory",
+        task: "Elenca solo le directory della tua home, non i file, con `ls` e un carattere jolly.",
+        goals: [{ text: "Compaiono `documenti/`, `foto/` e `progetti/`, senza i file", output: "same", command: "^ls\\b.*\\*/" }],
+        hint: "Il modello `*/` corrisponde solo alle directory. Perché `ls` non mostri il loro contenuto, ma le directory stesse, serve l'opzione `-d`.",
+        solution: ["ls -d */"],
+        explain: "La shell trasforma `*/` nell'elenco delle directory (con la `/` in fondo) prima di avviare `ls`. Senza `-d`, `ls` mostrerebbe il contenuto di ognuna."
+    },
 
     // ---- 2.4 Creazione, spostamento ed eliminazione di file ----
     {
@@ -349,6 +407,47 @@ addExercises("010-160", [
         hint: "Con `zip` il primo nome è l'archivio; per entrare nelle directory serve `-r`.",
         solution: ["zip -r foto.zip foto"],
         explain: "`zip -r archivio.zip directory`; per estrarre `unzip archivio.zip`, per vedere il contenuto `unzip -l archivio.zip`."
+    },
+    {
+        id: "t3.1-06", title: "Comprimere con bzip2",
+        task: "Comprimi il file `eventi.log` con bzip2: al suo posto deve restare solo la versione compressa.",
+        setup: { files: { "/home/anna/eventi.log": "avvio\nlogin anna\nlogout anna\n" } },
+        goals: [
+            { text: "C'è `eventi.log.bz2`, compresso con bzip2", path: "/home/anna/eventi.log.bz2", archive: "bzip2" },
+            { text: "`eventi.log` non c'è più", path: "/home/anna/eventi.log", is: "absent" }
+        ],
+        hint: "Funziona come gzip: il comando ha il nome del programma, e il file compresso prende l'estensione `.bz2`.",
+        solution: ["bzip2 eventi.log"],
+        explain: "`bzip2` comprime di più di gzip ma è più lento; `bunzip2` (o `bzip2 -d`) decomprime. Come gzip, comprime un file alla volta e lo sostituisce con la versione compressa."
+    },
+    {
+        id: "t3.1-07", title: "Un archivio tar.xz",
+        task: "Crea `documenti.tar.xz`, un archivio tar compresso con xz, con dentro la directory `documenti`.",
+        goals: [{ text: "C'è `documenti.tar.xz` con dentro `documenti/spesa.txt`", path: "/home/anna/documenti.tar.xz", archive: "tar.xz", has: ["documenti/spesa.txt"] }],
+        hint: "Come per `.tar.gz`, ma l'opzione di tar per xz è una J maiuscola: `-c` crea, `-J` comprime con xz, `-f` dice il nome.",
+        solution: ["tar -cJf documenti.tar.xz documenti"],
+        explain: "Le opzioni di compressione di tar: `-z` gzip (`.tar.gz`), `-j` bzip2 (`.tar.bz2`), `-J` xz (`.tar.xz`). xz di solito comprime più di tutti."
+    },
+    {
+        id: "t3.1-08", title: "Decomprimere un file",
+        task: "Nella tua home c'è `appunti.txt.gz`. Decomprimilo, così torna `appunti.txt`.",
+        setup: { files: { "/home/anna/appunti.txt": "prima riga\nseconda riga\n" }, prepare: ["gzip appunti.txt"] },
+        goals: [
+            { text: "C'è di nuovo `appunti.txt`, con il suo contenuto", path: "/home/anna/appunti.txt", content: "prima riga\nseconda riga\n" },
+            { text: "`appunti.txt.gz` non c'è più", path: "/home/anna/appunti.txt.gz", is: "absent" }
+        ],
+        hint: "Il contrario di `gzip` ha un nome che inizia con «gun». Va bene anche `gzip -d`.",
+        solution: ["gunzip appunti.txt.gz"],
+        explain: "`gunzip` (o `gzip -d`) toglie la compressione e il `.gz` dal nome. Per leggere il contenuto senza decomprimere il file c'è `zcat`."
+    },
+    {
+        id: "t3.1-09", title: "Dentro uno zip", bash: false,
+        task: "Mostra l'elenco dei file contenuti in `sito.zip`, senza estrarli.",
+        setup: { prepare: ["zip -qr sito.zip documenti"] },
+        goals: [{ text: "Compaiono `documenti/lettera.txt` e `documenti/spesa.txt`", output: "words", words: ["documenti/lettera.txt", "documenti/spesa.txt"], command: "^unzip\\s+-l\\s" }],
+        hint: "Per gli zip non si usa tar: c'è un'opzione di `unzip`, la `l` di «list».",
+        solution: ["unzip -l sito.zip"],
+        explain: "`unzip -l` mostra dimensione, data e nome di ogni file, e in fondo il totale. Per i tar lo stesso lavoro lo fa `tar -tf`."
     },
 
     // ---- 3.2 Ricerca ed estrazione di dati dai file ----
@@ -590,6 +689,41 @@ addExercises("010-160", [
         solution: ["vim ciao.sh", "i, poi le due righe: #!/bin/bash e echo Ciao dallo script", "Esc, :wq e Invio", "chmod u+x ciao.sh", "./ciao.sh"],
         steps: ["vim ciao.sh", { press: "i" }, { type: "#!/bin/bash\necho Ciao dallo script" }, { press: "Escape" }, { type: ":wq" }, { press: "Enter" }, "chmod u+x ciao.sh", "./ciao.sh"],
         explain: "Gli script si scrivono proprio così, con un editor. Un file nuovo non è eseguibile: serve `chmod u+x`. La prima riga, `#!/bin/bash` (shebang), dice quale programma deve leggere lo script."
+    },
+
+    // ---- 4.2 Comprendere l'hardware del computer ----
+    // (il processore, la memoria e i dischi sono quelli di un computer finto: non si confrontano con Bash)
+    {
+        id: "t4.2-01", title: "Il processore", bash: false,
+        task: "Il kernel descrive il processore nel file `/proc/cpuinfo`. Mostra solo le righe con il modello, quelle che contengono `model name`.",
+        goals: [{ text: "Compare il modello del processore (una riga per ogni core)", output: "words", words: ["model", "name", "Intel(R)"], command: "\\bgrep\\b.*model.name" }],
+        hint: "`grep 'model name' /proc/cpuinfo`: le virgolette servono perché le due parole formino un solo modello.",
+        solution: ["grep 'model name' /proc/cpuinfo"],
+        explain: "In `/proc` non ci sono file veri sul disco: il kernel li prepara al momento. `/proc/cpuinfo` ha un blocco per ogni core: le righe sono tante quanti i core."
+    },
+    {
+        id: "t4.2-02", title: "Quanta memoria", bash: false,
+        task: "Mostra quanta RAM ha il computer: la riga `MemTotal` del file `/proc/meminfo`.",
+        goals: [{ text: "Compare la riga `MemTotal`", output: "words", words: ["MemTotal:"], command: "\\bgrep\\b.*MemTotal" }],
+        hint: "Come per il processore: `grep`, la parola da cercare e il file `/proc/meminfo`.",
+        solution: ["grep MemTotal /proc/meminfo"],
+        explain: "Il valore è in kB: circa 4 milioni di kB sono 4 GB. Lo stesso dato, più leggibile, lo mostra `free -h`, con la memoria usata e quella libera."
+    },
+    {
+        id: "t4.2-03", title: "I dischi in /dev", bash: false,
+        task: "Elenca in formato lungo i file di dispositivo dei dischi, `/dev/sd*`: i dischi interi e le loro partizioni.",
+        goals: [{ text: "Compaiono `/dev/sda`, le sue partizioni e `/dev/sdb`", output: "words", words: ["/dev/sda", "/dev/sda1", "/dev/sdb"], command: "^ls\\s+-[a-zA-Z]*l[a-zA-Z]*\\s+/dev/sd" }],
+        hint: "`ls -l` con il carattere jolly `*` dopo `/dev/sd`.",
+        solution: ["ls -l /dev/sd*"],
+        explain: "`sda` è il primo disco, `sdb` il secondo; il numero indica la partizione (`sda1` è la prima di `sda`). La `b` all'inizio dei permessi vuol dire dispositivo a blocchi; al posto della dimensione ci sono due numeri, il maggiore (il driver) e il minore."
+    },
+    {
+        id: "t4.2-04", title: "Le partizioni secondo il kernel", bash: false,
+        task: "Mostra l'elenco delle partizioni che il kernel conosce, dal file `/proc/partitions`.",
+        goals: [{ text: "Compaiono `sda1`, `sda2` e `sdb1`", output: "words", words: ["sda1", "sda2", "sdb1"], command: "^(cat|less|more)\\s+/proc/partitions\\s*$" }],
+        hint: "Basta mostrare il contenuto del file con `cat`.",
+        solution: ["cat /proc/partitions"],
+        explain: "Per ogni disco e partizione ci sono i numeri maggiore e minore e la dimensione in blocchi da 1 KB. `sr0` è il lettore ottico (CD o DVD). Un disco si divide in partizioni per tenere separati, per esempio, il sistema e i dati."
     },
 
     // ---- 4.3 Dove sono memorizzati i dati ----
@@ -1007,6 +1141,39 @@ addExercises("010-160", [
         solution: ["chmod -R g+w progetti"],
         explain: "`chmod -R` applica la modifica a tutto l'albero: la forma simbolica `g+w` lascia invariati gli altri permessi di ogni file."
     },
+    {
+        id: "t5.3-06", title: "Permessi in numeri",
+        task: "Imposta per lo script `avvia.sh` i permessi `rwxr-x---` usando la forma numerica di `chmod`.",
+        setup: { files: { "/home/anna/avvia.sh": "#!/bin/bash\necho avvio\n" } },
+        goals: [
+            { text: "I permessi di `avvia.sh` sono `rwxr-x---`", path: "/home/anna/avvia.sh", mode: "750" },
+            { text: "Hai usato la forma numerica", history: "^chmod\\s+0?750\\b" }
+        ],
+        hint: "Ogni gruppo di tre lettere è una cifra: r vale 4, w 2, x 1. Somma quelle di ogni gruppo.",
+        solution: ["chmod 750 avvia.sh"],
+        explain: "`rwx` = 4+2+1 = 7, `r-x` = 4+1 = 5, `---` = 0: quindi 750. La forma numerica imposta tutti i permessi insieme; quella simbolica (`u+x`) ne cambia solo una parte."
+    },
+    {
+        id: "t5.3-07", title: "Il gruppo del file", bash: false,
+        task: "Assegna il file `piano.txt` al gruppo `sviluppo`, di cui fai parte, senza cambiare il proprietario.",
+        setup: { files: { "/home/anna/piano.txt": "Obiettivi del progetto\n" } },
+        goals: [{ text: "`piano.txt` è del gruppo `sviluppo` e resta di anna", path: "/home/anna/piano.txt", group: "sviluppo", owner: "anna" }],
+        hint: "Il comando per cambiare solo il gruppo è `chgrp`: prima il gruppo, poi il file. Va bene anche `chown :sviluppo piano.txt`.",
+        solution: ["chgrp sviluppo piano.txt"],
+        explain: "Il proprietario di un file può assegnarlo a un gruppo di cui fa parte, senza `sudo`; per cambiare il proprietario serve invece root. `ls -l` mostra proprietario e gruppo, uno dopo l'altro."
+    },
+    {
+        id: "t5.3-08", title: "Permessi con l'uguale",
+        task: "Con la forma simbolica e il segno `=`, imposta i permessi di `rubrica.txt` a `rw-r-----`: lettura e scrittura per il proprietario, solo lettura per il gruppo, niente per gli altri.",
+        setup: { files: { "/home/anna/rubrica.txt": { content: "Luca 333 1234567\n", mode: "666" } } },
+        goals: [
+            { text: "I permessi di `rubrica.txt` sono `rw-r-----`", path: "/home/anna/rubrica.txt", mode: "640" },
+            { text: "Hai usato la forma simbolica con `=`", history: "^chmod\\s+\\S*=" }
+        ],
+        hint: "Con `=` i permessi di una categoria diventano esattamente quelli scritti. Le categorie si separano con la virgola, senza spazi: `u=...,g=...,o=`.",
+        solution: ["chmod u=rw,g=r,o= rubrica.txt"],
+        explain: "`+` aggiunge, `-` toglie, `=` imposta: `o=` senza lettere toglie tutto agli altri. Il risultato è lo stesso di `chmod 640 rubrica.txt`."
+    },
 
     // ---- 5.4 Directory e file speciali ----
     {
@@ -1040,5 +1207,39 @@ addExercises("010-160", [
         hint: "`ls -l` su una directory ne mostra il contenuto: un'altra opzione mostra la directory stessa.",
         solution: ["ls -ld /tmp"],
         explain: "`ls -ld` mostra la riga della directory: la `t` finale è lo sticky bit."
+    },
+    {
+        id: "t5.4-05", title: "Un link che non porta da nessuna parte",
+        task: "Il link simbolico `ultimo` punta a `report-2026.txt`, che non esiste. Crea quel file con dentro la parola `pronto`, poi leggi il file passando dal link.",
+        setup: { links: { "/home/anna/ultimo": "report-2026.txt" } },
+        goals: [
+            { text: "`report-2026.txt` contiene `pronto`", path: "/home/anna/report-2026.txt", content: "pronto\n" },
+            { text: "`cat ultimo` mostra `pronto`", output: "words", words: ["pronto"], command: "^cat\\s+ultimo\\s*$" }
+        ],
+        hint: "Un link simbolico è solo un nome che punta a un altro nome: appena il file `report-2026.txt` esiste, il link funziona. `echo pronto > report-2026.txt`, poi `cat ultimo`.",
+        solution: ["echo pronto > report-2026.txt", "cat ultimo"],
+        explain: "Un link che punta a un file che non c'è si dice «rotto»: `ls -l` lo mostra lo stesso, ma `cat` dice che il file non esiste. Il link non cambia: è il file di destinazione che arriva."
+    },
+    {
+        id: "t5.4-06", title: "Lo stesso inode", bash: false,
+        task: "Crea `copia.txt`, un hard link a `note.txt`. Poi mostra con `ls` il numero di inode dei due file, per vedere che è lo stesso.",
+        goals: [
+            { text: "`copia.txt` è un hard link a `note.txt`", path: "/home/anna/copia.txt", sameAs: "/home/anna/note.txt" },
+            { text: "`ls` mostra i numeri di inode dei due file", output: "words", words: ["note.txt", "copia.txt"], command: "^ls\\s+(\\S+\\s+)*-[a-zA-Z]*i" }
+        ],
+        hint: "`ln` senza `-s` crea un hard link. L'opzione di `ls` per il numero di inode è `-i`.",
+        solution: ["ln note.txt copia.txt", "ls -i note.txt copia.txt"],
+        explain: "Un hard link è un secondo nome per lo stesso inode, cioè per gli stessi dati: il numero è uguale, e con `ls -l` il contatore dei link sale a 2. I dati spariscono solo quando si cancella l'ultimo nome."
+    },
+    {
+        id: "t5.4-07", title: "Un link a una directory",
+        task: "Crea il link simbolico `docs` che punta alla directory `documenti`, poi elenca il contenuto passando dal link.",
+        goals: [
+            { text: "`docs` è un link simbolico a `documenti`", path: "/home/anna/docs", is: "link", target: "documenti" },
+            { text: "`ls docs` mostra i file di `documenti`", output: "same", command: "^ls\\s+docs/?\\s*$" }
+        ],
+        hint: "`ln -s DESTINAZIONE NOME`: prima la cosa a cui puntare, poi il nome del link.",
+        solution: ["ln -s documenti docs", "ls docs"],
+        explain: "I link simbolici possono puntare anche alle directory (gli hard link no) e anche su un altro file system. Qui la destinazione è relativa: `documenti` si cerca nella directory dove sta il link."
     }
 ]);

@@ -16,7 +16,7 @@
 # modificarlo a mano. https://github.com/paselsoft/certificazioni-lpi
 set -euo pipefail
 
-ELENCO=$'t1.2-01  Che cosa è installato?\nt1.2-02  Installare un programma\nt1.2-03  Cercare un pacchetto\nt1.2-04  Di quale pacchetto è?\nt1.2-05  Togliere tutto\nt2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt3.3-12  Il primo file con nano\nt3.3-13  Aggiungere una riga con nano\nt3.3-14  Il primo file con vi\nt3.3-15  Togliere una riga con vi\nt3.3-16  Uno script scritto con vim\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.1-01  Chi sono io?\nt5.1-02  Chi è collegato?\nt5.1-03  Che cosa stanno facendo?\nt5.1-04  Gli accessi di luca\nt5.1-05  Un utente di sistema\nt5.1-06  Dove stanno le password\nt5.1-07  Che cosa posso fare con sudo?\nt5.1-08  Diventare luca\nt5.1-09  Un comando come un altro utente\nt5.1-10  Il prompt di root\nt5.2-01  Un nuovo utente\nt5.2-02  Nome completo e shell\nt5.2-03  La riga del nuovo utente\nt5.2-04  Il modello delle home\nt5.2-05  Un gruppo nuovo\nt5.2-06  Aggiungere a un gruppo\nt5.2-07  Una password per luigi\nt5.2-08  Bloccare un account\nt5.2-09  Un utente di sistema\nt5.2-10  Eliminare un utente\nt5.2-11  Il numero di un utente\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp'
+ELENCO=$'t1.2-01  Che cosa è installato?\nt1.2-02  Installare un programma\nt1.2-03  Cercare un pacchetto\nt1.2-04  Di quale pacchetto è?\nt1.2-05  Togliere tutto\nt2.1-01  Una variabile\nt2.1-02  Il dollaro tra virgolette\nt2.1-03  Allungare il PATH\nt2.1-04  Che tipo di comando è?\nt2.1-05  Una variabile per i programmi\nt2.1-06  I comandi già scritti\nt2.1-07  Il dollaro tra virgolette doppie\nt2.2-01  La pagina di manuale\nt2.2-02  Non ricordo il nome\nt2.2-03  La sezione giusta\nt2.2-04  L\'aiuto veloce\nt2.2-05  Un comando interno\nt2.2-06  La documentazione dei pacchetti\nt2.2-07  Dov\'è quel file?\nt2.2-08  Il database non lo sa ancora\nt2.3-01  Dove sono?\nt2.3-02  I file nascosti\nt2.3-03  Tutto il contenuto, anche dentro\nt2.3-04  Percorso relativo\nt2.3-05  Il più recente per primo\nt2.3-06  Torna indietro\nt2.3-07  A casa con una parola\nt2.3-08  Solo le directory\nt2.4-01  Directory annidate\nt2.4-02  Rinominare\nt2.4-03  Copiare una directory\nt2.4-04  Eliminare una directory piena\nt2.4-05  Tutti i .jpg in un colpo\nt2.4-06  Un solo carattere\nt3.1-01  Un archivio compresso\nt3.1-02  Estrarre un archivio\nt3.1-03  Guardare dentro senza estrarre\nt3.1-04  Comprimere un file\nt3.1-05  Un file zip\nt3.1-06  Comprimere con bzip2\nt3.1-07  Un archivio tar.xz\nt3.1-08  Decomprimere un file\nt3.1-09  Dentro uno zip\nt3.2-01  Gli errori nel log\nt3.2-02  Quanti errori?\nt3.2-03  I nomi degli utenti\nt3.2-04  Ordinata e senza doppioni\nt3.2-05  Aggiungere in fondo\nt3.2-06  L\'inizio del log\nt3.2-07  Senza messaggi di errore\nt3.2-08  Righe che iniziano così\nt3.3-01  Il primo script\nt3.3-02  Senza il permesso di esecuzione\nt3.3-03  Con il punto e la barra\nt3.3-04  Il primo argomento\nt3.3-05  Quanti argomenti?\nt3.3-06  Il codice di uscita\nt3.3-07  Un comando tutto tuo\nt3.3-08  Un ciclo su una riga\nt3.3-09  Un saluto per ciascuno\nt3.3-10  Se il file esiste\nt3.3-11  Leggere uno script\nt3.3-12  Il primo file con nano\nt3.3-13  Aggiungere una riga con nano\nt3.3-14  Il primo file con vi\nt3.3-15  Togliere una riga con vi\nt3.3-16  Uno script scritto con vim\nt4.2-01  Il processore\nt4.2-02  Quanta memoria\nt4.2-03  I dischi in /dev\nt4.2-04  Le partizioni secondo il kernel\nt4.3-01  I processi del terminale\nt4.3-02  Tutti i processi\nt4.3-03  Trova un processo\nt4.3-04  Quanta memoria?\nt4.3-05  La memoria vista dal kernel\nt4.3-06  La cartella di un processo\nt4.3-07  I messaggi del kernel\nt4.3-08  Il registro di sistema\nt4.3-09  Il kernel sul disco\nt4.3-10  I dischi sono file\nt4.4-01  Il mio indirizzo IP\nt4.4-02  Il vecchio ifconfig\nt4.4-03  La porta verso Internet\nt4.4-04  La tabella di route\nt4.4-05  Quale server DNS?\nt4.4-06  Nomi senza DNS\nt4.4-07  Il NAS risponde?\nt4.4-08  Chiedere al DNS\nt4.4-09  Chi è in ascolto?\nt4.4-10  Gli indirizzi IPv6\nt5.1-01  Chi sono io?\nt5.1-02  Chi è collegato?\nt5.1-03  Che cosa stanno facendo?\nt5.1-04  Gli accessi di luca\nt5.1-05  Un utente di sistema\nt5.1-06  Dove stanno le password\nt5.1-07  Che cosa posso fare con sudo?\nt5.1-08  Diventare luca\nt5.1-09  Un comando come un altro utente\nt5.1-10  Il prompt di root\nt5.2-01  Un nuovo utente\nt5.2-02  Nome completo e shell\nt5.2-03  La riga del nuovo utente\nt5.2-04  Il modello delle home\nt5.2-05  Un gruppo nuovo\nt5.2-06  Aggiungere a un gruppo\nt5.2-07  Una password per luigi\nt5.2-08  Bloccare un account\nt5.2-09  Un utente di sistema\nt5.2-10  Eliminare un utente\nt5.2-11  Il numero di un utente\nt5.3-01  Solo per me\nt5.3-02  Eseguibile per il proprietario\nt5.3-03  Togliere la lettura agli altri\nt5.3-04  Cambiare proprietario\nt5.3-05  Il gruppo può scrivere ovunque\nt5.3-06  Permessi in numeri\nt5.3-07  Il gruppo del file\nt5.3-08  Permessi con l\'uguale\nt5.4-01  Un link simbolico\nt5.4-02  Un hard link\nt5.4-03  Una directory per tutti\nt5.4-04  I permessi di /tmp\nt5.4-05  Un link che non porta da nessuna parte\nt5.4-06  Lo stesso inode\nt5.4-07  Un link a una directory'
 APP_LOG=$'2026-11-12 08:00:01 INFO avvio del servizio\n2026-11-12 08:05:12 WARN disco quasi pieno\n2026-11-12 08:10:30 ERROR connessione al database fallita\n2026-11-12 08:10:31 INFO nuovo tentativo\n2026-11-12 08:10:35 ERROR connessione al database fallita\n2026-11-12 08:11:00 INFO connessione riuscita\n2026-11-12 09:00:00 error utente sconosciuto: mario\n'
 SEGRETO=$'solo per luca\n'
 
@@ -45,9 +45,11 @@ file() {
     touch -d "@$((ADESSO - $3 * 60))" "$CASA/$1"
 }
 
+# collegamento LINK DESTINAZIONE ETÀ_IN_MINUTI
 collegamento() {
     [ "$PREPARA" = 1 ] || return 0
     ln -s "$2" "$CASA/$1"
+    touch -h -d "@$((ADESSO - $3 * 60))" "$CASA/$1"
 }
 
 # data CARTELLA PERMESSI ETÀ_IN_MINUTI
@@ -253,6 +255,60 @@ esercizio() {
         PARTENZA=$''
         PRIMA=$''
         SOLUZIONE=$'type cd cp'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.1-05)
+        TITOLO=$'Una variabile per i programmi'
+        COMPITO=$'Crea la variabile d\'ambiente LINGUA con il valore it, visibile anche ai programmi avviati dalla shell. Poi controlla con env e grep che ci sia.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'export LINGUA=it\nenv | grep LINGUA'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.1-06)
+        TITOLO=$'I comandi già scritti'
+        COMPITO=$'Scrivi echo uno e poi echo due. Poi mostra l\'elenco numerato dei comandi che hai scritto.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'echo uno\necho due\nhistory'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.1-07)
+        TITOLO=$'Il dollaro tra virgolette doppie'
+        COMPITO=$'Crea la variabile NOME con il valore Anna. Poi, con un solo echo tra virgolette doppie, stampa Ciao Anna, il biglietto costa $5: il nome deve venire dalla variabile.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'NOME=Anna\necho "Ciao $NOME, il biglietto costa \\$5"'
         cartella documenti
         cartella foto
         cartella progetti
@@ -512,6 +568,60 @@ esercizio() {
         data foto 755 4320
         data documenti 755 4320
         ;;
+    t2.3-06)
+        TITOLO=$'Torna indietro'
+        COMPITO=$'Vai nella directory /etc, poi torna nella directory di prima con il comando più breve.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'cd /etc\ncd -'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.3-07)
+        TITOLO=$'A casa con una parola'
+        COMPITO=$'Sei in /var/log. Torna nella tua home con il comando più corto che ci sia.'
+        PARTENZA=$'/var/log'
+        PRIMA=$''
+        SOLUZIONE=$'cd'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t2.3-08)
+        TITOLO=$'Solo le directory'
+        COMPITO=$'Elenca solo le directory della tua home, non i file, con ls e un carattere jolly.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'ls -d */'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
     t2.4-01)
         TITOLO=$'Directory annidate'
         COMPITO=$'Crea la struttura di directory viaggi/2027/foto con un solo comando (nessuna delle tre esiste).'
@@ -745,6 +855,82 @@ esercizio() {
         data progetti 755 4320
         data foto 755 4320
         data documenti 755 4320
+        ;;
+    t3.1-06)
+        TITOLO=$'Comprimere con bzip2'
+        COMPITO=$'Comprimi il file eventi.log con bzip2: al suo posto deve restare solo la versione compressa.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'bzip2 eventi.log'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file eventi.log 644 4320 $'avvio\nlogin anna\nlogout anna\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t3.1-07)
+        TITOLO=$'Un archivio tar.xz'
+        COMPITO=$'Crea documenti.tar.xz, un archivio tar compresso con xz, con dentro la directory documenti.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'tar -cJf documenti.tar.xz documenti'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t3.1-08)
+        TITOLO=$'Decomprimere un file'
+        COMPITO=$'Nella tua home c\'è appunti.txt.gz. Decomprimilo, così torna appunti.txt.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'gunzip appunti.txt.gz'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file appunti.txt 644 4320 $'prima riga\nseconda riga\n'
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        esegui $'gzip appunti.txt'
+        ;;
+    t3.1-09)
+        TITOLO=$'Dentro uno zip'
+        COMPITO=$'Mostra l\'elenco dei file contenuti in sito.zip, senza estrarli.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'unzip -l sito.zip'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        esegui $'zip -qr sito.zip documenti'
         ;;
     t3.2-01)
         TITOLO=$'Gli errori nel log'
@@ -1177,6 +1363,78 @@ esercizio() {
         PARTENZA=$''
         PRIMA=$''
         SOLUZIONE=$'vim ciao.sh\ni, poi le due righe: #!/bin/bash e echo Ciao dallo script\nEsc, :wq e Invio\nchmod u+x ciao.sh\n./ciao.sh'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.2-01)
+        TITOLO=$'Il processore'
+        COMPITO=$'Il kernel descrive il processore nel file /proc/cpuinfo. Mostra solo le righe con il modello, quelle che contengono model name.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'grep \'model name\' /proc/cpuinfo'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.2-02)
+        TITOLO=$'Quanta memoria'
+        COMPITO=$'Mostra quanta RAM ha il computer: la riga MemTotal del file /proc/meminfo.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'grep MemTotal /proc/meminfo'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.2-03)
+        TITOLO=$'I dischi in /dev'
+        COMPITO=$'Elenca in formato lungo i file di dispositivo dei dischi, /dev/sd*: i dischi interi e le loro partizioni.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'ls -l /dev/sd*'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t4.2-04)
+        TITOLO=$'Le partizioni secondo il kernel'
+        COMPITO=$'Mostra l\'elenco delle partizioni che il kernel conosce, dal file /proc/partitions.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'cat /proc/partitions'
         cartella documenti
         cartella foto
         cartella progetti
@@ -2024,6 +2282,63 @@ esercizio() {
         data foto 755 4320
         data documenti 755 4320
         ;;
+    t5.3-06)
+        TITOLO=$'Permessi in numeri'
+        COMPITO=$'Imposta per lo script avvia.sh i permessi rwxr-x--- usando la forma numerica di chmod.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'chmod 750 avvia.sh'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file avvia.sh 644 4320 $'#!/bin/bash\necho avvio\n'
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.3-07)
+        TITOLO=$'Il gruppo del file'
+        COMPITO=$'Assegna il file piano.txt al gruppo sviluppo, di cui fai parte, senza cambiare il proprietario.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'chgrp sviluppo piano.txt'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        file piano.txt 644 4320 $'Obiettivi del progetto\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.3-08)
+        TITOLO=$'Permessi con l\'uguale'
+        COMPITO=$'Con la forma simbolica e il segno =, imposta i permessi di rubrica.txt a rw-r-----: lettura e scrittura per il proprietario, solo lettura per il gruppo, niente per gli altri.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'chmod u=rw,g=r,o= rubrica.txt'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        file rubrica.txt 666 4320 $'Luca 333 1234567\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
     t5.4-01)
         TITOLO=$'Un link simbolico'
         COMPITO=$'Crea nella tua home il link simbolico hosts che punta al file /etc/hosts.'
@@ -2096,6 +2411,61 @@ esercizio() {
         data foto 755 4320
         data documenti 755 4320
         ;;
+    t5.4-05)
+        TITOLO=$'Un link che non porta da nessuna parte'
+        COMPITO=$'Il link simbolico ultimo punta a report-2026.txt, che non esiste. Crea quel file con dentro la parola pronto, poi leggi il file passando dal link.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'echo pronto > report-2026.txt\ncat ultimo'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        collegamento ultimo report-2026.txt 4320
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.4-06)
+        TITOLO=$'Lo stesso inode'
+        COMPITO=$'Crea copia.txt, un hard link a note.txt. Poi mostra con ls il numero di inode dei due file, per vedere che è lo stesso.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'ln note.txt copia.txt\nls -i note.txt copia.txt'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
+    t5.4-07)
+        TITOLO=$'Un link a una directory'
+        COMPITO=$'Crea il link simbolico docs che punta alla directory documenti, poi elenca il contenuto passando dal link.'
+        PARTENZA=$''
+        PRIMA=$''
+        SOLUZIONE=$'ln -s documenti docs\nls docs'
+        cartella documenti
+        cartella foto
+        cartella progetti
+        file documenti/lettera.txt 644 1440 $'Gentile Luca,\nti scrivo per la riunione di lunedì.\nA presto,\nAnna\n'
+        file documenti/spesa.txt 644 120 $'pane\nlatte\nmele\npane\nuova\nlatte\npane\n'
+        file foto/mare.jpg 644 14400 $'JPEG mare\n'
+        file foto/montagna.jpg 644 12960 $'JPEG montagna\n'
+        file note.txt 644 300 $'Ripassare i permessi\nProvare tar e gzip\nLeggere la lezione 3.2\n'
+        data progetti 755 4320
+        data foto 755 4320
+        data documenti 755 4320
+        ;;
     *)
         errore "Non conosco l'esercizio «$1». Scrivi lpi-esercizio per vedere l'elenco."
         ;;
@@ -2148,7 +2518,7 @@ controlla_path() {
 
 # controlla_file TESTO PERCORSO [tipo=dir|file|link|absent] [contenuto=...] [permessi=644]
 #   [contenutocome=COMANDO] [permessiconti=100] [proprietario=...] [destinazione=...] [stessidati=PERCORSO]
-#   [archivio=tar|tar.gz|gzip|zip] [contiene=nome,nome]
+#   [archivio=tar|tar.gz|tar.bz2|tar.xz|gzip|bzip2|xz|zip] [contiene=nome,nome]
 controlla_file() {
     local testo="$1" file elenco kind="" voce nome
     file="$(percorso "$2")"
@@ -2168,6 +2538,7 @@ controlla_file() {
             permessi=*) [ "$((8#$(stat -c %a "$file")))" = "$((8#${voce#permessi=}))" ] || { da_fare "$testo"; return; } ;;
             permessiconti=*) [ $((8#$(stat -c %a "$file") & 8#${voce#permessiconti=})) = $((8#${voce#permessiconti=})) ] || { da_fare "$testo"; return; } ;;
             proprietario=*) [ "$(stat -c %U "$file")" = "${voce#proprietario=}" ] || { da_fare "$testo"; return; } ;;
+            gruppo=*) [ "$(stat -c %G "$file")" = "${voce#gruppo=}" ] || { da_fare "$testo"; return; } ;;
             destinazione=*) [ "$(readlink "$file")" = "${voce#destinazione=}" ] || { da_fare "$testo"; return; } ;;
             stessidati=*) [ "$(stat -c %d:%i "$file")" = "$(stat -c %d:%i "$(percorso "${voce#stessidati=}")" 2>/dev/null)" ] || { da_fare "$testo"; return; } ;;
             archivio=*) kind="${voce#archivio=}" ;;
@@ -2177,7 +2548,11 @@ controlla_file() {
         case "$kind" in
             tar) elenco="$(tar -tf "$file" 2>/dev/null)" && ! gzip -t "$file" 2>/dev/null ;;
             tar.gz) elenco="$(tar -tzf "$file" 2>/dev/null)" ;;
-            gzip) gzip -t "$file" 2>/dev/null; elenco="" ;;
+            tar.bz2) elenco="$(tar -tjf "$file" 2>/dev/null)" ;;
+            tar.xz) elenco="$(tar -tJf "$file" 2>/dev/null)" ;;
+            gzip) gzip -t "$file" 2>/dev/null && elenco="" ;;
+            bzip2) bzip2 -t "$file" 2>/dev/null && elenco="" ;;
+            xz) xz -t "$file" 2>/dev/null && elenco="" ;;
             zip) elenco="$(unzip -Z1 "$file" 2>/dev/null)" ;;
         esac || { da_fare "$testo"; return; }
         for voce in "$@"; do
@@ -2277,6 +2652,16 @@ verifica_obiettivi() {
     t2.1-04)
         occhio $'Compare la risposta per cd e per cp'
         ;;
+    t2.1-05)
+        controlla_variabile $'LINGUA vale it ed è esportata' LINGUA $'it'
+        occhio $'env filtrato con grep mostra LINGUA=it'
+        ;;
+    t2.1-06)
+        occhio $'L\'elenco comprende echo uno ed echo due'
+        ;;
+    t2.1-07)
+        occhio $'Compare la frase, con il nome preso da NOME e il simbolo del dollaro'
+        ;;
     t2.2-01)
         occhio $'Sullo schermo c\'è la pagina di manuale di cp'
         ;;
@@ -2318,6 +2703,17 @@ verifica_obiettivi() {
         ;;
     t2.3-05)
         occhio $'Elenco lungo di documenti, dal più recente'
+        ;;
+    t2.3-06)
+        controlla_cwd $'Sei di nuovo nella tua home, /home/anna' /home/anna
+        occhio $'Sei tornato con cd -'
+        ;;
+    t2.3-07)
+        controlla_cwd $'Sei nella tua home, /home/anna' /home/anna
+        occhio $'Hai usato cd da solo, senza argomenti'
+        ;;
+    t2.3-08)
+        occhio $'Compaiono documenti/, foto/ e progetti/, senza i file'
         ;;
     t2.4-01)
         controlla_file $'Esiste viaggi/2027/foto' /home/anna/viaggi/2027/foto $'tipo=dir'
@@ -2361,6 +2757,20 @@ verifica_obiettivi() {
         ;;
     t3.1-05)
         controlla_file $'foto.zip contiene foto/mare.jpg e foto/montagna.jpg' /home/anna/foto.zip $'archivio=zip' $'contiene=foto/mare.jpg,foto/montagna.jpg'
+        ;;
+    t3.1-06)
+        controlla_file $'C\'è eventi.log.bz2, compresso con bzip2' /home/anna/eventi.log.bz2 $'archivio=bzip2'
+        controlla_file $'eventi.log non c\'è più' /home/anna/eventi.log $'tipo=absent'
+        ;;
+    t3.1-07)
+        controlla_file $'C\'è documenti.tar.xz con dentro documenti/spesa.txt' /home/anna/documenti.tar.xz $'archivio=tar.xz' $'contiene=documenti/spesa.txt'
+        ;;
+    t3.1-08)
+        controlla_file $'C\'è di nuovo appunti.txt, con il suo contenuto' /home/anna/appunti.txt $'contenuto=prima riga\nseconda riga\n'
+        controlla_file $'appunti.txt.gz non c\'è più' /home/anna/appunti.txt.gz $'tipo=absent'
+        ;;
+    t3.1-09)
+        occhio $'Compaiono documenti/lettera.txt e documenti/spesa.txt'
         ;;
     t3.2-01)
         occhio $'Compaiono le due righe con ERROR'
@@ -2443,6 +2853,18 @@ verifica_obiettivi() {
     t3.3-16)
         controlla_file $'ciao.sh è eseguibile per il proprietario' /home/anna/ciao.sh $'permessiconti=100'
         occhio $'Lo script, avviato, scrive Ciao dallo script'
+        ;;
+    t4.2-01)
+        occhio $'Compare il modello del processore (una riga per ogni core)'
+        ;;
+    t4.2-02)
+        occhio $'Compare la riga MemTotal'
+        ;;
+    t4.2-03)
+        occhio $'Compaiono /dev/sda, le sue partizioni e /dev/sdb'
+        ;;
+    t4.2-04)
+        occhio $'Compaiono sda1, sda2 e sdb1'
         ;;
     t4.3-01)
         occhio $'Compare l\'elenco con la tua shell (bash) e il comando stesso'
@@ -2592,6 +3014,17 @@ verifica_obiettivi() {
         controlla_file $'Anche in progetti/sito' /home/anna/progetti/sito $'permessi=775'
         controlla_file $'E su progetti/sito/index.html' /home/anna/progetti/sito/index.html $'permessi=664'
         ;;
+    t5.3-06)
+        controlla_file $'I permessi di avvia.sh sono rwxr-x---' /home/anna/avvia.sh $'permessi=750'
+        occhio $'Hai usato la forma numerica'
+        ;;
+    t5.3-07)
+        controlla_file $'piano.txt è del gruppo sviluppo e resta di anna' /home/anna/piano.txt $'proprietario=anna' $'gruppo=sviluppo'
+        ;;
+    t5.3-08)
+        controlla_file $'I permessi di rubrica.txt sono rw-r-----' /home/anna/rubrica.txt $'permessi=640'
+        occhio $'Hai usato la forma simbolica con ='
+        ;;
     t5.4-01)
         controlla_file $'hosts è un link simbolico a /etc/hosts' /home/anna/hosts $'tipo=link' $'destinazione=/etc/hosts'
         ;;
@@ -2603,6 +3036,18 @@ verifica_obiettivi() {
         ;;
     t5.4-04)
         occhio $'Compare la riga di /tmp con drwxrwxrwt'
+        ;;
+    t5.4-05)
+        controlla_file $'report-2026.txt contiene pronto' /home/anna/report-2026.txt $'contenuto=pronto\n'
+        occhio $'cat ultimo mostra pronto'
+        ;;
+    t5.4-06)
+        controlla_file $'copia.txt è un hard link a note.txt' /home/anna/copia.txt $'stessidati=/home/anna/note.txt'
+        occhio $'ls mostra i numeri di inode dei due file'
+        ;;
+    t5.4-07)
+        controlla_file $'docs è un link simbolico a documenti' /home/anna/docs $'tipo=link' $'destinazione=documenti'
+        occhio $'ls docs mostra i file di documenti'
         ;;
     esac
 }

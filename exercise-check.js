@@ -58,7 +58,8 @@ function archiveEntries(node, kind) {
         if (binaryKind(data) !== layer) return null;
         data = binaryBody(data);
     }
-    if (kind === "gzip") return [];
+    // Un file compresso da solo (non un archivio): conta solo il formato
+    if (["gzip", "bzip2", "xz"].includes(kind)) return [];
     try {
         return JSON.parse(data).map(entry => entry.name);
     } catch (error) {
@@ -117,6 +118,7 @@ function goalMet(sh, exercise, goal) {
         if (goal.mode !== undefined && (node.mode & 0o7777) !== parseInt(goal.mode, 8)) return false;
         if (goal.modeHas !== undefined && (node.mode & parseInt(goal.modeHas, 8)) !== parseInt(goal.modeHas, 8)) return false;
         if (goal.owner !== undefined && node.owner !== goal.owner) return false;
+        if (goal.group !== undefined && node.group !== goal.group) return false;
         if (goal.target !== undefined && node.target !== goal.target) return false;
         if (goal.sameAs !== undefined && inspectPath(sh, goal.sameAs, false) !== node) return false;
         if (goal.archive !== undefined) {

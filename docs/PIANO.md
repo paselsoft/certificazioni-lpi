@@ -382,6 +382,19 @@ la palestra davvero ed esegue le soluzioni da anna.
   dalla palestra con `dpkg-query`. 5 esercizi per l'1.2, che non ne aveva: `dpkg -l`,
   installare `tree`, cercare con `apt-cache search`, `dpkg -S` e `-L`, `purge` di nginx.
 
+- **Altri esercizi dove erano pochi (21/11/2026).** 20 esercizi nuovi, 127 in tutto: 2.1 (ora 7:
+  `export` con `env | grep`, `history`, `$` e `\$` tra virgolette doppie), 2.3 (8: `cd -`, `cd`
+  da solo, `ls -d */`), 3.1 (9: `bzip2`, `tar -cJf`, `gunzip`, `unzip -l`), 5.3 (8: `chmod 750`,
+  `chgrp`, `chmod u=rw,g=r,o=`), 5.4 (7: un link rotto, `ls -i` sugli hard link, un link a una
+  directory) e i primi 4 del 4.2 (`/proc/cpuinfo`, `/proc/meminfo`, `ls -l /dev/sd*`,
+  `/proc/partitions`). Nel simulatore: `ls -i` (il numero di inode, uguale per gli hard link) e
+  `*/` che ora corrisponde solo alle directory (prima anche ai file). Obiettivi nuovi: il gruppo
+  di un file (`group` con `path`) e i formati `bzip2`, `xz`, `tar.bz2`, `tar.xz`, controllati
+  anche dalla palestra (che ora dà «da fare» anche quando un file non è davvero compresso con gzip).
+  La palestra crea i link con la loro data e `check-palestra.js` controlla anche i file preparati
+  con `gzip` e `zip`. Gli esercizi che girano in Bash vero sono confrontati da `check-shell.js`
+  (357 sequenze, 0 differenze).
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -407,11 +420,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 1. **Più domande dove sono poche: fatto** (vedi sopra).
 2. **Gli editor vi e nano nel simulatore: fatto** (vedi sopra).
 3. **I pacchetti nel simulatore: fatto** (vedi sopra).
-4. **Altri esercizi dove sono pochi.** 2.1 ne ha 4, 5.4 4, 2.3, 3.1 e 5.3 5. Si possono
-   aggiungere: `type`, `history`, `export` (2.1); `ls -R`, `ls -d`, `.` e `..` (2.3);
-   `bzip2`, `xz`, `tar -tf`, `unzip -l` (3.1); `chown`, `chmod` numerico e simbolico (5.3);
-   sticky bit, `/var/tmp`, link simbolici rotti (5.4). E i primi esercizi del 4.2: guardare
-   `/dev/sd*`, `/proc/cpuinfo`, `/proc/meminfo`, le partizioni.
+4. **Altri esercizi dove sono pochi: fatto** (vedi sopra).
 5. **La data dell'esame.** Chi studia indica il giorno dell'esame (entro aprile 2027); la pagina
    principale e «Sono pronto?» mostrano i giorni che mancano e quanto fare a settimana per finire
    in tempo (obiettivi da studiare, domande nuove al giorno, una simulazione a settimana nell'ultimo

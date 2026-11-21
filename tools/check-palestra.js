@@ -86,11 +86,29 @@ try {
         const expected = simHome(setup);
         // I comandi di preparazione (tar, rm) si controllano a parte: tolgono file e creano archivi
         const archives = {};
+        const zips = {};
         (setup.prepare || []).forEach(line => {
             let match = line.match(/^tar -czf (\S+) (\S+)$/);
             if (match) archives[match[1]] = match[2];
+            match = line.match(/^zip -qr (\S+) (\S+)$/);
+            if (match) zips[match[1]] = match[2];
             match = line.match(/^rm -r (\S+)$/);
             if (match) Object.keys(expected).filter(key => key === match[1] || key.startsWith(`${match[1]}/`)).forEach(key => delete expected[key]);
+            // gzip FILE: resta FILE.gz, compresso davvero
+            match = line.match(/^gzip (\S+)$/);
+            if (match) {
+                delete expected[match[1]];
+                if (!real[`${match[1]}.gz`]) problems.push(`${exercise.id}: manca ${match[1]}.gz`);
+                else if (spawnSync("gzip", ["-t", path.join(home, `${match[1]}.gz`)]).status !== 0) problems.push(`${exercise.id}: ${match[1]}.gz non è compresso con gzip`);
+                delete real[`${match[1]}.gz`];
+            }
+        });
+        Object.entries(zips).forEach(([archive, dir]) => {
+            if (!real[archive]) { problems.push(`${exercise.id}: manca l'archivio ${archive}`); return; }
+            const list = spawnSync("unzip", ["-Z1", path.join(home, archive)], { encoding: "utf8" }).stdout.split("\n").filter(Boolean).map(name => name.replace(/\/$/, "")).sort();
+            const want = Object.keys(simHome(setup)).filter(key => key === dir || key.startsWith(`${dir}/`)).sort();
+            if (JSON.stringify(list) !== JSON.stringify(want)) problems.push(`${exercise.id}: ${archive} contiene ${list.join(", ")} invece di ${want.join(", ")}`);
+            delete real[archive];
         });
         Object.entries(archives).forEach(([archive, dir]) => {
             if (!real[archive]) { problems.push(`${exercise.id}: manca l'archivio ${archive}`); return; }
