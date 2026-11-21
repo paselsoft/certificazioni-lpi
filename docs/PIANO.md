@@ -395,6 +395,16 @@ la palestra davvero ed esegue le soluzioni da anna.
   con `gzip` e `zip`. Gli esercizi che girano in Bash vero sono confrontati da `check-shell.js`
   (357 sequenze, 0 differenze).
 
+- **Il giorno dell'esame (21/11/2026).** In «Sono pronto?» si sceglie il giorno dell'esame (un
+  campo data, da oggi al 30/04/2027): l'app dice quanti giorni mancano e il piano. Prima
+  dell'ultimo periodo (4 settimane): gli obiettivi non ancora «solidi» divisi per le settimane di
+  studio, le domande mai viste divise per i giorni, e la data da cui iniziare le simulazioni.
+  Nell'ultimo periodo: una simulazione a settimana (con quante se ne sono fatte nelle ultime 4
+  settimane) e gli obiettivi da rinforzare. Il giorno stesso un augurio, dopo un invito a
+  scegliere una nuova data; oltre aprile 2027 un avviso. La pagina principale mostra «Esame il …:
+  mancano N giorni» oppure l'invito a sceglierlo. La scelta sta in `progress.plans` (anche nel
+  backup e nella sincronizzazione: vince la scelta più recente, anche quella di toglierla).
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -421,10 +431,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 2. **Gli editor vi e nano nel simulatore: fatto** (vedi sopra).
 3. **I pacchetti nel simulatore: fatto** (vedi sopra).
 4. **Altri esercizi dove sono pochi: fatto** (vedi sopra).
-5. **La data dell'esame.** Chi studia indica il giorno dell'esame (entro aprile 2027); la pagina
-   principale e «Sono pronto?» mostrano i giorni che mancano e quanto fare a settimana per finire
-   in tempo (obiettivi da studiare, domande nuove al giorno, una simulazione a settimana nell'ultimo
-   mese).
+5. **La data dell'esame: fatto** (vedi sopra).
 6. **L'andamento delle simulazioni.** Nella pagina della simulazione, un piccolo grafico (senza
    librerie) con la percentuale di ogni simulazione nel tempo e la linea del 75%, con la stessa
    informazione anche in tabella per i lettori di schermo.

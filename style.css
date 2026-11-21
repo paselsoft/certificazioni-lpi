@@ -538,3 +538,8 @@ main { display: block; }
 .ready-level-weak { color: var(--warn); border-color: var(--warn); }
 .ready-facts, .ready-actions, .ready-obj-sims { margin: 2px 0; }
 .ready-obj-sims-low { font-weight: 600; }
+/* Il giorno dell'esame (readiness.js) */
+.plan-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 4px; }
+.plan-form input[type="date"] { font: inherit; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); min-height: 2.75rem; box-sizing: border-box; }
+.plan-list { margin: 8px 0; padding-left: 1.2em; }
+.plan-list li { margin: 4px 0; }
