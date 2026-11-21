@@ -548,6 +548,15 @@ main { display: block; }
 .sim-chart-point.is-above { fill: var(--accent); }
 .sim-chart-label { fill: var(--muted); font-size: 12px; font-family: inherit; }
 .sim-chart-target-label { fill: var(--ok); font-weight: 600; }
+/* Glossario (glossary.js) */
+.glossary-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 4px; }
+.glossary-search input { flex: 1 1 14rem; min-width: 0; font: inherit; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); min-height: 2.75rem; box-sizing: border-box; }
+.glossary-letter h2 { border-bottom: 1px solid var(--border); padding-bottom: 2px; }
+.glossary-term { font-weight: 700; margin-top: 12px; overflow-wrap: anywhere; }
+.glossary-text { margin: 2px 0 0; }
+.glossary-text p { margin: 2px 0; }
+.glossary-more { font-size: 0.9rem; }
+.glossary-letter[hidden], .glossary-term[hidden], .glossary-text[hidden] { display: none; }
 /* Il giorno dell'esame (readiness.js) */
 .plan-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 4px; }
 .plan-form input[type="date"] { font: inherit; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); min-height: 2.75rem; box-sizing: border-box; }

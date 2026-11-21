@@ -20,6 +20,9 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   risposta sbagliata riporta la domanda nella scatola 1 (torna il giorno dopo), ogni risposta
   giusta la sposta nella scatola successiva (torna dopo 2, 4, 8, poi 16 giorni). Prima le domande
   scadute, poi quelle nuove degli obiettivi che stai studiando.
+- **Glossario**: 208 termini degli obiettivi (distribuzioni, licenze, comandi, file, hardware, rete,
+  permessi) spiegati in breve, scritti da zero, con una ricerca che filtra mentre scrivi e il
+  collegamento all'obiettivo; dalla pagina di un obiettivo si aprono solo i suoi termini.
 - **Sono pronto?**: un riepilogo per obiettivo che unisce domande, ripasso, simulazioni, lezioni ed
   esercizi (con il risultato delle ultime simulazioni, obiettivo per obiettivo); il giorno
   dell'esame, con i giorni che mancano e quanto fare ogni settimana; la stima «se
@@ -89,6 +92,7 @@ HTML, CSS e JavaScript senza librerie né compilazione. I file principali:
 | `exam-sim.js` | la simulazione d'esame (`#/simulazione`, `#/simulazione/risultato`) |
 | `review.js` | il ripasso di oggi (`#/ripasso`); le scatole di Leitner sono in `store.js` |
 | `readiness.js` | «Sono pronto?» (`#/pronto`, `#/pronto/domande`): riepilogo per obiettivo, stima, punti deboli |
+| `glossary.js`, `data/glossary-010-160.js` | il glossario (`#/glossario`, `#/glossario/2.1`) e i suoi termini |
 | `questions/010-160/1.js` ... `5.js` | le domande, un file per argomento |
 | `shell-sim.js`, `shell-commands.js` | la shell simulata: file system in memoria, interprete, comandi |
 | `shell-system.js` | il computer finto della shell simulata: processi (`ps`, `top`), memoria (`free`), `dmesg`, registri, `/proc`, `/dev`, `/sys`, `/boot` |

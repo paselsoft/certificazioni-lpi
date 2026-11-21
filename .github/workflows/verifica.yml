@@ -36,6 +36,9 @@ jobs:
       - name: Domande (formato, risposte giuste, copertura per peso, nessuna frase copiata dalle lezioni)
         run: node tools/check-questions.js --stats
 
+      - name: Glossario (termini, obiettivi, nessuna frase copiata dalle lezioni)
+        run: node tools/check-glossary.js
+
       # ubuntu-24.04: GNU coreutils 9.4, come Pipe Dreams
       - name: La shell simulata coincide con Bash e GNU coreutils (soluzioni degli esercizi e casi tipici)
         run: node tools/check-shell.js
