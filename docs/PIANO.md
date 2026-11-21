@@ -405,6 +405,14 @@ la palestra davvero ed esegue le soluzioni da anna.
   mancano N giorni» oppure l'invito a sceglierlo. La scelta sta in `progress.plans` (anche nel
   backup e nella sincronizzazione: vince la scelta più recente, anche quella di toglierla).
 
+- **L'andamento delle simulazioni (21/11/2026).** Con almeno due simulazioni, sopra lo storico
+  compare un piccolo grafico (SVG scritto a mano, senza librerie): la percentuale di ognuna delle
+  ultime 20, dalla più vecchia alla più recente, con le linee dello 0, 25, 50 e 100% e quella
+  tratteggiata del 75% consigliato; i punti sopra il 75% sono pieni. Per i lettori di schermo il
+  grafico è un'immagine con una descrizione in parole (primo e ultimo risultato, il migliore,
+  quanti sopra il 75%); i numeri restano nella tabella. Sotto, una frase: «dal 55% all'83%
+  (+28 punti)», con l'articolo giusto («all'83%», «al 55%»). Colori dai temi chiaro e scuro.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -432,9 +440,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 3. **I pacchetti nel simulatore: fatto** (vedi sopra).
 4. **Altri esercizi dove sono pochi: fatto** (vedi sopra).
 5. **La data dell'esame: fatto** (vedi sopra).
-6. **L'andamento delle simulazioni.** Nella pagina della simulazione, un piccolo grafico (senza
-   librerie) con la percentuale di ogni simulazione nel tempo e la linea del 75%, con la stessa
-   informazione anche in tabella per i lettori di schermo.
+6. **L'andamento delle simulazioni: fatto** (vedi sopra).
 7. **Glossario dei termini.** I termini degli obiettivi (Debian, LTS, sticky bit, `/dev/sd*`,
    GPL…) in una pagina sola, ognuno con una spiegazione breve scritta da zero e il collegamento
    all'obiettivo e alla lezione; con una casella di ricerca.

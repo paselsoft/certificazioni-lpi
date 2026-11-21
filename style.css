@@ -538,6 +538,16 @@ main { display: block; }
 .ready-level-weak { color: var(--warn); border-color: var(--warn); }
 .ready-facts, .ready-actions, .ready-obj-sims { margin: 2px 0; }
 .ready-obj-sims-low { font-weight: 600; }
+/* L'andamento delle simulazioni (exam-sim.js) */
+.sim-chart { margin: 8px 0 16px; max-width: 560px; }
+.sim-chart svg { display: block; width: 100%; height: auto; }
+.sim-chart-grid { stroke: var(--border); stroke-width: 1; }
+.sim-chart-target { stroke: var(--ok); stroke-width: 2; stroke-dasharray: 6 4; }
+.sim-chart-line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; }
+.sim-chart-point { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.sim-chart-point.is-above { fill: var(--accent); }
+.sim-chart-label { fill: var(--muted); font-size: 12px; font-family: inherit; }
+.sim-chart-target-label { fill: var(--ok); font-weight: 600; }
 /* Il giorno dell'esame (readiness.js) */
 .plan-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 4px; }
 .plan-form input[type="date"] { font: inherit; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); min-height: 2.75rem; box-sizing: border-box; }
