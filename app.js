@@ -11,6 +11,7 @@
 //   #/terminale                      pratica al terminale (practice.js): elenco degli esercizi
 //   #/terminale/t2.4-01              un esercizio; #/terminale/libero il terminale libero
 //   #/glossario                      glossario dei termini (glossary.js); #/glossario/2.1 un obiettivo
+//   #/glossario/carte                ripasso dei termini con le carte (anche #/glossario/2.1/carte)
 //   #/backup                         backup dei progressi
 
 const APP_NAME = "Certificazioni LPI";
@@ -580,7 +581,8 @@ function progressCounts(data) {
         count(Object.keys(data.read).length, "lezione letta", "lezioni lette"),
         count(Object.keys(data.answers).length, "domanda con almeno una risposta", "domande con almeno una risposta"),
         count(data.simulations.length, "simulazione d'esame", "simulazioni d'esame"),
-        count(Object.keys(data.practice).length, "esercizio al terminale", "esercizi al terminale")
+        count(Object.keys(data.practice).length, "esercizio al terminale", "esercizi al terminale"),
+        ...(data.cards && Object.keys(data.cards).length ? [count(Object.keys(data.cards).length, "carta del glossario", "carte del glossario")] : [])
     ].join(", ");
 }
 
@@ -721,6 +723,11 @@ function render() {
     }
     if (hash === "#/backup") {
         finishRender(renderBackup());
+        return;
+    }
+    match = hash.match(/^#\/glossario(?:\/(\d+\.\d+))?\/carte$/);
+    if (match && (!match[1] || allObjectives(exam).some(item => item.objective.id === match[1]))) {
+        finishRender(renderCards(exam, match[1] || null));
         return;
     }
     match = hash.match(/^#\/glossario(?:\/(\d+\.\d+))?$/);

@@ -69,6 +69,77 @@ module.exports = {
         assert.doesNotMatch(await page.textContent("main h1"), /Glossario/);
     },
 
+    "carte: gira, lo sapevo o no, scatole del ripasso, il giorno dopo tornano le sbagliate": async ({ page }) => {
+        await page.clock.setFixedTime(new Date("2026-11-22T10:00:00"));
+        await open(page, { hash: "#/glossario" });
+        const total = await page.evaluate(() => GLOSSARY.length);
+        assert.match(await page.textContent(".cards-start .hint"), new RegExp(`^Oggi: 0 carte da ripassare, ${total} mai viste\\.`));
+        await page.click("#cards-start");
+        await ready(page, "#/glossario/carte");
+        assert.equal(await page.textContent("main h1"), "Carte del glossario");
+        assert.match(await page.textContent(".meter-label"), /^Carta 1 di 10$/);
+        assert.equal(await page.locator("#card-back").count(), 0, "prima di girarla la spiegazione non si vede");
+        const first = await page.textContent("#card-term");
+        await page.click("#card-flip");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "card-back");
+        const text = await page.evaluate(term => GLOSSARY.find(entry => entry.term === term).text.replace(/`/g, ""), first);
+        assert.equal(await page.textContent("#card-back"), text);
+        await page.click("#card-yes");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "card-term");
+        const second = await page.textContent("#card-term");
+        await page.click("#card-flip");
+        await page.click("#card-no");
+        for (let i = 2; i < 10; i++) {
+            await page.click("#card-flip");
+            await page.click("#card-yes");
+        }
+        assert.equal(await page.textContent("#cards-result"), "Lo sapevi: 9 su 10");
+        assert.equal(await page.evaluate(() => document.activeElement.id), "cards-result");
+        assert.deepEqual(await page.$$eval(".cards-missed li", items => items.map(item => item.textContent)), [second]);
+        const saved = await page.evaluate(() => progress.cards);
+        assert.equal(Object.keys(saved).length, 10);
+        const slug = term => term.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        assert.deepEqual(saved[`010-160/${slug(first)}`], { ...saved[`010-160/${slug(first)}`], ok: 1, ko: 0, box: 2, last: "2026-11-22", due: "2026-11-24" });
+        assert.deepEqual(saved[`010-160/${slug(second)}`], { ...saved[`010-160/${slug(second)}`], ok: 0, ko: 1, box: 1, due: "2026-11-23" });
+        assert.equal(await page.locator("#cards-again").count(), 1);
+        // Il giorno dopo: la carta sbagliata torna per prima; il ripasso lo dice
+        await page.clock.setFixedTime(new Date("2026-11-23T10:00:00"));
+        await go(page, "#/ripasso");
+        assert.match(await page.textContent("#cards-line"), /Anche 1 termine del glossario da ripassare oggi: 🔄 ripassa con le carte/);
+        await page.click("#cards-line a");
+        await ready(page, "#/glossario/carte");
+        assert.equal(await page.textContent("#card-term"), second);
+        await go(page, "#/glossario");
+        assert.match(await page.textContent(".cards-start .hint"), new RegExp(`^Oggi: 1 carta da ripassare, ${total - 10} mai viste\\.`));
+    },
+
+    "carte di un obiettivo; unione fra dispositivi; nessuna carta per oggi": async ({ page }) => {
+        await page.clock.setFixedTime(new Date("2026-11-22T10:00:00"));
+        await open(page, { hash: "#/glossario/5.4" });
+        const count = await page.evaluate(() => GLOSSARY.filter(entry => entry.objective === "5.4").length);
+        await page.click("#cards-start");
+        await ready(page, "#/glossario/5.4/carte");
+        assert.match(await page.textContent(".meter-label"), new RegExp(`^Carta 1 di ${count}$`));
+        for (let i = 0; i < count; i++) {
+            const term = await page.textContent("#card-term");
+            assert.ok(await page.evaluate(term => GLOSSARY.find(entry => entry.term === term).objective === "5.4", term), term);
+            await page.click("#card-flip");
+            await page.click("#card-yes");
+        }
+        assert.equal(await page.textContent("#cards-result"), `Lo sapevi: ${count} su ${count}`);
+        assert.equal(await page.locator("#cards-again").count(), 0, "per oggi le carte del 5.4 sono finite");
+        await page.click("#cards-body a[href='#/glossario/5.4']");
+        await ready(page, "#/glossario/5.4");
+        assert.match(await page.textContent(".cards-start .hint"), /Per oggi hai ripassato tutte le carte/);
+        await page.click("#cards-start");
+        assert.match(await page.textContent("#cards-body"), /Per oggi non ci sono carte/);
+        // Unione: per ogni carta vince la risposta più recente
+        const merged = await page.evaluate(() => mergeProgress(
+            cleanProgress({ cards: { "010-160/ls": { ok: 1, ko: 0, last: "2026-11-20", box: 2, due: "2026-11-22", at: "2026-11-20T10:00:00.000Z" } } }),
+            cleanProgress({ cards: { "010-160/ls": { ok: 1, ko: 1, last: "2026-11-21", box: 1, due: "2026-11-22", at: "2026-11-21T10:00:00.000Z" }, "x": { ok: "no" } } })).cards);
+        assert.deepEqual(merged, { "010-160/ls": { ok: 1, ko: 1, last: "2026-11-21", box: 1, due: "2026-11-22", at: "2026-11-21T10:00:00.000Z" } });
+    },
+
     "glossario: 320 px e nessuna violazione axe (chiaro e scuro)": async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 700 });
         await open(page, { hash: "#/glossario" });
@@ -78,6 +149,16 @@ module.exports = {
             await page.emulateMedia({ colorScheme: scheme });
             const violations = await axeViolations(page);
             if (violations !== null) assert.deepEqual(violations, [], scheme);
+        }
+        // Le carte, girate
+        await page.emulateMedia({ colorScheme: "light" });
+        await go(page, "#/glossario/carte");
+        await page.click("#card-flip");
+        assert.ok(await overflow(page) <= 0, `carte: scorrimento di ${await overflow(page)} px`);
+        for (const scheme of ["light", "dark"]) {
+            await page.emulateMedia({ colorScheme: scheme });
+            const violations = await axeViolations(page);
+            if (violations !== null) assert.deepEqual(violations, [], `carte ${scheme}`);
         }
         await go(page, "#/");
         assert.ok(await overflow(page) <= 0, `pagina principale con il menu più lungo: ${await overflow(page)} px`);

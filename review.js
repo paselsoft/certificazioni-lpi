@@ -125,6 +125,13 @@ function renderReview(exam) {
     const head = el("header", "page-head");
     head.appendChild(el("h1", "", "Ripasso di oggi"));
     page.appendChild(head);
+    // Anche i termini del glossario hanno il loro ripasso, con le carte
+    const termsToday = cardsToday(exam, null).due.length;
+    const cardsLine = el("p", "hint cards-line");
+    cardsLine.id = "cards-line";
+    cardsLine.append(document.createTextNode(termsToday ? `Anche ${termsToday === 1 ? "1 termine" : `${termsToday} termini`} del glossario da ripassare oggi: ` : "Anche i termini: "), link("🔄 ripassa con le carte", `${GLOSSARY_HREF}/carte`));
+    cardsLine.lastChild.onclick = () => { cards.session = null; };
+    page.appendChild(cardsLine);
     const body = el("div", "quiz-body");
     body.id = "quiz-body";
     page.appendChild(body);
