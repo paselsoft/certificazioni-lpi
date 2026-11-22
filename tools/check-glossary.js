@@ -1,5 +1,6 @@
 // Controlla il glossario (data/glossary-<esame>.js):
-//   - ogni voce ha termine, obiettivo esistente e spiegazione; nessun termine doppio;
+//   - ogni voce ha termine, obiettivo esistente e spiegazione; nessun termine doppio, nemmeno nella
+//     forma usata per salvare le carte (minuscole, senza accenti né simboli: «sticky-bit»);
 //   - ogni obiettivo ha almeno 3 termini;
 //   - spiegazioni brevi (al massimo 400 caratteri) e apici inversi chiusi;
 //   - nessuna frase copiata dalle lezioni LPI (licenza CC BY-NC-ND: il glossario si scrive da
@@ -48,7 +49,8 @@ for (const entry of GLOSSARY) {
     if (!objective) problems.push(`${name}: obiettivo ${entry.objective} inesistente`);
     if (typeof entry.text !== "string" || !entry.text.trim()) problems.push(`${name}: spiegazione mancante`);
     else if (entry.text.length > 400) problems.push(`${name}: spiegazione troppo lunga (${entry.text.length} caratteri, al massimo 400)`);
-    const key = `${entry.exam}/${String(entry.term).toLowerCase()}`;
+    const key = `${entry.exam}/${String(entry.term).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+    if (key.endsWith("/")) problems.push(`${name}: il termine deve contenere almeno una lettera o una cifra`);
     if (seen.has(key)) problems.push(`${name}: termine doppio`);
     seen.add(key);
     for (const piece of [entry.term, entry.text]) {

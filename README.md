@@ -23,7 +23,9 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   scadute, poi quelle nuove degli obiettivi che stai studiando.
 - **Glossario**: 208 termini degli obiettivi (distribuzioni, licenze, comandi, file, hardware, rete,
   permessi) spiegati in breve, scritti da zero, con una ricerca che filtra mentre scrivi e il
-  collegamento all'obiettivo; dalla pagina di un obiettivo si aprono solo i suoi termini.
+  collegamento all'obiettivo; dalla pagina di un obiettivo si aprono solo i suoi termini. Con le
+  carte si ripassano i termini: si gira la carta e si dice «lo sapevo» o «no», e i termini tornano
+  con le stesse scatole del ripasso delle domande.
 - **Sono pronto?**: un riepilogo per obiettivo che unisce domande, ripasso, simulazioni, lezioni ed
   esercizi (con il risultato delle ultime simulazioni, obiettivo per obiettivo); il giorno
   dell'esame, con i giorni che mancano e quanto fare ogni settimana; la stima «se

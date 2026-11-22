@@ -12,6 +12,8 @@
 //                 storico delle simulazioni d'esame (objectives: giuste e domande per obiettivo,
 //                 dal 20/11/2026; le simulazioni di prima non ce l'hanno)
 //   practice: { "010-160/t2.4-01": "2026-11-12" }    esercizi al terminale completati
+//   cards:   { "010-160/sticky-bit": { ok: 1, ko: 0, last: "2026-11-22", box: 2, due: "2026-11-24", at: "…" } }
+//            le carte del glossario (glossary.js), con le stesse scatole del ripasso delle domande
 //   plans:   { "010-160": { date: "2027-03-15", at: "2026-11-21T10:00:00.000Z" } }  il giorno
 //            dell'esame scelto (date null: tolto) e quando è stato scelto (readiness.js)
 //   removed: { "studied|010-160:2.1": "2026-11-14T10:00:00.000Z" }  spunte tolte e quando (per la
@@ -72,6 +74,10 @@ function cleanProgress(data) {
         answers: {},
         simulations: [],
         practice: pick(source.practice, /^[\w.-]+\/t\d+\.\d+-\d+$/),
+        cards: Object.fromEntries(Object.entries(isPlainObject(source.cards) ? source.cards : {})
+            .filter(([key, value]) => /^[\w.-]+\/[a-z0-9-]+$/.test(key) && isPlainObject(value) && isCount(value.ok) && isCount(value.ko)
+                && value.ok + value.ko > 0 && Number.isInteger(value.box) && value.box >= 1 && value.box <= LEITNER_DAYS.length && isDate(value.last) && isDate(value.due))
+            .map(([key, value]) => [key, Object.assign({ ok: value.ok, ko: value.ko, last: value.last, box: value.box, due: value.due }, isStamp(value.at) && value.at.includes("T") ? { at: value.at } : {})])),
         plans: Object.fromEntries(Object.entries(isPlainObject(source.plans) ? source.plans : {})
             .filter(([key, value]) => /^[\w.-]+$/.test(key) && isPlainObject(value) && (value.date === null || isDate(value.date)) && isStamp(value.at))
             .map(([key, value]) => [key, { date: value.date, at: value.at }])),
@@ -196,6 +202,23 @@ function recordAnswer(question, right) {
     return progress.answers[key];
 }
 
+// Una carta del glossario: «lo sapevo» la sposta nella scatola successiva, «no» la riporta nella 1
+const cardKey = (examId, slug) => `${examId}/${slug}`;
+const cardOf = (examId, slug) => (progress.cards || {})[cardKey(examId, slug)] || null;
+function recordCard(examId, slug, right) {
+    progress.cards = progress.cards || {};
+    const key = cardKey(examId, slug);
+    const entry = progress.cards[key] || { ok: 0, ko: 0, box: 1 };
+    const box = right ? Math.min(LEITNER_DAYS.length, entry.box + 1) : 1;
+    const today = todayKey();
+    progress.cards[key] = {
+        ok: entry.ok + (right ? 1 : 0), ko: entry.ko + (right ? 0 : 1), last: today, box,
+        due: addDays(today, LEITNER_DAYS[box - 1]), at: nowStamp()
+    };
+    saveProgress();
+    return progress.cards[key];
+}
+
 // ---- Unione (sincronizzazione fra dispositivi) ----
 
 // Unisce i progressi di due dispositivi: non si perde niente, e se la stessa cosa è cambiata su
@@ -204,12 +227,22 @@ function recordAnswer(question, right) {
 //   - risposte alle domande: per ogni domanda la più recente, con la sua scatola del ripasso;
 //   - simulazioni: tutte, senza doppioni, in ordine di data;
 //   - giorno dell'esame: la scelta più recente;
+//   - carte del glossario: per ogni carta la risposta più recente;
 //   - punto di lettura (last): quello di questo dispositivo (a).
 function mergeProgress(a, b) {
     const later = (x, y) => (x === undefined ? y : y === undefined ? x : x >= y ? x : y);
     const removed = { ...a.removed };
     Object.entries(b.removed).forEach(([key, when]) => { removed[key] = later(removed[key], when); });
-    const merged = { studied: {}, read: {}, practice: {}, removed, last: a.last || b.last, answers: {}, simulations: [], plans: {} };
+    const merged = { studied: {}, read: {}, practice: {}, removed, last: a.last || b.last, answers: {}, simulations: [], plans: {}, cards: {} };
+    // Le carte del glossario: per ogni carta la risposta più recente, come per le domande
+    const cardsA = a.cards || {};
+    const cardsB = b.cards || {};
+    const cardTime = entry => entry.at || entry.last;
+    new Set([...Object.keys(cardsA), ...Object.keys(cardsB)]).forEach(key => {
+        const x = cardsA[key];
+        const y = cardsB[key];
+        merged.cards[key] = !x ? y : !y ? x : cardTime(y) > cardTime(x) ? y : x;
+    });
     // Il giorno dell'esame: per ogni esame la scelta più recente (anche se è stata toglierlo)
     const plansA = a.plans || {};
     const plansB = b.plans || {};

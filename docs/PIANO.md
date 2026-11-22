@@ -432,6 +432,15 @@ la palestra davvero ed esegue le soluzioni da anna.
   `check-questions.js` ora chiede almeno 15 domande per obiettivo e 8 × peso − 2 per quelli che
   pesano di più (peso 3: 22, peso 4: 30), e almeno due a scelta multipla per obiettivo.
 
+- **Le carte del glossario (22/11/2026).** Dal glossario (tutto o di un obiettivo) si parte con
+  «🔄 Ripassa con le carte»: 10 carte alla volta, prima quelle che tornano oggi e poi quelle mai
+  viste. Si vede il termine, si prova a ricordare, «Gira la carta» mostra la spiegazione, e «✓ Lo
+  sapevo» o «✗ Non lo sapevo» spostano la carta nelle scatole del ripasso (le stesse delle
+  domande: 1, 2, 4, 8, 16 giorni). Alla fine il risultato e i termini che tornano domani. Le carte
+  stanno in `progress.cards` (backup e sincronizzazione: vince la risposta più recente); la pagina
+  del ripasso dice quanti termini sono da ripassare oggi. Il fuoco segue la carta (termine,
+  spiegazione, termine successivo, risultato) per chi usa la tastiera o un lettore di schermo.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -468,9 +477,7 @@ Tutti quelli dell'analisi del 20/11 sono fatti. Questi sono i nuovi, in ordine d
 l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
 1. **Più domande dove l'esame ne chiede di più: fatto** (vedi sopra).
-2. **Ripasso dei termini con le carte.** Dal glossario, carte da girare: si vede il termine, si
-   prova a ricordare, si gira e si dice «lo sapevo» o «no». Le carte entrano nelle scatole del
-   ripasso come le domande, così i termini difficili tornano più spesso.
+2. **Ripasso dei termini con le carte: fatto** (vedi sopra).
 3. **Simulazioni brevi.** Oltre a quella completa (40 domande, 60 minuti): una da 20 domande in
    30 minuti, tante per obiettivo quanto il peso diviso a metà, e una per argomento. Per quando c'è
    poco tempo, con lo stesso risultato per obiettivo.
