@@ -10,7 +10,8 @@
 //   simulations: [ { exam: "010-160", date: "2026-11-12", right: 31, total: 40, seconds: 2520,
 //                    topics: { "1": [6, 7], ... }, objectives: { "1.1": [2, 2], ... } } ]
 //                 storico delle simulazioni d'esame (objectives: giuste e domande per obiettivo,
-//                 dal 20/11/2026; le simulazioni di prima non ce l'hanno)
+//                 dal 20/11/2026; le simulazioni di prima non ce l'hanno); kind: "breve" o
+//                 "argomento-3" per le simulazioni più corte (dal 22/11/2026)
 //   practice: { "010-160/t2.4-01": "2026-11-12" }    esercizi al terminale completati
 //   cards:   { "010-160/sticky-bit": { ok: 1, ko: 0, last: "2026-11-22", box: 2, due: "2026-11-24", at: "…" } }
 //            le carte del glossario (glossary.js), con le stesse scatole del ripasso delle domande
@@ -90,6 +91,8 @@ function cleanProgress(data) {
             && isCount(item.seconds) && isPlainObject(item.topics) && Object.values(item.topics).every(isPair))
             .map(item => {
                 const clean = { exam: item.exam, date: item.date, right: item.right, total: item.total, seconds: item.seconds, topics: item.topics };
+                // Il tipo: niente per la completa, "breve" o "argomento-N" (exam-sim.js)
+                if (item.kind === "breve" || /^argomento-\d+$/.test(item.kind || "")) clean.kind = item.kind;
                 // Per obiettivo: si tengono solo le voci giuste (le simulazioni vecchie non le hanno)
                 if (isPlainObject(item.objectives)) {
                     const objectives = Object.fromEntries(Object.entries(item.objectives).filter(([id, pair]) => /^\d+\.\d+$/.test(id) && isPair(pair)));

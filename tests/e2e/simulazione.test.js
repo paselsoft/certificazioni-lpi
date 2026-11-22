@@ -55,6 +55,58 @@ module.exports = {
         assert.equal(await page.getAttribute(".site-nav a[href='#/simulazione']", "aria-current"), "page");
     },
 
+    "simulazioni più corte: breve (20 domande, 30 minuti) e di un argomento; storico e «Sono pronto?»": async ({ page }) => {
+        await page.clock.install({ time: START });
+        await open(page, { hash: "#/simulazione" });
+        assert.equal(await page.textContent("#sim-start-breve"), "⏱ Breve: 20 domande, 30 minuti");
+        assert.match(await page.textContent("#sim-start-argomento-3"), /^Argomento 3: .+ \(18 domande, 27 minuti\)$/);
+        // Breve: metà del peso per obiettivo; le mezze domande avanzate agli obiettivi di peso dispari
+        await page.click("#sim-start-breve");
+        await page.waitForSelector("#sim-clock");
+        assert.equal(await page.textContent("#sim-clock"), "⏱ Tempo rimasto: 30:00");
+        assert.equal(await page.textContent("#sim-position"), "Domanda 1 di 20");
+        const counts = await page.evaluate(() => {
+            const result = {};
+            simLoad().questions.forEach(entry => { const o = entry.id.split("-")[0]; result[o] = (result[o] || 0) + 1; });
+            return allObjectives(currentExam()).map(({ objective }) => [objective.weight, result[objective.id] || 0]);
+        });
+        assert.ok(counts.every(([weight, count]) => count === Math.floor(weight / 2) || (weight % 2 === 1 && count === Math.ceil(weight / 2))), JSON.stringify(counts));
+        assert.equal((await simData(page)).kind, "breve");
+        for (let i = 0; i < 5; i++) {
+            await answer(page, true);
+            await page.click("#sim-next");
+        }
+        await page.click("#sim-end");
+        await page.click("#sim-end-confirm");
+        await ready(page, "#/simulazione/risultato");
+        assert.equal(await page.textContent("#sim-score"), "5 giuste su 20 (25%)");
+        assert.equal(await page.textContent(".sim-kind"), "Simulazione breve: 20 domande in 30 minuti.");
+        assert.match(await page.textContent("main"), /su 30 minuti/);
+        // Un argomento: solo le sue domande, un minuto e mezzo ciascuna
+        await go(page, "#/simulazione");
+        await page.click("#sim-start-argomento-3");
+        await page.waitForSelector("#sim-clock");
+        assert.equal(await page.textContent("#sim-clock"), "⏱ Tempo rimasto: 27:00");
+        const ids = (await simData(page)).questions.map(entry => entry.id);
+        assert.equal(ids.length, 18);
+        assert.ok(ids.every(id => id.startsWith("3.")), ids.join(" "));
+        await answer(page, true);
+        await page.click("#sim-end");
+        await page.click("#sim-end-confirm");
+        await ready(page, "#/simulazione/risultato");
+        assert.equal(await page.locator("#sim-topics tbody tr").count(), 1, "solo l'argomento 3");
+        assert.match(await page.textContent(".sim-kind"), /^Simulazione dell'argomento 3: 18 domande in 27 minuti\.$/);
+        const saved = (await stored(page)).simulations;
+        assert.deepEqual(saved.map(item => [item.kind, item.total]), [["breve", 20], ["argomento-3", 18]]);
+        assert.deepEqual(Object.keys(saved[1].topics), ["3"]);
+        assert.ok(Object.keys(saved[1].objectives).every(id => id.startsWith("3.")));
+        // Storico con il tipo; «Sono pronto?» conta solo la breve
+        await go(page, "#/simulazione");
+        assert.deepEqual(await page.$$eval("#history tbody tr td:nth-child(2)", cells => cells.map(cell => cell.textContent)), ["Argomento 3", "Breve"]);
+        await go(page, "#/pronto");
+        assert.match(await page.textContent("#ready-sims"), /^Ultima simulazione d'esame: 25% di risposte giuste\./);
+    },
+
     "durante la prova: risposte salvate, segnate, quadro, si riprende dopo aver ricaricato": async ({ page }) => {
         await page.clock.install({ time: START });
         await open(page, { hash: "#/simulazione" });

@@ -441,6 +441,15 @@ la palestra davvero ed esegue le soluzioni da anna.
   del ripasso dice quanti termini sono da ripassare oggi. Il fuoco segue la carta (termine,
   spiegazione, termine successivo, risultato) per chi usa la tastiera o un lettore di schermo.
 
+- **Simulazioni più corte (22/11/2026).** Nella pagina della simulazione, sotto «Inizia la
+  simulazione», la sezione «Hai meno tempo?»: la **breve** (20 domande in 30 minuti, da tutti gli
+  obiettivi: metà del peso ciascuno, e le mezze domande avanzate a caso agli obiettivi di peso
+  dispari) e una per ogni **argomento** (il doppio del peso per obiettivo, un minuto e mezzo a
+  domanda: da 14 domande in 21 minuti a 18 in 27). Stesse regole della completa. Lo storico ha
+  la colonna «Tipo»; il risultato dice che simulazione era e mostra solo gli argomenti presenti.
+  Lo storico salva `kind` («breve», «argomento-3»); «Sono pronto?» conta la completa e la breve,
+  non quelle di un solo argomento.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -478,9 +487,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 
 1. **Più domande dove l'esame ne chiede di più: fatto** (vedi sopra).
 2. **Ripasso dei termini con le carte: fatto** (vedi sopra).
-3. **Simulazioni brevi.** Oltre a quella completa (40 domande, 60 minuti): una da 20 domande in
-   30 minuti, tante per obiettivo quanto il peso diviso a metà, e una per argomento. Per quando c'è
-   poco tempo, con lo stesso risultato per obiettivo.
+3. **Simulazioni brevi: fatto** (vedi sopra).
 4. **Dalla lezione alle domande.** In fondo a ogni lezione, i pulsanti per le domande e gli esercizi
    del suo obiettivo; segnata la lezione come letta, l'app propone di provare subito le domande.
 5. **Giorni di studio di fila.** Nella pagina principale, quanti giorni di fila hai studiato (una

@@ -9,6 +9,12 @@
 //     rivedere con le spiegazioni. Il risultato va nello storico (progress.simulations, anche nel
 //     backup, con il risultato per argomento e per obiettivo) e le risposte date entrano nelle
 //     scatole del ripasso.
+// Oltre a quella completa ci sono due simulazioni più corte, per quando c'è poco tempo (kind):
+//   "breve"        metà delle domande (20) in metà del tempo (30 minuti): per ogni obiettivo metà
+//                  del peso, e le mezze domande avanzate vanno a caso agli obiettivi di peso dispari;
+//   "argomento-N"  solo l'argomento N: per ogni obiettivo il doppio del peso, un minuto e mezzo a
+//                  domanda (come all'esame). Non conta nel giudizio di «Sono pronto?», che guarda
+//                  tutto l'esame.
 // Il punteggio ufficiale va da 200 a 800 e si supera con 500, ma quante risposte giuste servono
 // non è pubblico (dipende dalle domande): qui la soglia del 50% è solo un riferimento.
 
@@ -47,12 +53,39 @@ const clockText = ms => {
     return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 };
 
-// Una prova nuova: per ogni obiettivo tante domande quanto il peso
-function simCreate(exam) {
-    const picked = allObjectives(exam).flatMap(({ objective }) => shuffle(questionsOf(exam.id, objective.id)).slice(0, objective.weight));
+// I tipi di simulazione: quante domande per obiettivo e quanti minuti
+function simPlan(exam, kind = null) {
+    const all = allObjectives(exam);
+    if (kind === "breve") {
+        const counts = all.map(({ objective }) => ({ objective, count: Math.floor(objective.weight / 2) }));
+        const missing = Math.round(exam.questions / 2) - counts.reduce((sum, item) => sum + item.count, 0);
+        shuffle(counts.filter(item => item.objective.weight % 2)).slice(0, missing).forEach(item => { item.count++; });
+        return { kind, counts, questions: Math.round(exam.questions / 2), minutes: Math.round(exam.minutes / 2) };
+    }
+    const match = /^argomento-(\d+)$/.exec(kind || "");
+    if (match) {
+        const counts = all.filter(({ topic }) => topic.id === match[1]).map(({ objective }) => ({ objective, count: objective.weight * 2 }));
+        const questions = counts.reduce((sum, item) => sum + item.count, 0);
+        return { kind, counts, questions, minutes: Math.round(questions * exam.minutes / exam.questions) };
+    }
+    return { kind: null, counts: all.map(({ objective }) => ({ objective, count: objective.weight })), questions: exam.questions, minutes: exam.minutes };
+}
+
+// Il nome di un tipo di simulazione, per lo storico e il risultato
+function simKindText(kind) {
+    if (kind === "breve") return "Breve";
+    const match = /^argomento-(\d+)$/.exec(kind || "");
+    return match ? `Argomento ${match[1]}` : "Completa";
+}
+
+// Una prova nuova: per ogni obiettivo tante domande quante ne dice il tipo (completa: il peso)
+function simCreate(exam, kind = null) {
+    const plan = simPlan(exam, kind);
+    const picked = plan.counts.flatMap(({ objective, count }) => shuffle(questionsOf(exam.id, objective.id)).slice(0, count));
     const started = Date.now();
     const data = {
-        exam: exam.id, started, deadline: started + exam.minutes * 60000, index: 0, finished: false,
+        exam: exam.id, kind: plan.kind, minutes: plan.minutes,
+        started, deadline: started + plan.minutes * 60000, index: 0, finished: false,
         questions: shuffle(picked).map(q => ({
             exam: exam.id, id: q.id, flagged: false, answer: q.type === "fill" ? "" : [],
             order: q.options ? (q.fixed ? q.options.map((_, index) => index) : shuffle(q.options.map((_, index) => index))) : null
@@ -87,7 +120,11 @@ function simFinish(exam, data, reason) {
         if (simAnswered(entry)) recordAnswer(question, ok);
     });
     const seconds = Math.max(0, Math.round((ended - data.started) / 1000));
-    progress.simulations.push({ exam: exam.id, date: todayKey(), right, total: data.questions.length, seconds, topics, objectives });
+    // Solo gli argomenti e gli obiettivi che c'erano nella prova
+    const present = pairs => Object.fromEntries(Object.entries(pairs).filter(([, pair]) => pair[1] > 0));
+    const record = { exam: exam.id, date: todayKey(), right, total: data.questions.length, seconds, topics: present(topics), objectives: present(objectives) };
+    if (data.kind) record.kind = data.kind;
+    progress.simulations.push(record);
     progress.simulations = progress.simulations.slice(-SIMULATIONS_KEPT);
     saveProgress();
     Object.assign(data, { finished: true, ended, reason, right, seconds, topics });
@@ -198,7 +235,7 @@ function simHistory(exam) {
     const table = el("table", "history");
     table.id = "history";
     const head = el("tr");
-    ["Data", "Giuste", "Percentuale", "Tempo"].forEach(text => {
+    ["Data", "Tipo", "Giuste", "Percentuale", "Tempo"].forEach(text => {
         const th = el("th", "", text);
         th.scope = "col";
         head.appendChild(th);
@@ -209,7 +246,7 @@ function simHistory(exam) {
     list.forEach(item => {
         const row = el("tr");
         const percent = Math.round(item.right / item.total * 100);
-        [formatDate(item.date), `${item.right} su ${item.total}`, `${percent}%${percent / 100 >= SIM_REFERENCE ? " ✓" : ""}`, minutesText(item.seconds)]
+        [formatDate(item.date), simKindText(item.kind), `${item.right} su ${item.total}`, `${percent}%${percent / 100 >= SIM_REFERENCE ? " ✓" : ""}`, minutesText(item.seconds)]
             .forEach(text => row.appendChild(el("td", "", text)));
         tbody.appendChild(row);
     });
@@ -244,6 +281,34 @@ function renderSimulationStart(exam, page) {
         render();
     };
     page.appendChild(start);
+
+    // Le simulazioni più corte
+    const short = el("section", "block sim-short");
+    short.setAttribute("aria-labelledby", "sim-short-title");
+    const shortTitle = el("h2", "", "Hai meno tempo?");
+    shortTitle.id = "sim-short-title";
+    short.appendChild(shortTitle);
+    const half = simPlan(exam, "breve");
+    short.appendChild(el("p", "", `La simulazione breve ha ${half.questions} domande in ${half.minutes} minuti, da tutti gli obiettivi. Quella di un argomento ha solo le sue domande, un minuto e mezzo ciascuna come all'esame. Le regole sono le stesse.`));
+    const choices = el("div", "sim-short-choices");
+    const choice = (kind, text, id) => {
+        const button = el("button", "button", text);
+        button.type = "button";
+        button.id = id;
+        button.onclick = () => {
+            simCreate(exam, kind);
+            render();
+        };
+        choices.appendChild(button);
+    };
+    choice("breve", `⏱ Breve: ${half.questions} domande, ${half.minutes} minuti`, "sim-start-breve");
+    exam.topics.forEach(topic => {
+        const plan = simPlan(exam, `argomento-${topic.id}`);
+        choice(plan.kind, `Argomento ${topic.id}: ${topic.title} (${plan.questions} domande, ${plan.minutes} minuti)`, `sim-start-argomento-${topic.id}`);
+    });
+    short.appendChild(choices);
+    short.appendChild(el("p", "hint", "Le simulazioni di un argomento non contano nel giudizio di «Sono pronto?», che guarda tutto l'esame; le risposte entrano comunque nel ripasso."));
+    page.appendChild(short);
     const history = simHistory(exam);
     if (history) page.appendChild(history);
 }
@@ -516,7 +581,8 @@ function renderSimulationResult(exam) {
         ? `✅ Sopra la soglia di riferimento del ${SIM_REFERENCE * 100}%.`
         : `Sotto la soglia di riferimento del ${SIM_REFERENCE * 100}%: ripassa gli argomenti con il risultato più basso.`));
     page.appendChild(simReferenceNote());
-    page.appendChild(el("p", "", `Tempo usato: ${minutesText(data.seconds)} su ${exam.minutes} minuti.`
+    if (data.kind) page.appendChild(el("p", "sim-kind", `Simulazione ${simKindText(data.kind).toLowerCase().replace(/^argomento/, "dell'argomento")}: ${total} domande in ${data.minutes} minuti.`));
+    page.appendChild(el("p", "", `Tempo usato: ${minutesText(data.seconds)} su ${data.minutes || exam.minutes} minuti.`
         + (data.reason === "tempo" ? " Il tempo è scaduto: le domande senza risposta contano come sbagliate." : "")));
 
     // Risultato per argomento
@@ -537,6 +603,8 @@ function renderSimulationResult(exam) {
     thead.appendChild(head);
     const tbody = el("tbody");
     exam.topics.forEach(topic => {
+        // Nelle simulazioni di un argomento ci sono solo le sue domande
+        if (!data.topics[topic.id] || !data.topics[topic.id][1]) return;
         const [right, count] = data.topics[topic.id];
         const row = el("tr");
         const name = el("td");
