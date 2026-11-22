@@ -56,7 +56,8 @@ function examReadiness(exam) {
     const total = rows.reduce((sum, row) => sum + row.total, 0);
     const answered = rows.reduce((sum, row) => sum + row.answered, 0);
     const estimate = rows.reduce((sum, row) => sum + row.objective.weight * row.share, 0);
-    const sims = progress.simulations.filter(item => item.exam === exam.id).slice(-READY_SIMS);
+    // Contano le simulazioni di tutto l'esame (completa e breve), non quelle di un solo argomento
+    const sims = progress.simulations.filter(item => item.exam === exam.id && !/^argomento-/.test(item.kind || "")).slice(-READY_SIMS);
     const simRight = sims.reduce((sum, item) => sum + item.right, 0);
     const simTotal = sims.reduce((sum, item) => sum + item.total, 0);
     // Le somme per argomento e per obiettivo; objectiveSims: quante delle ultime simulazioni hanno
