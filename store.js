@@ -15,6 +15,9 @@
 //   practice: { "010-160/t2.4-01": "2026-11-12" }    esercizi al terminale completati
 //   cards:   { "010-160/sticky-bit": { ok: 1, ko: 0, last: "2026-11-22", box: 2, due: "2026-11-24", at: "…" } }
 //            le carte del glossario (glossary.js), con le stesse scatole del ripasso delle domande
+//   days:    { "2026-11-24": 12 }   i giorni di studio, con quante cose si sono fatte (risposte,
+//            carte, esercizi, lezioni, obiettivi): per i giorni di fila nella pagina principale.
+//            Chi aveva già dei progressi prima del 24/11/2026 li ritrova ricavati dalle date salvate
 //   plans:   { "010-160": { date: "2027-03-15", at: "2026-11-21T10:00:00.000Z" } }  il giorno
 //            dell'esame scelto (date null: tolto) e quando è stato scelto (readiness.js)
 //   removed: { "studied|010-160:2.1": "2026-11-14T10:00:00.000Z" }  spunte tolte e quando (per la
@@ -41,6 +44,39 @@ const todayKey = () => {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 };
 const formatDate = key => key.split("-").reverse().join("/");
+// Il giorno (AAAA-MM-GG, calendario locale) di un istante ISO
+const localDay = stamp => {
+    const date = new Date(stamp);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+};
+const STUDY_DAYS_KEPT = 400;
+
+// Un'attività di studio oggi (una risposta, una carta, un esercizio, una lezione letta...)
+function noteStudy() {
+    progress.days = progress.days || {};
+    const today = todayKey();
+    progress.days[today] = (progress.days[today] || 0) + 1;
+}
+
+// I giorni di studio di fila, fino a oggi (o fino a ieri, se oggi non hai ancora studiato), e il record
+function studyStreak(today = todayKey()) {
+    const days = progress.days || {};
+    const run = from => {
+        let count = 0;
+        for (let day = from; days[day]; day = addDays(day, -1)) count++;
+        return count;
+    };
+    const current = days[today] ? run(today) : run(addDays(today, -1));
+    // Il record: la serie più lunga, contata da ogni giorno che non ha un giorno di studio prima
+    let best = 0;
+    Object.keys(days).forEach(day => {
+        if (days[addDays(day, -1)]) return;
+        let count = 0;
+        for (let next = day; days[next]; next = addDays(next, 1)) count++;
+        best = Math.max(best, count);
+    });
+    return { current, today: Boolean(days[today]), best: Math.max(best, current) };
+}
 
 // Il giorno (AAAA-MM-GG) che viene n giorni dopo key, nel calendario locale
 function addDays(key, days) {
@@ -79,6 +115,7 @@ function cleanProgress(data) {
             .filter(([key, value]) => /^[\w.-]+\/[a-z0-9-]+$/.test(key) && isPlainObject(value) && isCount(value.ok) && isCount(value.ko)
                 && value.ok + value.ko > 0 && Number.isInteger(value.box) && value.box >= 1 && value.box <= LEITNER_DAYS.length && isDate(value.last) && isDate(value.due))
             .map(([key, value]) => [key, Object.assign({ ok: value.ok, ko: value.ko, last: value.last, box: value.box, due: value.due }, isStamp(value.at) && value.at.includes("T") ? { at: value.at } : {})])),
+        days: {},
         plans: Object.fromEntries(Object.entries(isPlainObject(source.plans) ? source.plans : {})
             .filter(([key, value]) => /^[\w.-]+$/.test(key) && isPlainObject(value) && (value.date === null || isDate(value.date)) && isStamp(value.at))
             .map(([key, value]) => [key, { date: value.date, at: value.at }])),
@@ -112,6 +149,22 @@ function cleanProgress(data) {
             if (isStamp(value.at) && value.at.includes("T")) progress.answers[key].at = value.at;
         }
     });
+    // I giorni di studio; se non ci sono ancora, si ricavano dalle date dei progressi
+    if (isPlainObject(source.days)) {
+        Object.entries(source.days).forEach(([day, count]) => {
+            if (isDate(day) && isCount(count) && count > 0) progress.days[day] = count;
+        });
+    } else {
+        const note = stamp => {
+            const day = stamp.includes("T") ? localDay(stamp) : stamp.slice(0, 10);
+            if (isDate(day)) progress.days[day] = (progress.days[day] || 0) + 1;
+        };
+        ["studied", "read", "practice"].forEach(kind => Object.values(progress[kind]).forEach(note));
+        Object.values(progress.answers).forEach(entry => note(entry.last));
+        Object.values(progress.cards).forEach(entry => note(entry.last));
+        progress.simulations.forEach(item => note(item.date));
+    }
+    progress.days = Object.fromEntries(Object.entries(progress.days).sort().slice(-STUDY_DAYS_KEPT));
     const last = source.last;
     if (isPlainObject(last) && typeof last.lesson === "string" && /^[\w.-]+\/\d+\.\d+_\d+$/.test(last.lesson)) {
         const scroll = Number(last.scroll);
@@ -165,7 +218,10 @@ const isRead = (examId, lessonId) => Boolean(progress.read[lessonKey(examId, les
 // sincronizzazione vince l'azione più recente fra i dispositivi
 function setMark(kind, key, value) {
     if (value) {
-        if (!progress[kind][key]) progress[kind][key] = nowStamp();
+        if (!progress[kind][key]) {
+            progress[kind][key] = nowStamp();
+            noteStudy();
+        }
         delete progress.removed[`${kind}|${key}`];
     } else if (progress[kind][key]) {
         delete progress[kind][key];
@@ -201,6 +257,7 @@ function recordAnswer(question, right) {
         ok: entry.ok + (right ? 1 : 0), ko: entry.ko + (right ? 0 : 1), last: today, result: right,
         box, due: addDays(today, LEITNER_DAYS[box - 1]), at: nowStamp()
     };
+    noteStudy();
     saveProgress();
     return progress.answers[key];
 }
@@ -218,6 +275,7 @@ function recordCard(examId, slug, right) {
         ok: entry.ok + (right ? 1 : 0), ko: entry.ko + (right ? 0 : 1), last: today, box,
         due: addDays(today, LEITNER_DAYS[box - 1]), at: nowStamp()
     };
+    noteStudy();
     saveProgress();
     return progress.cards[key];
 }
@@ -231,12 +289,17 @@ function recordCard(examId, slug, right) {
 //   - simulazioni: tutte, senza doppioni, in ordine di data;
 //   - giorno dell'esame: la scelta più recente;
 //   - carte del glossario: per ogni carta la risposta più recente;
+//   - giorni di studio: per ogni giorno il conteggio più alto;
 //   - punto di lettura (last): quello di questo dispositivo (a).
 function mergeProgress(a, b) {
     const later = (x, y) => (x === undefined ? y : y === undefined ? x : x >= y ? x : y);
     const removed = { ...a.removed };
     Object.entries(b.removed).forEach(([key, when]) => { removed[key] = later(removed[key], when); });
-    const merged = { studied: {}, read: {}, practice: {}, removed, last: a.last || b.last, answers: {}, simulations: [], plans: {}, cards: {} };
+    const merged = { studied: {}, read: {}, practice: {}, removed, last: a.last || b.last, answers: {}, simulations: [], plans: {}, cards: {}, days: {} };
+    // I giorni di studio: per ogni giorno il conteggio più alto dei due dispositivi
+    [a.days || {}, b.days || {}].forEach(days => Object.entries(days).forEach(([day, count]) => {
+        merged.days[day] = Math.max(merged.days[day] || 0, count);
+    }));
     // Le carte del glossario: per ogni carta la risposta più recente, come per le domande
     const cardsA = a.cards || {};
     const cardsB = b.cards || {};

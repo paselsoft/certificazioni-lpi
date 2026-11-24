@@ -9,7 +9,8 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
 
 - **Obiettivi**: i 5 argomenti e i 19 obiettivi dell'esame, con il peso, la descrizione, le aree di
   conoscenza e i file, termini e comandi da conoscere (dalla traduzione italiana ufficiale degli
-  obiettivi, sulla wiki LPI).
+  obiettivi, sulla wiki LPI). Nella pagina principale anche i giorni di studio di fila, il record
+  e gli ultimi 7 giorni.
 - **Lezioni**: tutte le 24 lezioni ufficiali in italiano, integrali e non modificate, con indice
   delle sezioni, dimensione del testo regolabile e «Riprendi la lettura» dal punto in cui eri. In
   fondo a ogni lezione, «Mettiti alla prova»: le domande, il prossimo esercizio e i termini del suo

@@ -457,6 +457,15 @@ la palestra davvero ed esegue le soluzioni da anna.
   l'avviso di licenza. Quando si segna la lezione come letta compare l'invito a provare subito le
   domande, letto anche dai lettori di schermo.
 
+- **Giorni di studio di fila (24/11/2026).** Nella pagina principale, nei progressi: «Giorni di
+  studio di fila: 5, oggi compreso» (oppure «fino a ieri: studia anche oggi per non interrompere
+  la serie», o l'invito a cominciare), il record se è più lungo, e gli ultimi 7 giorni con un ✓
+  per quelli di studio (per i lettori di schermo anche quante attività). Conta come studio ogni
+  risposta (anche in simulazione e nel ripasso), carta, esercizio completato, lezione segnata
+  come letta e obiettivo segnato come studiato. I giorni stanno in `progress.days` (al massimo
+  400; backup e sincronizzazione: per ogni giorno il conteggio più alto); chi aveva già dei
+  progressi li ritrova ricavati dalle date salvate.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -496,8 +505,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 2. **Ripasso dei termini con le carte: fatto** (vedi sopra).
 3. **Simulazioni brevi: fatto** (vedi sopra).
 4. **Dalla lezione alle domande: fatto** (vedi sopra).
-5. **Giorni di studio di fila.** Nella pagina principale, quanti giorni di fila hai studiato (una
-   risposta, un esercizio o una lezione letta bastano) e un piccolo riepilogo degli ultimi 7 giorni.
+5. **Giorni di studio di fila: fatto** (vedi sopra).
 6. **Segnala un errore.** In ogni domanda, esercizio e voce del glossario, un collegamento che apre
    una segnalazione su GitHub già compilata (quale domanda, che cosa non va), per correggere in fretta.
 7. **La versione 2.0 (010-200).** Controllare su learning.lpi.org e lpi.org se le lezioni italiane

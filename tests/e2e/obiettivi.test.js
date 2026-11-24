@@ -78,6 +78,43 @@ module.exports = {
         assert.deepEqual((await stored(page)).studied, {});
     },
 
+    "giorni di studio di fila: serie, record, ultimi 7 giorni; si contano le attività di oggi": async ({ page }) => {
+        await page.clock.setFixedTime(new Date("2026-11-24T10:00:00"));
+        await open(page);
+        assert.equal(await page.textContent("#study-streak"), "Oggi non hai ancora studiato: basta una domanda, una carta o un esercizio per cominciare una serie di giorni di fila.");
+        assert.equal(await page.locator("#study-days .study-day").count(), 7);
+        assert.equal(await page.locator("#study-days .study-day.is-active").count(), 0);
+        // Fino a ieri 4 giorni di fila (venerdì 20 - lunedì 23), un record di 7 a inizio mese
+        const days = { "2026-11-20": 3, "2026-11-21": 2, "2026-11-22": 1, "2026-11-23": 4 };
+        for (let d = 1; d <= 7; d++) days[`2026-11-0${d}`] = 1;
+        await page.evaluate(days => { progress.days = days; saveProgress(false); }, days);
+        await go(page, "#/ripasso");
+        await go(page, "#/");
+        assert.equal(await page.textContent("#study-streak"), "Giorni di studio di fila: 4, fino a ieri. Studia anche oggi per non interrompere la serie. Il tuo record: 7 giorni.");
+        const week = await page.$$eval("#study-days .study-day", items => items.map(item => item.textContent));
+        assert.deepEqual(week, ["mer–: nessuna attività", "gio–: nessuna attività", "ven✓: 3 attività", "sab✓: 2 attività", "dom✓: 1 attività", "lun✓: 4 attività", "oggi–: nessuna attività"]);
+        // Una risposta oggi: la serie arriva a oggi
+        await page.evaluate(() => recordAnswer(QUESTIONS[0], true));
+        await go(page, "#/ripasso");
+        await go(page, "#/");
+        assert.match(await page.textContent("#study-streak"), /^Giorni di studio di fila: 5, oggi compreso\. Il tuo record: 7 giorni\.$/);
+        assert.equal((await stored(page)).days["2026-11-24"], 1);
+        // Unione: per ogni giorno il conteggio più alto
+        const merged = await page.evaluate(() => mergeProgress(cleanProgress({ days: { "2026-11-20": 3 } }), cleanProgress({ days: { "2026-11-20": 5, "2026-11-21": 1, "x": 2 } })).days);
+        assert.deepEqual(merged, { "2026-11-20": 5, "2026-11-21": 1 });
+    },
+
+    "giorni di studio ricavati dai progressi di prima": async ({ page }) => {
+        await page.clock.setFixedTime(new Date("2026-11-24T10:00:00"));
+        await open(page, { progress: {
+            answers: { "010-160/2.1-01": { ok: 1, ko: 0, last: "2026-11-23", result: true, box: 2, due: "2026-11-25" } },
+            read: { "010-160/2.1_01": "2026-11-22" },
+            simulations: [{ exam: "010-160", date: "2026-11-21", right: 30, total: 40, seconds: 3000, topics: {} }]
+        } });
+        assert.deepEqual(await page.evaluate(() => progress.days), { "2026-11-21": 1, "2026-11-22": 1, "2026-11-23": 1 });
+        assert.equal(await page.textContent("#study-streak"), "Giorni di studio di fila: 3, fino a ieri. Studia anche oggi per non interrompere la serie.");
+    },
+
     "salvataggio rovinato: l'app parte lo stesso, con i dati buoni": async ({ page }) => {
         await open(page, { rawProgress: "{non è json" });
         assert.match(await page.textContent("#summary"), /Obiettivi studiati: 0 su 19/);

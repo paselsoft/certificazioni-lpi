@@ -559,6 +559,13 @@ main { display: block; }
 .glossary-text p { margin: 2px 0; }
 .glossary-more { font-size: 0.9rem; }
 .glossary-letter[hidden], .glossary-term[hidden], .glossary-text[hidden] { display: none; }
+/* I giorni di studio (app.js) */
+.study-days { margin: 12px 0; }
+.study-week { display: flex; gap: 6px; list-style: none; padding: 0; margin: 6px 0; }
+.study-day { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; padding: 4px 0; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; }
+.study-day.is-active { border-color: var(--ok); background: var(--ok-bg); }
+.study-day-mark { font-weight: 700; }
+.study-day.is-active .study-day-mark { color: var(--ok); }
 /* Le carte del glossario */
 .cards-start { margin: 12px 0; }
 .glossary-card { margin: 12px 0; padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }

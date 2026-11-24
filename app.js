@@ -136,6 +136,7 @@ function renderHome(exam) {
         box.appendChild(line);
     }
     box.appendChild(examDateLine(exam));
+    box.appendChild(studyDaysBlock());
     const ready = el("p", "ready-link");
     const readyLink = link("🎯 Sono pronto? Punti deboli e stima per l'esame", READY_HREF, "button");
     readyLink.id = "ready-link";
@@ -611,6 +612,40 @@ function renderBackup() {
     main.appendChild(page);
     renderSyncPanel();
     return "Backup dei progressi";
+}
+
+// I giorni di studio di fila e gli ultimi 7 giorni, nella pagina principale
+const WEEKDAYS = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
+function studyDaysBlock(today = todayKey()) {
+    const block = el("div", "study-days");
+    block.id = "study-days";
+    const streak = studyStreak(today);
+    const days = progress.days || {};
+    const days_ = n => n === 1 ? "1 giorno" : `${n} giorni`;
+    let text;
+    if (!streak.current) text = "Oggi non hai ancora studiato: basta una domanda, una carta o un esercizio per cominciare una serie di giorni di fila.";
+    else if (streak.today) text = `Giorni di studio di fila: ${streak.current}, oggi compreso.`;
+    else text = `Giorni di studio di fila: ${streak.current}, fino a ieri. Studia anche oggi per non interrompere la serie.`;
+    if (streak.best > streak.current) text += ` Il tuo record: ${days_(streak.best)}.`;
+    const line = el("p", "study-streak", text);
+    line.id = "study-streak";
+    block.appendChild(line);
+    // Gli ultimi 7 giorni, da 6 giorni fa a oggi
+    const week = el("ol", "study-week");
+    week.setAttribute("aria-label", "Gli ultimi 7 giorni");
+    for (let back = 6; back >= 0; back--) {
+        const day = addDays(today, -back);
+        const [year, month, date] = day.split("-").map(Number);
+        const name = back === 0 ? "oggi" : WEEKDAYS[new Date(year, month - 1, date).getDay()];
+        const count = days[day] || 0;
+        const item = el("li", count ? "study-day is-active" : "study-day");
+        item.append(el("span", "study-day-name", name), el("span", "study-day-mark", count ? "✓" : "–"),
+            el("span", "sr-only", count ? `: ${count === 1 ? "1 attività" : `${count} attività`}` : ": nessuna attività"));
+        item.title = `${formatDate(day)}: ${count ? `${count} attività` : "nessuna attività"}`;
+        week.appendChild(item);
+    }
+    block.appendChild(week);
+    return block;
 }
 
 // Riepilogo dei progressi salvati, per la pagina Backup: «2 obiettivi studiati, 3 lezioni lette, ...»
