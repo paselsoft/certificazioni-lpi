@@ -450,6 +450,13 @@ la palestra davvero ed esegue le soluzioni da anna.
   Lo storico salva `kind` («breve», «argomento-3»); «Sono pronto?» conta la completa e la breve,
   non quelle di un solo argomento.
 
+- **Dalla lezione alle domande (24/11/2026).** In fondo a ogni lezione, sopra «Ho letto questa
+  lezione», la sezione «Mettiti alla prova»: le domande dell'obiettivo (con quante sono), il primo
+  esercizio al terminale non ancora fatto (o «tutti fatti») e i termini del glossario
+  dell'obiettivo. Il testo della lezione resta com'è: tutto questo sta fuori dall'articolo, come
+  l'avviso di licenza. Quando si segna la lezione come letta compare l'invito a provare subito le
+  domande, letto anche dai lettori di schermo.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -488,8 +495,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 1. **Più domande dove l'esame ne chiede di più: fatto** (vedi sopra).
 2. **Ripasso dei termini con le carte: fatto** (vedi sopra).
 3. **Simulazioni brevi: fatto** (vedi sopra).
-4. **Dalla lezione alle domande.** In fondo a ogni lezione, i pulsanti per le domande e gli esercizi
-   del suo obiettivo; segnata la lezione come letta, l'app propone di provare subito le domande.
+4. **Dalla lezione alle domande: fatto** (vedi sopra).
 5. **Giorni di studio di fila.** Nella pagina principale, quanti giorni di fila hai studiato (una
    risposta, un esercizio o una lezione letta bastano) e un piccolo riepilogo degli ultimi 7 giorni.
 6. **Segnala un errore.** In ogni domanda, esercizio e voce del glossario, un collegamento che apre

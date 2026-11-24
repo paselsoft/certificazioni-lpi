@@ -11,7 +11,9 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   conoscenza e i file, termini e comandi da conoscere (dalla traduzione italiana ufficiale degli
   obiettivi, sulla wiki LPI).
 - **Lezioni**: tutte le 24 lezioni ufficiali in italiano, integrali e non modificate, con indice
-  delle sezioni, dimensione del testo regolabile e «Riprendi la lettura» dal punto in cui eri.
+  delle sezioni, dimensione del testo regolabile e «Riprendi la lettura» dal punto in cui eri. In
+  fondo a ogni lezione, «Mettiti alla prova»: le domande, il prossimo esercizio e i termini del suo
+  obiettivo.
 - **Domande**: 333 domande scritte per questa app (da 15 a 30 per obiettivo, di più dove l'esame
   pesa di più), come
   all'esame: scelta singola, scelta multipla («scegli 2») e completamento. Dopo ogni risposta: il

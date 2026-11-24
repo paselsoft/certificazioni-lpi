@@ -75,7 +75,7 @@ module.exports = {
         await ready(page, "#/010-160/lezione/2.2_01");
         assert.equal(await page.textContent("main h1"), "2.2 Lezione 1");
         assert.equal(await page.isChecked("#lesson-read"), false);
-        await page.click(".lesson-end a:has-text('Obiettivo 2.2')");
+        await page.click(".lesson-end nav.pager a:has-text('Obiettivo 2.2')");
         await ready(page, "#/010-160/obiettivo/2.2");
         await go(page, "#/010-160/obiettivo/2.1");
         assert.match(await page.textContent(".lesson-list li >> nth=1"), /✓ letta/);
@@ -87,6 +87,39 @@ module.exports = {
         assert.deepEqual(await page.$$eval(".lesson-end .pager a", nodes => nodes.map(node => node.textContent)), ["Obiettivo 1.1", "1.2 lezione unica →"]);
         await go(page, "#/010-160/lezione/5.4_01");
         assert.deepEqual(await page.$$eval(".lesson-end .pager a", nodes => nodes.map(node => node.textContent)), ["← 5.3 lezione unica", "Obiettivo 5.4"]);
+    },
+
+    "fine della lezione: domande, esercizio e termini dell'obiettivo; dopo «letta» l'invito alle domande": async ({ page }) => {
+        await open(page, { hash: "#/010-160/lezione/5.3_01" });
+        const counts = await page.evaluate(() => ({
+            questions: questionsOf("010-160", "5.3").length,
+            terms: GLOSSARY.filter(entry => entry.objective === "5.3").length,
+            first: EXERCISES.find(exercise => exercise.objective === "5.3")
+        }));
+        assert.equal(await page.textContent("#lesson-practice"), "Mettiti alla prova");
+        assert.equal(await page.textContent("#lesson-questions"), `🎯 Domande dell'obiettivo 5.3 (${counts.questions})`);
+        assert.equal(await page.getAttribute("#lesson-questions", "href"), "#/010-160/domande/5.3");
+        assert.equal(await page.textContent("#lesson-exercise"), `⌨ Esercizio al terminale: ${counts.first.title.replace(/`/g, "")}`);
+        assert.equal(await page.getAttribute("#lesson-exercise", "href"), `#/terminale/${counts.first.id}`);
+        assert.equal(await page.textContent("#lesson-glossary"), `📖 I ${counts.terms} termini dell'obiettivo`);
+        assert.equal(await page.getAttribute("#lesson-glossary", "href"), "#/glossario/5.3");
+        // Il primo esercizio fatto: il pulsante passa al successivo
+        await page.evaluate(id => { setPracticeDone(EXERCISES.find(exercise => exercise.id === id)); }, counts.first.id);
+        await go(page, "#/");
+        await go(page, "#/010-160/lezione/5.3_01");
+        assert.notEqual(await page.getAttribute("#lesson-exercise", "href"), `#/terminale/${counts.first.id}`);
+        assert.equal(await page.isVisible("#lesson-next-step"), false);
+        await page.check("#lesson-read");
+        assert.equal(await page.textContent("#lesson-next-step"), "✅ Lezione letta. Adesso prova le domande dell'obiettivo 5.3: fissano quello che hai appena letto.");
+        await page.uncheck("#lesson-read");
+        assert.equal(await page.isVisible("#lesson-next-step"), false);
+        await page.click("#lesson-questions");
+        await ready(page, "#/010-160/domande/5.3");
+        assert.match(await page.textContent(".meter-label"), new RegExp(`^Domanda 1 di ${counts.questions}$`));
+        // Un obiettivo senza esercizi al terminale: niente pulsante
+        await go(page, "#/010-160/lezione/1.3_01");
+        assert.equal(await page.locator("#lesson-exercise").count(), 0);
+        assert.equal(await page.locator("#lesson-questions").count(), 1);
     },
 
     "lezione: dimensione del testo, ricordata": async ({ page }) => {

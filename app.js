@@ -354,6 +354,38 @@ function textSizeControls() {
     return group;
 }
 
+// In fondo alla lezione: le domande, gli esercizi al terminale e i termini del suo obiettivo
+function lessonPractice(exam, objective) {
+    const box = el("div", "lesson-practice");
+    const title = el("h2", "", "Mettiti alla prova");
+    title.id = "lesson-practice";
+    box.appendChild(title);
+    const actions = el("p", "lesson-practice-links");
+    const stats = objectiveQuizStats(exam.id, objective.id);
+    const questions = link(`🎯 Domande dell'obiettivo ${objective.id} (${stats.total})`, quizHref(exam, objective), "button primary");
+    questions.id = "lesson-questions";
+    // Come dalla pagina dell'obiettivo: se la serie di prima è finita, ne parte una nuova
+    questions.onclick = () => {
+        if (quiz.session && quiz.session.index >= quiz.session.questions.length) quiz.session = null;
+    };
+    actions.appendChild(questions);
+    const exercises = exercisesOf(exam.id, objective.id);
+    if (exercises.length) {
+        const next = exercises.find(exercise => !isPracticeDone(exercise));
+        const practiceLink = link(next ? `⌨ Esercizio al terminale: ${next.title.replace(/`/g, "")}` : `⌨ Esercizi al terminale (${exercises.length}, tutti fatti)`, next ? exerciseHref(next) : `${objectiveHref(exam, objective)}`, "button");
+        practiceLink.id = "lesson-exercise";
+        actions.appendChild(practiceLink);
+    }
+    const terms = glossaryOf(exam.id, objective.id).length;
+    if (terms) {
+        const glossaryLink = link(`📖 I ${terms} termini dell'obiettivo`, `${GLOSSARY_HREF}/${objective.id}`, "button");
+        glossaryLink.id = "lesson-glossary";
+        actions.appendChild(glossaryLink);
+    }
+    box.appendChild(actions);
+    return box;
+}
+
 function renderLessonPage(exam, entry, lesson) {
     const { topic, objective, index } = entry;
     const page = el("div", "page lesson-page");
@@ -386,20 +418,28 @@ function renderLessonPage(exam, entry, lesson) {
     h1.after(index_);
     page.appendChild(article);
 
-    // Fine della lezione: letta, lezione precedente e successiva
+    // Fine della lezione: mettersi alla prova, letta, lezione precedente e successiva
     const end = el("section", "lesson-end");
     end.setAttribute("aria-label", "Fine della lezione");
+    end.appendChild(lessonPractice(exam, objective));
     const readLabel = el("label", "studied-toggle");
     const readBox = document.createElement("input");
     readBox.type = "checkbox";
     readBox.id = "lesson-read";
     readBox.checked = isRead(exam.id, lesson.id);
+    // Appena letta, l'invito a provare subito le domande
+    const nextStep = el("p", "ok lesson-next-step");
+    nextStep.id = "lesson-next-step";
+    nextStep.hidden = true;
     readBox.onchange = () => {
         setRead(exam.id, lesson.id, readBox.checked);
-        announce(readBox.checked ? "Lezione segnata come letta." : "Lezione non più segnata come letta.");
+        nextStep.hidden = !readBox.checked;
+        nextStep.textContent = readBox.checked ? `✅ Lezione letta. Adesso prova le domande dell'obiettivo ${objective.id}: fissano quello che hai appena letto.` : "";
+        announce(readBox.checked ? `Lezione segnata come letta. Adesso prova le domande dell'obiettivo ${objective.id}.` : "Lezione non più segnata come letta.");
     };
     readLabel.append(readBox, document.createTextNode(" Ho letto questa lezione"));
     end.appendChild(readLabel);
+    end.appendChild(nextStep);
     const lessons = allLessons(exam);
     const position = lessons.findIndex(item => item.id === lesson.id);
     const pager = el("nav", "pager");
