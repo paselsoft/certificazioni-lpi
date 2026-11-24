@@ -614,6 +614,31 @@ function renderBackup() {
     return "Backup dei progressi";
 }
 
+// «Segnala un errore»: apre su GitHub una segnalazione (issue) già compilata con che cosa è
+// (domanda, esercizio, termine), il suo codice, il testo e la versione dell'app; chi la apre
+// scrive che cosa non va. Serve Internet e un account GitHub; si apre in una nuova scheda.
+const REPORT_URL = "https://github.com/paselsoft/certificazioni-lpi/issues/new";
+function reportLink(what, id, text) {
+    const clean = String(text || "").replace(/`/g, "").replace(/\s+/g, " ").trim();
+    const short = clean.length > 300 ? `${clean.slice(0, 297)}...` : clean;
+    const body = [
+        `**Dove**: ${what} ${id} (${currentExam().name} ${currentExam().version})`,
+        short ? `**Testo**: ${short}` : null,
+        "",
+        "**Che cosa non va?**",
+        "(scrivi qui: che cosa è sbagliato o poco chiaro e, se lo sai, come dovrebbe essere)",
+        "",
+        "---",
+        `Versione dell'app: ${typeof APP_BUILD === "string" ? APP_BUILD : "?"}`
+    ].filter(line => line !== null).join("\n");
+    const href = `${REPORT_URL}?${new URLSearchParams({ title: `Errore: ${what} ${id}`, body }).toString()}`;
+    const anchor = link("⚠ Segnala un errore", href, "report-link");
+    anchor.target = "_blank";
+    anchor.rel = "noopener";
+    anchor.setAttribute("aria-label", `Segnala un errore in ${what} ${id} (si apre GitHub in una nuova scheda)`);
+    return anchor;
+}
+
 // I giorni di studio di fila e gli ultimi 7 giorni, nella pagina principale
 const WEEKDAYS = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"];
 function studyDaysBlock(today = todayKey()) {

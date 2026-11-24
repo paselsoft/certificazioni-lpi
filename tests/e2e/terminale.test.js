@@ -481,6 +481,18 @@ module.exports = {
         assert.equal(await outputText(page), "");
     },
 
+    "esercizio: «Segnala un errore» con il codice e il compito": async ({ page }) => {
+        await open(page, { hash: "#/terminale/t2.4-04" });
+        const report = await page.evaluate(() => {
+            const url = new URL(document.querySelector(".report-link").href);
+            return { title: url.searchParams.get("title"), body: url.searchParams.get("body") };
+        });
+        assert.equal(report.title, "Errore: esercizio t2.4-04");
+        assert.match(report.body, /^\*\*Dove\*\*: esercizio t2\.4-04 /);
+        await open(page, { hash: "#/terminale/libero" });
+        assert.equal(await page.locator(".report-link").count(), 0, "il terminale libero non ha niente da segnalare");
+    },
+
     "nano: scrivere, Ctrl+O salva, Ctrl+X chiede se salvare, Ctrl+K e Ctrl+U, permessi e sudo": async ({ page }) => {
         await open(page, { hash: "#/terminale/libero" });
         const status = () => page.textContent("#editor-status");

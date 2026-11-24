@@ -466,6 +466,14 @@ la palestra davvero ed esegue le soluzioni da anna.
   400; backup e sincronizzazione: per ogni giorno il conteggio più alto); chi aveva già dei
   progressi li ritrova ricavati dalle date salvate.
 
+- **Segnala un errore (24/11/2026).** Un collegamento «⚠ Segnala un errore» dopo ogni risposta
+  (domande e ripasso), nelle domande da rivedere della simulazione, in ogni esercizio, in ogni voce
+  del glossario e sul retro delle carte. Apre in una nuova scheda una segnalazione (issue) del
+  repository su GitHub già compilata: titolo «Errore: domanda 2.1-03» (o esercizio, o termine), e
+  nel testo dove, il testo della domanda (al massimo 300 caratteri), lo spazio per dire che cosa
+  non va e la versione dell'app. Serve Internet e un account GitHub; le segnalazioni sono attive
+  sul repository (verificato). Non si manda niente da solo: chi segnala vede tutto prima di inviare.
+
 ### Miglioramenti ancora da fare (analisi del 15/11/2026)
 
 In ordine di utilità per l'esame. Uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
@@ -506,8 +514,7 @@ l'esame; uno alla volta, ognuno con i suoi test e la sua richiesta di unione.
 3. **Simulazioni brevi: fatto** (vedi sopra).
 4. **Dalla lezione alle domande: fatto** (vedi sopra).
 5. **Giorni di studio di fila: fatto** (vedi sopra).
-6. **Segnala un errore.** In ogni domanda, esercizio e voce del glossario, un collegamento che apre
-   una segnalazione su GitHub già compilata (quale domanda, che cosa non va), per correggere in fretta.
+6. **Segnala un errore: fatto** (vedi sopra).
 7. **La versione 2.0 (010-200).** Controllare su learning.lpi.org e lpi.org se le lezioni italiane
    della 2.0 sono complete e se l'esame si può dare in italiano; se sì, preparare obiettivi e lezioni
    (lo strumento di importazione c'è già), per chi darà l'esame dopo aprile 2027.
