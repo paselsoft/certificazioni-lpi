@@ -273,7 +273,7 @@ function showFeedback(exam, objective, body, feedback, question, options, chosen
     feedback.appendChild(title);
     feedback.appendChild(explanation(question, options, chosen));
     const review = el("p", "review");
-    review.appendChild(reviewLink(exam, question));
+    review.append(reviewLink(exam, question), document.createTextNode(" · "), reportLink("domanda", question.id, question.text));
     if (entry) feedback.appendChild(el("p", "return-text hint", returnText(entry)));
     feedback.appendChild(review);
     const next = el("button", "button primary", quiz.session.index + 1 < quiz.session.questions.length ? "Domanda successiva →" : "Vedi il risultato");

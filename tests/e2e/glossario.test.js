@@ -23,6 +23,9 @@ module.exports = {
         assert.match(await page.textContent("#lettera-e"), /^E$/);
         assert.ok(await page.locator("#lettera-e + dl dt:has-text('/etc/passwd')").count(), "/etc/passwd sotto la E");
         // Ogni voce porta al suo obiettivo
+        // Ogni voce si può segnalare
+        const report = await page.evaluate(() => new URL(document.querySelector("#termine-sticky-bit + dd .report-link").href).searchParams.get("title"));
+        assert.equal(report, "Errore: termine del glossario «Sticky bit»");
         await page.click("#termine-sticky-bit + dd a");
         await ready(page, "#/010-160/obiettivo/5.4");
         assert.match(await page.textContent("main h1"), /5\.4/);
@@ -83,7 +86,7 @@ module.exports = {
         await page.click("#card-flip");
         assert.equal(await page.evaluate(() => document.activeElement.id), "card-back");
         const text = await page.evaluate(term => GLOSSARY.find(entry => entry.term === term).text.replace(/`/g, ""), first);
-        assert.equal(await page.textContent("#card-back"), text);
+        assert.equal(await page.textContent("#card-back p:first-child"), text);
         await page.click("#card-yes");
         assert.equal(await page.evaluate(() => document.activeElement.id), "card-term");
         const second = await page.textContent("#card-term");

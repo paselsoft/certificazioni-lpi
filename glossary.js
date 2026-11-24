@@ -116,6 +116,9 @@ function renderCardStep(exam, body) {
     const back = el("div", "card-back");
     back.id = "card-back";
     back.appendChild(richText(entry.text, "p"));
+    const report = el("p", "hint");
+    report.appendChild(reportLink("termine del glossario", `«${entry.term}»`, entry.text));
+    back.appendChild(report);
     card.appendChild(back);
     card.appendChild(el("p", "", "Lo sapevi?"));
     const actions = el("div", "pager card-actions");
@@ -242,7 +245,8 @@ function renderGlossary(exam, objectiveId = null) {
             const dd = el("dd", "glossary-text");
             dd.appendChild(richText(entry.text, "p"));
             const more = el("p", "glossary-more");
-            more.appendChild(link(`Obiettivo ${entry.objective}${found ? `: ${found.objective.title}` : ""}`, found ? objectiveHref(exam, found.objective) : "#/"));
+            more.append(link(`Obiettivo ${entry.objective}${found ? `: ${found.objective.title}` : ""}`, found ? objectiveHref(exam, found.objective) : "#/"),
+                document.createTextNode(" · "), reportLink("termine del glossario", `«${entry.term}»`, entry.text));
             dd.appendChild(more);
             dl.append(dt, dd);
             items.push({ entry, dt, dd, section, key: glossaryKey(`${entry.term} ${entry.text}`) });

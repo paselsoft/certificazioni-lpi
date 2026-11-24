@@ -241,6 +241,9 @@ function renderPractice(exam, exercise) {
         const real = el("p", "hint");
         real.append(document.createTextNode("Su un Linux vero, con la palestra: "), el("code", "", `lpi-esercizio ${exercise.id}`), document.createTextNode(", poi "), el("code", "", "lpi-esercizio verifica"), document.createTextNode(" ("), link("come si installa", "#/terminale"), document.createTextNode(")."));
         page.appendChild(real);
+        const report = el("p", "hint");
+        report.appendChild(reportLink("esercizio", exercise.id, `${exercise.title}: ${exercise.task}`));
+        page.appendChild(report);
     }
     if (!exercise) page.appendChild(el("p", "hint", "Scrivi help per l'elenco dei comandi. Il simulatore si comporta come Bash con LC_ALL=C; i messaggi di errore sono in italiano."));
     page.appendChild(el("p", "hint terminal-tips", "Tab completa i comandi e i nomi dei file (con la riga vuota passa al pulsante successivo); ↑ e ↓ richiamano i comandi già scritti; Ctrl+L pulisce lo schermo. Gli editor nano e vi si aprono qui, al posto della riga di comando."));

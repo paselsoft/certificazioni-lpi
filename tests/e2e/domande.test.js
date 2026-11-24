@@ -65,6 +65,19 @@ module.exports = {
         assert.equal(await page.getAttribute(".review-link", "href"), "#/010-160/lezione/2.1_01/Virgolette%20Doppie");
         const saved = (await stored(page)).answers["010-160/2.1-01"];
         assert.deepEqual({ ok: saved.ok, ko: saved.ko, result: saved.result }, { ok: 0, ko: 1, result: false });
+        // «Segnala un errore»: una segnalazione su GitHub già compilata, in una nuova scheda
+        const report = await page.evaluate(() => {
+            const anchor = document.querySelector("#feedback .report-link");
+            const url = new URL(anchor.href);
+            return { base: url.origin + url.pathname, title: url.searchParams.get("title"), body: url.searchParams.get("body"), target: anchor.target, rel: anchor.rel, label: anchor.getAttribute("aria-label"), text: anchor.textContent };
+        });
+        assert.equal(report.base, "https://github.com/paselsoft/certificazioni-lpi/issues/new");
+        assert.equal(report.title, "Errore: domanda 2.1-01");
+        assert.match(report.body, /^\*\*Dove\*\*: domanda 2\.1-01 \(Linux Essentials 1\.6\)\n\*\*Testo\*\*: La variabile USER vale frank\./);
+        assert.match(report.body, /\*\*Che cosa non va\?\*\*/);
+        assert.match(report.body, /\n---\nVersione dell'app: .+$/);
+        assert.deepEqual([report.target, report.rel, report.text], ["_blank", "noopener", "⚠ Segnala un errore"]);
+        assert.equal(report.label, "Segnala un errore in domanda 2.1-01 (si apre GitHub in una nuova scheda)");
 
         // Il link apre la lezione alla sezione giusta
         await page.click(".review-link");

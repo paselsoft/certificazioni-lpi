@@ -642,7 +642,7 @@ function renderSimulationResult(exam) {
         const chosen = options ? entry.order.map((original, i) => entry.answer.includes(original) ? i : -1).filter(i => i >= 0) : [];
         item.appendChild(explanation(question, options, chosen, question.type === "fill" ? entry.answer.trim() : undefined));
         const more = el("p", "review");
-        more.appendChild(reviewLink(exam, question));
+        more.append(reviewLink(exam, question), document.createTextNode(" · "), reportLink("domanda", question.id, question.text));
         item.appendChild(more);
         review.appendChild(item);
     });

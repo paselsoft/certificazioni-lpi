@@ -559,6 +559,8 @@ main { display: block; }
 .glossary-text p { margin: 2px 0; }
 .glossary-more { font-size: 0.9rem; }
 .glossary-letter[hidden], .glossary-term[hidden], .glossary-text[hidden] { display: none; }
+/* «Segnala un errore» (app.js) */
+.report-link { font-size: 0.9rem; white-space: nowrap; }
 /* I giorni di studio (app.js) */
 .study-days { margin: 12px 0; }
 .study-week { display: flex; gap: 6px; list-style: none; padding: 0; margin: 6px 0; }

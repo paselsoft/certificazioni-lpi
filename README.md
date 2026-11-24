@@ -24,6 +24,9 @@ simulazione d'esame e la pratica al terminale. Il piano è in [docs/PIANO.md](do
   risposta sbagliata riporta la domanda nella scatola 1 (torna il giorno dopo), ogni risposta
   giusta la sposta nella scatola successiva (torna dopo 2, 4, 8, poi 16 giorni). Prima le domande
   scadute, poi quelle nuove degli obiettivi che stai studiando.
+- **Segnala un errore**: dopo ogni risposta, nelle domande da rivedere della simulazione, in ogni
+  esercizio e in ogni termine del glossario, un collegamento apre su GitHub una segnalazione già
+  compilata (che cosa, il codice, il testo, la versione dell'app). Serve un account GitHub.
 - **Glossario**: 208 termini degli obiettivi (distribuzioni, licenze, comandi, file, hardware, rete,
   permessi) spiegati in breve, scritti da zero, con una ricerca che filtra mentre scrivi e il
   collegamento all'obiettivo; dalla pagina di un obiettivo si aprono solo i suoi termini. Con le
