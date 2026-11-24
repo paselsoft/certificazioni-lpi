@@ -3,7 +3,7 @@
 // dai dati degli esami, così una lezione nuova entra da sola). Strategia «prima la rete»: online si
 // riceve sempre la versione più recente (e la copia salvata si aggiorna), offline si usa la copia.
 // Per far installare una nuova versione basta cambiare CACHE.
-const CACHE = "certlpi-v27";
+const CACHE = "certlpi-v28";
 
 importScripts("data/exams.js", "data/exam-010-160.js");
 
